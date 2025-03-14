@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function Signup() {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState("Please select your role");
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -29,7 +30,7 @@ export function Signup() {
     console.log("Form submitted");
   };
 
-  const items = ["Client", "Restaurant", "Delivery", "Admin", "Vendor"];
+  const items = ["Client", "Restaurant", "Delivery", "Vendor"];
 
   return (
     <div className=" w-full border-2 py-10 px-14   border-[#8e8d8b] rounded-4xl mx-36">
@@ -45,13 +46,17 @@ export function Signup() {
 
           <form className="my-5" onSubmit={handleSubmit}>
             <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-              <LabelInputContainer>
+              {/* <LabelInputContainer>
                 <Label htmlFor="firstname">First name</Label>
                 <Input id="firstname" placeholder="Foulen" type="text" />
-              </LabelInputContainer>
+              </LabelInputContainer> */}
               <LabelInputContainer>
-                <Label htmlFor="lastname">Last name</Label>
-                <Input id="lastname" placeholder="Ben Foulen" type="text" />
+                <Label htmlFor="lastname">Fullname</Label>
+                <Input
+                  id="lastname"
+                  placeholder="Foulen Ben Foulen"
+                  type="text"
+                />
               </LabelInputContainer>
             </div>
             <LabelInputContainer className="mb-4">
@@ -70,18 +75,34 @@ export function Signup() {
             <LabelInputContainer className="mb-4 relative">
               <Label htmlFor="role">Role</Label>
               <button
-                className=" cursor-pointer flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-3 py-2 text-sm  file:border-0 file:bg-transparent 
-          file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 
-          focus-visible:outline-none focus-visible:ring-[2px]  focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600
-           disabled:cursor-not-allowed disabled:opacity-50
-           dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]
-           group-hover/input:shadow-none transition duration-400"
+                className="cursor-pointer flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600 disabled:cursor-not-allowed disabled:opacity-50 dark:shadow-[0px_0px_1px_1px_var(--neutral-700)] group-hover/input:shadow-none transition duration-400"
                 onClick={() => setIsOpen(!isOpen)}
               >
-                Please select your role
+                {selectedItem}
               </button>
               <AnimatePresence>
-                {!isOpen && <motion.div></motion.div>}
+                {isOpen && (
+                  <motion.div
+                    className="absolute top-16 w-full z-10 bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-neutral-700 rounded-md shadow-lg"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {items.map((item, index) => (
+                      <p
+                        key={index}
+                        className="px-4 py-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-md border-t border-neutral-200 dark:border-neutral-700"
+                        onClick={() => {
+                          setIsOpen(false);
+                          setSelectedItem(item);
+                        }}
+                      >
+                        {item}
+                      </p>
+                    ))}
+                  </motion.div>
+                )}
               </AnimatePresence>
             </LabelInputContainer>
             <button

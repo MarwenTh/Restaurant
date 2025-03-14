@@ -18,6 +18,7 @@ export const authOptions: any = {
       clientSecret: process.env.GOOGLE_SECRET!,
     }),
     // ...add more providers here
+    CredentialsProvider,
   ],
   callbacks: {
     async signIn({ user, account }: { user: AuthUser; account: Account }) {
@@ -40,8 +41,8 @@ export const authOptions: any = {
           } else {
             await User.create({
               email: user.email,
-              username: user.email?.split("@")[0],
-              fullName: user.name,
+              name: user.name,
+              role: "Client",
               image: user.image,
             });
 
@@ -51,6 +52,7 @@ export const authOptions: any = {
           console.error("Error saving user", error);
           return false;
         }
+      } else {
       }
       return true;
     },
