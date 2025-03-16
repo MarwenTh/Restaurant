@@ -5,6 +5,8 @@ import { signIn } from "next-auth/react";
 import { Account, User as AuthUser } from "next-auth";
 import connectToDatabase from "@/lib/database";
 import User from "@/lib/database/models/user.model";
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcrypt";
 
 export const authOptions: any = {
   // Configure one or more authentication providers
@@ -18,7 +20,67 @@ export const authOptions: any = {
       clientSecret: process.env.GOOGLE_SECRET!,
     }),
     // ...add more providers here
-    CredentialsProvider,
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        name: { label: "Name", type: "text" },
+        password: { label: "Password", type: "password" },
+        role: { label: "Role", type: "text" }, // Fixed: Role should be sent as a text field
+      },
+      async authorize(credentials: any) {
+        if (!credentials?.email || !credentials?.password) {
+          // !credentials?.name ||
+          // !credentials?.role
+          throw new Error("All fields are required");
+        }
+
+        await connectToDatabase();
+
+        const existingUser = await User.findOne({ email: credentials.email });
+
+        if (!existingUser) {
+          // signup
+          const hashedPassword = await bcrypt.hash(credentials.password, 10);
+
+          const newUser = await User.create({
+            email: credentials.email,
+            name: credentials.name,
+            role: credentials.role,
+            password: hashedPassword,
+          });
+
+          return {
+            id: newUser._id.toString(),
+            email: newUser.email,
+            name: newUser.name,
+            role: newUser.role,
+            image: newUser.image,
+          };
+        }
+
+        // login
+        const isEmailMatch = credentials.email === existingUser.email;
+        const isPasswordMatch = await bcrypt.compare(
+          credentials.password,
+          existingUser.password
+        );
+
+        if (!isEmailMatch) {
+          throw new Error("Email not found");
+        } else if (!isPasswordMatch) {
+          throw new Error("Password is incorrect");
+        }
+
+        return {
+          id: existingUser._id.toString(),
+          email: existingUser.email,
+          name: existingUser.name,
+          role: existingUser.role,
+          image: existingUser.image,
+        };
+      },
+    }),
   ],
   callbacks: {
     async signIn({ user, account }: { user: AuthUser; account: Account }) {

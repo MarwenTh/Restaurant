@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { BottomGradient, Input, LabelInputContainer } from "../ui/input";
 import { cn } from "@/lib/utils";
@@ -10,22 +10,37 @@ import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { HashLoader } from "react-spinners";
+import { toast } from "sonner";
 
 export function Login() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
+  }, [session, router]); // ✅ No conditional hooks
 
   if (status === "loading") {
     return <HashLoader color="#ff6b00" />;
   }
 
-  if (session) {
-    router.push("/");
-  }
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted");
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (!result?.error) {
+      toast.success("Congrats! You have successfully signed in!");
+    } else {
+      toast.error(result.error);
+    }
   };
   return (
     <div className=" w-full py-10 px-14   border-[#8e8d8b] border-2 rounded-4xl mx-36">
@@ -46,17 +61,24 @@ export function Login() {
                 id="email"
                 placeholder="foulenbenfoulen@email.com"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="••••••••" type="password" />
+              <Input
+                id="password"
+                placeholder="••••••••"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </LabelInputContainer>
 
             <button
               className="bg-gradient-to-br cursor-pointer relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
               type="submit"
-              onClick={() => signIn("github")}
             >
               Login &rarr;
               <BottomGradient />
@@ -67,7 +89,7 @@ export function Login() {
             <div className="flex flex-col space-y-4">
               <button
                 className=" relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-                type="submit"
+                type="button"
                 onClick={() => signIn("github")}
               >
                 <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
@@ -78,7 +100,7 @@ export function Login() {
               </button>
               {/* <button
                 className=" relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-                type="submit"
+                type="button"
               >
                 <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
                 <span className="text-neutral-700 dark:text-neutral-300 text-sm">

@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { BottomGradient, Input, LabelInputContainer } from "../ui/input";
 import { cn } from "@/lib/utils";
@@ -11,23 +11,53 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { HashLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 
 export function Signup() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Please select your role");
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const { data: session, status } = useSession();
   const router = useRouter();
+
+  useEffect(() => {
+    if (session) {
+      router.push("/");
+    }
+  }, [session, router]); // ✅ No conditional hooks
 
   if (status === "loading") {
     return <HashLoader color="#ff6b00" />;
   }
-
-  if (session) {
-    router.push("/");
-  }
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted");
+
+    if (
+      !email ||
+      !name ||
+      !password ||
+      selectedItem === "Please select your role"
+    ) {
+      toast.error("All fields are required!");
+      return;
+    }
+
+    const result = await signIn("credentials", {
+      email,
+      name,
+      password,
+      role: selectedItem,
+      redirect: false, // Prevents NextAuth from redirecting
+    });
+
+    if (!result?.error) {
+      toast.success("Congrats! You have successfully signed up!");
+    } else {
+      // toast.error("Oops! Something went wrong. Please try again.");
+      toast.error(result.error);
+    }
   };
 
   const items = ["Client", "Restaurant", "Delivery", "Vendor"];
@@ -53,9 +83,11 @@ export function Signup() {
               <LabelInputContainer>
                 <Label htmlFor="lastname">Fullname</Label>
                 <Input
-                  id="lastname"
+                  id="fullname"
                   placeholder="Foulen Ben Foulen"
                   type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                 />
               </LabelInputContainer>
             </div>
@@ -65,11 +97,19 @@ export function Signup() {
                 id="email"
                 placeholder="foulenbenfoulen@email.com"
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </LabelInputContainer>
             <LabelInputContainer className="mb-4">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" placeholder="••••••••" type="password" />
+              <Input
+                id="password"
+                placeholder="••••••••"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </LabelInputContainer>
 
             <LabelInputContainer className="mb-4 relative">
@@ -77,6 +117,7 @@ export function Signup() {
               <button
                 className="cursor-pointer flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600 disabled:cursor-not-allowed disabled:opacity-50 dark:shadow-[0px_0px_1px_1px_var(--neutral-700)] group-hover/input:shadow-none transition duration-400"
                 onClick={() => setIsOpen(!isOpen)}
+                type="button"
               >
                 {selectedItem}
               </button>
@@ -116,7 +157,7 @@ export function Signup() {
             <div className="flex flex-col space-y-4">
               <button
                 className=" relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-                type="submit"
+                type="button"
                 onClick={() => signIn("github")}
               >
                 <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
@@ -125,16 +166,16 @@ export function Signup() {
                 </span>
                 <BottomGradient />
               </button>
-              <button
+              {/* <button
                 className=" relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-                type="submit"
+                type="button"
               >
                 <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
                 <span className="text-neutral-700 dark:text-neutral-300 text-sm">
                   Google
                 </span>
                 <BottomGradient />
-              </button>
+              </button> */}
             </div>
             <div className=" flex justify-end space-x-2 mt-4">
               <p className=" text-white">Already have an account?</p>

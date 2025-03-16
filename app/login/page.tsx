@@ -1,3 +1,4 @@
+"use client";
 import { Login } from "@/components/auth/login";
 import Image from "next/image";
 import React from "react";
