@@ -26,7 +26,10 @@ const UserDropdown: FC<Props> = ({ session }) => {
           className="overflow-hidden rounded-full cursor-pointer"
         >
           <Image
-            src={session?.user?.image ?? "/placeholder-user.jpg"}
+            src={
+              session?.user?.image ??
+              "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+            }
             width={36}
             height={36}
             alt="Avatar"

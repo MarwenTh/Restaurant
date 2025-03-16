@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
+import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebarAceternity";
 import {
   IconArrowLeft,
   IconBrandTabler,
@@ -43,6 +43,7 @@ export default function SidebarDemo() {
       ),
     },
   ];
+
   const [open, setOpen] = useState(false);
   return (
     <div
