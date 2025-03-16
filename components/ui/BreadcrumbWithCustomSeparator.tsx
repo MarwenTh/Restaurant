@@ -1,5 +1,13 @@
 import Link from "next/link";
 
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import React, { FC } from "react";
 
 type Props = {
@@ -8,17 +16,14 @@ type Props = {
 
 const BreadcrumbWithCustomSeparator: FC<Props> = ({ pathSegments }) => {
   return (
-    <nav aria-label="breadcrumb">
-      <ul className="flex items-center space-x-2 text-sm text-gray-600">
+    <Breadcrumb>
+      <BreadcrumbList>
         {/* Home Link */}
-        <li>
-          <Link
-            href="/"
-            className="text-[#757577] dark:text-[#b9b9be] hover:text-[#e5e5e7] dark:hover:text-[#e5e5e7] font-medium text-xs transition-all duration-200 ease-in-out"
-          >
-            Home
-          </Link>
-        </li>
+        <BreadcrumbItem>
+          <BreadcrumbLink>
+            <Link href="/">Home</Link>
+          </BreadcrumbLink>
+        </BreadcrumbItem>
 
         {pathSegments.map((segment, index) => {
           const href = `/${pathSegments.slice(0, index + 1).join("/")}`;
@@ -26,26 +31,21 @@ const BreadcrumbWithCustomSeparator: FC<Props> = ({ pathSegments }) => {
 
           return (
             <React.Fragment key={href}>
-              <span className="text-gray-400">{">"}</span>
-              <li>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
                 {isLast ? (
-                  <span className="text-[#757577] dark:text-[#b9b9be]  text-xs">
-                    {segment}
-                  </span>
+                  <BreadcrumbPage>{segment}</BreadcrumbPage>
                 ) : (
-                  <Link
-                    href={href}
-                    className="text-[#757577] dark:text-[#b9b9be] hover:text-[#e5e5e7] dark:hover:text-[#e5e5e7] font-medium text-xs transition-all duration-200 ease-in-out"
-                  >
-                    {segment}
-                  </Link>
+                  <BreadcrumbLink>
+                    <Link href={href}>{segment}</Link>
+                  </BreadcrumbLink>
                 )}
-              </li>
+              </BreadcrumbItem>
             </React.Fragment>
           );
         })}
-      </ul>
-    </nav>
+      </BreadcrumbList>
+    </Breadcrumb>
   );
 };
 
