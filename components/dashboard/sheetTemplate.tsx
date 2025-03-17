@@ -1,7 +1,7 @@
 "use client";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Input, LabelInputContainer } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Sheet,
@@ -13,6 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 interface User {
   id: string;
   name: string;
@@ -34,6 +35,10 @@ const SheetTemplate: FC<Props> = ({
   isSheetOpen,
   setIsSheetOpen,
 }) => {
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [image, setImage] = useState("");
   return (
     <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
       <SheetContent>
@@ -44,9 +49,45 @@ const SheetTemplate: FC<Props> = ({
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            {/* {JSON.stringify(selectedUser)} */}
-          </div>
+          <Avatar className=" text-center">
+            <AvatarImage
+              src={selectedUser?.image}
+              alt={selectedUser?.name}
+              sizes="15px"
+            />
+            <AvatarFallback>
+              {selectedUser?.name.charAt(0).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <LabelInputContainer className="mb-4">
+            <Label htmlFor="email">FullName</Label>
+            <Input
+              id="fullname"
+              placeholder="foulen ben foulen"
+              type="etextmail"
+              value={selectedUser?.name}
+            />
+          </LabelInputContainer>
+
+          <LabelInputContainer className="mb-4">
+            <Label htmlFor="email">Email Address</Label>
+            <Input
+              id="email"
+              placeholder="foulenbenfoulen@email.com"
+              type="email"
+              value={selectedUser?.email}
+            />
+          </LabelInputContainer>
+
+          <LabelInputContainer className="mb-4">
+            <Label htmlFor="email">Role</Label>
+            <Input
+              id="role"
+              placeholder="Role"
+              type="text"
+              value={selectedUser?.role}
+            />
+          </LabelInputContainer>
         </div>
         <SheetFooter>
           <SheetClose asChild>

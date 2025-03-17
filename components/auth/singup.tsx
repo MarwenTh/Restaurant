@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import { HashLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import axios from "axios";
 
 export function Signup() {
   const [isOpen, setIsOpen] = useState(false);
@@ -44,19 +45,29 @@ export function Signup() {
       return;
     }
 
-    const result = await signIn("credentials", {
-      email,
-      name,
-      password,
-      role: selectedItem,
-      redirect: false, // Prevents NextAuth from redirecting
-    });
+    try {
+      const result = await axios.post("/api/user", {
+        email,
+        name,
+        password,
+        role: selectedItem,
+      });
 
-    if (!result?.error) {
-      toast.success("Congrats! You have successfully signed up!");
-    } else {
-      // toast.error("Oops! Something went wrong. Please try again.");
-      toast.error(result.error);
+      if (!result?.data?.error) {
+        toast.success("Congrats! You have successfully signed up!");
+        router.push("/login");
+      } else {
+        toast.error(result?.data?.error);
+      }
+    } catch (error: any) {
+      console.error("Signup error:", error);
+
+      // Display error message from server response if available
+      if (error.response && error.response.data && error.response.data.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error("Oops! Something went wrong. Please try again.");
+      }
     }
   };
 

@@ -30,40 +30,17 @@ export const authOptions: any = {
       },
       async authorize(credentials: any) {
         if (!credentials?.email || !credentials?.password) {
-          // !credentials?.name ||
-          // !credentials?.role
-          throw new Error("All fields are required");
+          throw new Error("Please fill in all fields");
         }
-
         await connectToDatabase();
 
-        const existingUser = await User.findOne({ email: credentials.email });
-
-        if (!existingUser) {
-          // signup
-          const hashedPassword = await bcrypt.hash(credentials.password, 10);
-
-          const newUser = await User.create({
-            email: credentials.email,
-            name: credentials.name,
-            role: credentials.role,
-            password: hashedPassword,
-          });
-
-          return {
-            id: newUser._id.toString(),
-            email: newUser.email,
-            name: newUser.name,
-            role: newUser.role,
-            image: newUser.image,
-          };
-        }
+        const isUserExists = await User.findOne({ email: credentials.email });
 
         // login
-        const isEmailMatch = credentials.email === existingUser.email;
+        const isEmailMatch = credentials.email === isUserExists.email;
         const isPasswordMatch = await bcrypt.compare(
           credentials.password,
-          existingUser.password
+          isUserExists.password
         );
 
         if (!isEmailMatch) {
@@ -73,11 +50,11 @@ export const authOptions: any = {
         }
 
         return {
-          id: existingUser._id.toString(),
-          email: existingUser.email,
-          name: existingUser.name,
-          role: existingUser.role,
-          image: existingUser.image,
+          id: isUserExists._id.toString(),
+          email: isUserExists.email,
+          name: isUserExists.name,
+          role: isUserExists.role,
+          image: isUserExists.image,
         };
       },
     }),
@@ -120,7 +97,7 @@ export const authOptions: any = {
     },
   },
   pages: {
-    signIn: "/",
+    signIn: "/login",
   },
   debug: process.env.NODE_ENV === "development",
   session: {

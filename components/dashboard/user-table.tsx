@@ -195,19 +195,21 @@ export function UserTable() {
                               setIsSheetOpen(true);
                             }}
                           >
-                            Edit User Info
+                            Edit {user.role} Info
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="cursor-pointer text-red-500 "
-                            onClick={handleDeleteUser(user.id)}
-                          >
-                            Delete User
-                          </DropdownMenuItem>
+                          {user.role !== "Admin" && (
+                            <DropdownMenuItem
+                              className="cursor-pointer text-red-500 "
+                              onClick={handleDeleteUser(user.id)}
+                            >
+                              Delete this {user.role}
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>
                     <TooltipContent key={idx}>
-                      <p>Double tap to view {user.name} details</p>
+                      <p>Double tap to view {user.name} activity</p>
                     </TooltipContent>
                   </TableRow>
                 </TooltipTrigger>

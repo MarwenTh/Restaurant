@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { Session } from "next-auth";
+import bcrypt from "bcrypt";
 
 export async function getSession(): Promise<Session | null> {
   return await getServerSession(authOptions);
@@ -76,6 +77,82 @@ export async function DELETE(request: Request) {
     );
   } catch (error) {
     console.error("Error deleting user:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    await connectToDatabase();
+    const { email, name, password, role, image } = await request.json();
+
+    if (!email || !name || !password || !role) {
+      return NextResponse.json(
+        { error: "All fields are required!" },
+        { status: 400 }
+      );
+    }
+
+    const isUserExists = await User.findOne({ email });
+
+    if (isUserExists) {
+      return NextResponse.json(
+        { error: "User already exists with this email" },
+        { status: 400 }
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      email,
+      name,
+      password: hashedPassword,
+      role,
+      image,
+    });
+
+    return NextResponse.json({ user }, { status: 201 });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    await connectToDatabase();
+    const session = await getSession();
+    const currentUser = await User.findOne({ email: session?.user?.email });
+
+    if (!currentUser || currentUser.role !== "Admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id, name, email, role, image } = await request.json();
+
+    const user = await User.findById(id);
+
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    user.name = name;
+    user.email = email;
+    user.role = role;
+    user.image = image;
+
+    await user.save();
+
+    return NextResponse.json({ user }, { status: 200 });
+  } catch (error) {
+    console.error("Error updating user:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

@@ -22,24 +22,30 @@ export function Login() {
     if (session) {
       router.push("/");
     }
-  }, [session, router]); // ✅ No conditional hooks
+  }, [session, router]);
 
   if (status === "loading") {
     return <HashLoader color="#ff6b00" />;
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      e.preventDefault();
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-    if (!result?.error) {
-      toast.success("Congrats! You have successfully signed in!");
-    } else {
-      toast.error(result.error);
+      if (!result?.error) {
+        toast.success("Congrats! You have successfully signed in!");
+        router.push("/dashboard/users");
+      } else {
+        toast.error(result.error);
+      }
+    } catch (error: any) {
+      console.error("Error signing in:", error);
+      toast.error(error?.message);
     }
   };
   return (

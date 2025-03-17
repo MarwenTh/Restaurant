@@ -4,6 +4,8 @@ import "./globals.css";
 import SessionWrapper from "@/components/providers/SessionProvider";
 import { Toaster } from "sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
+import ThemeDataProvider from "@/context/theme-data-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,14 +29,23 @@ export default function RootLayout({
 }>) {
   return (
     <SessionWrapper>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <TooltipProvider>
-            <Toaster position="top-right" />
-            {children}
-          </TooltipProvider>
+          <NextThemesProvider
+            attribute="class"
+            // defaultTheme="dark"
+            enableSystem
+            // disableTransitionOnChange
+          >
+            {/* <ThemeDataProvider> */}
+            <TooltipProvider>
+              <Toaster position="top-right" />
+              {children}
+            </TooltipProvider>
+            {/* </ThemeDataProvider> */}
+          </NextThemesProvider>
         </body>
       </html>
     </SessionWrapper>

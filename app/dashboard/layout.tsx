@@ -1,7 +1,7 @@
 "use client";
 import SidebarDemo from "@/components/dashboard/dashboard";
 import Navbar from "@/components/dashboard/navbar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+
 import React from "react";
 
 type LayoutProps = {
