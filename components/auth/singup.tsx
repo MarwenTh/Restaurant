@@ -71,13 +71,16 @@ export function Signup() {
     }
   };
 
-  const items = ["Client", "Restaurant", "Delivery", "Vendor"];
+  const items = ["Client", "Vendor", "Delivery"];
 
   return (
-    <div className=" w-full border-2 py-10 px-14   border-[#8e8d8b] rounded-4xl mx-36">
-      <div className=" flex justify-between items-center ">
+    <div className="w-full border-2 py-10 px-14 border-[#8e8d8b] rounded-4xl mx-36">
+      <div className="flex justify-between items-center">
         <Image src={FoodPNG} alt="food" />
-        <div className="max-w-xl w-full  rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white/60 dark:bg-black/60 ">
+        <div
+          className="max-w-xl w-full rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white/60
+            dark:bg-black/60"
+        >
           <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
             Welcome to FoodGuide
           </h2>
@@ -126,7 +129,15 @@ export function Signup() {
             <LabelInputContainer className="mb-4 relative">
               <Label htmlFor="role">Role</Label>
               <button
-                className="cursor-pointer flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 focus-visible:outline-none focus-visible:ring-[2px] focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600 disabled:cursor-not-allowed disabled:opacity-50 dark:shadow-[0px_0px_1px_1px_var(--neutral-700)] group-hover/input:shadow-none transition duration-400"
+                className="cursor-pointer flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800
+                  text-black dark:text-white shadow-input rounded-md px-3 py-2 text-sm
+                  file:border-0 file:bg-transparent file:text-sm file:font-medium
+                  placeholder:text-neutral-400 dark:placeholder-text-neutral-600
+                  focus-visible:outline-none focus-visible:ring-[2px]
+                  focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600
+                  disabled:cursor-not-allowed disabled:opacity-50
+                  dark:shadow-[0px_0px_1px_1px_var(--neutral-700)] group-hover/input:shadow-none
+                  transition duration-400"
                 onClick={() => setIsOpen(!isOpen)}
                 type="button"
               >
@@ -135,7 +146,8 @@ export function Signup() {
               <AnimatePresence>
                 {isOpen && (
                   <motion.div
-                    className="absolute top-16 w-full z-10 bg-white dark:bg-zinc-800 border border-neutral-200 dark:border-neutral-700 rounded-md shadow-lg"
+                    className="absolute top-16 w-full z-10 bg-white dark:bg-zinc-800 border border-neutral-200
+                      dark:border-neutral-700 rounded-md shadow-lg"
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
@@ -144,7 +156,8 @@ export function Signup() {
                     {items.map((item, index) => (
                       <p
                         key={index}
-                        className="px-4 py-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 rounded-md border-t border-neutral-200 dark:border-neutral-700"
+                        className="px-4 py-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700
+                          rounded-md border-t border-neutral-200 dark:border-neutral-700"
                         onClick={() => {
                           setIsOpen(false);
                           setSelectedItem(item);
@@ -158,16 +171,25 @@ export function Signup() {
               </AnimatePresence>
             </LabelInputContainer>
             <button
-              className="bg-gradient-to-br cursor-pointer relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+              className="bg-gradient-to-br cursor-pointer relative group/btn from-black
+                dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full
+                text-white rounded-md h-10 font-medium
+                shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset]
+                dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
               type="submit"
             >
               Sign up &rarr;
               <BottomGradient />
             </button>
-            <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
+            <div
+              className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700
+                to-transparent my-8 h-[1px] w-full"
+            />
             <div className="flex flex-col space-y-4">
               <button
-                className=" relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
+                className="relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4
+                  w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50
+                  dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
                 type="button"
                 onClick={() => signIn("github")}
               >
@@ -188,9 +210,9 @@ export function Signup() {
                 <BottomGradient />
               </button> */}
             </div>
-            <div className=" flex justify-end space-x-2 mt-4">
-              <p className=" text-white">Already have an account?</p>
-              <Link href={"/login"} className=" text-blue-500">
+            <div className="flex justify-end space-x-2 mt-4">
+              <p className="text-white">Already have an account?</p>
+              <Link href={"/login"} className="text-blue-500">
                 Login Now
               </Link>
             </div>
