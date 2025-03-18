@@ -55,7 +55,7 @@ export function UserTable() {
   const getAllUsers = async (page: number) => {
     try {
       const response = await axios.get(
-        `/api/user?page=${page}&limit=${usersPerPage}`
+        `/api/user?page=${page}&limit=${usersPerPage}`,
       );
       setUsers(response.data.users);
       setTotalUsers(response.data.totalUsers);
@@ -122,7 +122,7 @@ export function UserTable() {
           </TableHeader>
           <TableBody>
             {users.map((user, idx) => (
-              <Tooltip>
+              <Tooltip key={idx}>
                 <TooltipTrigger asChild>
                   <TableRow
                     key={idx}
@@ -134,7 +134,7 @@ export function UserTable() {
                       setSelectedUser(user);
                       setIsDrawerOpen(true);
                     }}
-                    className="cursor-pointer "
+                    className="cursor-pointer"
                   >
                     <TableCell className="hidden sm:table-cell">
                       <Image
@@ -149,22 +149,19 @@ export function UserTable() {
                     <TableCell>
                       <Badge
                         variant="outline"
-                        className={`
-                      capitalize
-                      ${
+                        className={` capitalize ${
                         user.role === "Admin"
-                          ? "bg-green-500 text-green-100"
-                          : user.role === "Client"
-                          ? "bg-blue-500 text-blue-100"
-                          : user.role === "Restaurant"
-                          ? "bg-yellow-500 text-yellow-100"
-                          : user.role === "Delivery"
-                          ? "bg-purple-500 text-purple-100"
-                          : user.role === "Vendor"
-                          ? "bg-indigo-500 text-indigo-100"
-                          : ""
-                      }
-                    `}
+                            ? "bg-green-500 text-green-100"
+                            : user.role === "Client"
+                              ? "bg-blue-500 text-blue-100"
+                              : user.role === "Restaurant"
+                                ? "bg-yellow-500 text-yellow-100"
+                                : user.role === "Delivery"
+                                  ? "bg-purple-500 text-purple-100"
+                                  : user.role === "Vendor"
+                                    ? "bg-indigo-500 text-indigo-100"
+                                    : ""
+                        } `}
                       >
                         {user.role}
                       </Badge>
@@ -183,7 +180,7 @@ export function UserTable() {
                             size="icon"
                             variant="ghost"
                           >
-                            <MoreHorizontal className="h-4 w-4 " />
+                            <MoreHorizontal className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -199,7 +196,7 @@ export function UserTable() {
                           </DropdownMenuItem>
                           {user.role !== "Admin" && (
                             <DropdownMenuItem
-                              className="cursor-pointer text-red-500 "
+                              className="cursor-pointer text-red-500"
                               onClick={handleDeleteUser(user.id)}
                             >
                               Delete this {user.role}
@@ -240,9 +237,7 @@ export function UserTable() {
             variant="ghost"
             size="sm"
             disabled={currentPage * usersPerPage >= totalUsers}
-            className={`${
-              currentPage * usersPerPage >= totalUsers ? "" : "cursor-pointer"
-            }`}
+            className={`${currentPage * usersPerPage >= totalUsers ? "" : "cursor-pointer"}`}
           >
             Next
             <ChevronRight className="ml-2 h-4 w-4" />
