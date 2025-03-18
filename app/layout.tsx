@@ -35,9 +35,9 @@ export default function RootLayout({
         >
           <NextThemesProvider
             attribute="class"
-            // defaultTheme="dark"
+            defaultTheme="system"
             enableSystem
-            // disableTransitionOnChange
+            disableTransitionOnChange
           >
             {/* <ThemeDataProvider> */}
             <TooltipProvider>

@@ -196,3 +196,59 @@
     --chart-5: 340 75% 55%;
   }
 }
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --primary: #fed835;
+  --secondary: #304fff;
+
+  --primary-accent: #e5c230;
+  --foreground-accent: #454545;
+  --hero-background: #f3f3f5;
+}
+
+html {
+  @apply scroll-smooth;
+}
+
+body {
+  @apply text-lg;
+
+  color: var(--foreground);
+  background: var(--background);
+  font-family: "Source Sans 3", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.manrope {
+  font-family: "Manrope", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Manrope", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+#logos svg {
+  @apply h-10 w-fit sm:h-12;
+}
+
+.benefit-section:last-of-type > div {
+  @apply mb-10;
+}
