@@ -13,7 +13,10 @@ import { HashLoader } from "react-spinners";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import axios from "axios";
+import { MdOutlineDeliveryDining } from "react-icons/md";
+import { TbReportMoney } from "react-icons/tb";
 
+import { FiUser } from "react-icons/fi";
 export function Signup() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Please select your role");
@@ -71,7 +74,17 @@ export function Signup() {
     }
   };
 
-  const items = ["Client", "Vendor", "Delivery"];
+  const items = [
+    {
+      name: "Client",
+      icon: <FiUser />,
+    },
+    {
+      name: "Delivery",
+      icon: <MdOutlineDeliveryDining />,
+    },
+    { name: "Vendor", icon: <TbReportMoney /> },
+  ];
 
   return (
     <div className="w-full border-2 py-10 px-14 border-[#8e8d8b] rounded-4xl mx-36">
@@ -154,17 +167,19 @@ export function Signup() {
                     transition={{ duration: 0.2 }}
                   >
                     {items.map((item, index) => (
-                      <p
+                      <div
                         key={index}
-                        className="px-4 py-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700
-                          rounded-md border-t border-neutral-200 dark:border-neutral-700"
+                        className="px-4 py-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 flex
+                          space-x-3 flex-row items-center rounded-md border-t border-neutral-200
+                          dark:border-neutral-700"
                         onClick={() => {
                           setIsOpen(false);
-                          setSelectedItem(item);
+                          setSelectedItem(item.name);
                         }}
                       >
-                        {item}
-                      </p>
+                        {item.icon}
+                        <div>{item.name}</div>
+                      </div>
                     ))}
                   </motion.div>
                 )}

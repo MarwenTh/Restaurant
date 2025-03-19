@@ -1,8 +1,6 @@
 "use client";
 import React, { FC, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input, LabelInputContainer } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Sheet,
   SheetClose,
@@ -49,7 +47,7 @@ const SheetTemplate: FC<Props> = ({
           </SheetDescription>
         </SheetHeader>
         <div className="grid gap-4 py-4">
-          <Avatar className=" text-center">
+          <Avatar className="text-center">
             <AvatarImage
               src={selectedUser?.image}
               alt={selectedUser?.name}
@@ -59,7 +57,7 @@ const SheetTemplate: FC<Props> = ({
               {selectedUser?.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
-          <LabelInputContainer className="mb-4">
+          {/* <LabelInputContainer className="mb-4">
             <Label htmlFor="email">FullName</Label>
             <Input
               id="fullname"
@@ -87,7 +85,7 @@ const SheetTemplate: FC<Props> = ({
               type="text"
               value={selectedUser?.role}
             />
-          </LabelInputContainer>
+          </LabelInputContainer> */}
         </div>
         <SheetFooter>
           <SheetClose asChild>

@@ -40,21 +40,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           type={type}
           className={cn(
-            `flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black dark:text-white shadow-input rounded-md px-3 py-2 text-sm  file:border-0 file:bg-transparent 
-          file:text-sm file:font-medium placeholder:text-neutral-400 dark:placeholder-text-neutral-600 
-          focus-visible:outline-none focus-visible:ring-[2px]  focus-visible:ring-neutral-400 dark:focus-visible:ring-neutral-600
-           disabled:cursor-not-allowed disabled:opacity-50
-           dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]
-           group-hover/input:shadow-none transition duration-400
-           `,
-            className
+            `flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800 text-black
+            dark:text-white shadow-input rounded-md px-3 py-2 text-sm file:border-0
+            file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400
+            dark:placeholder-text-neutral-600 focus-visible:outline-none
+            focus-visible:ring-[2px] focus-visible:ring-neutral-400
+            dark:focus-visible:ring-neutral-600 disabled:cursor-not-allowed
+            disabled:opacity-50 dark:shadow-[0px_0px_1px_1px_var(--neutral-700)]
+            group-hover/input:shadow-none transition duration-400 `,
+            className,
           )}
           ref={ref}
           {...props}
         />
       </motion.div>
     );
-  }
+  },
 );
 Input.displayName = "Input";
 
@@ -63,8 +64,16 @@ export { Input };
 export const BottomGradient = () => {
   return (
     <>
-      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+      <span
+        className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute
+          h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500
+          to-transparent"
+      />
+      <span
+        className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0
+          absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r
+          from-transparent via-indigo-500 to-transparent"
+      />
     </>
   );
 };
