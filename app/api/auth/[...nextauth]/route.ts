@@ -36,17 +36,22 @@ export const authOptions: any = {
 
         const isUserExists = await User.findOne({ email: credentials.email });
 
+        if (!isUserExists) {
+          throw new Error("Cannot found an account with this email!!");
+        }
         // login
-        const isEmailMatch = credentials.email === isUserExists.email;
+
         const isPasswordMatch = await bcrypt.compare(
           credentials.password,
-          isUserExists.password
+          isUserExists.password,
         );
 
-        if (!isEmailMatch) {
-          throw new Error("Email not found");
-        } else if (!isPasswordMatch) {
+        if (!isPasswordMatch) {
           throw new Error("Password is incorrect");
+        }
+
+        if (!isUserExists.verified) {
+          throw new Error("Please Verify your account in order to log in!");
         }
 
         return {
@@ -75,7 +80,7 @@ export const authOptions: any = {
                   fullName: user.name,
                   image: user.image,
                 },
-              }
+              },
             );
           } else {
             await User.create({

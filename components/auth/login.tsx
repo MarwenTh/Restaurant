@@ -11,12 +11,14 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { HashLoader } from "react-spinners";
 import { toast } from "sonner";
+import { FaSpinner } from "react-icons/fa6";
 
 export function Login() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (session) {
@@ -31,6 +33,7 @@ export function Login() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       e.preventDefault();
+      setLoading(true);
       const result = await signIn("credentials", {
         email,
         password,
@@ -46,6 +49,8 @@ export function Login() {
     } catch (error: any) {
       console.error("Error signing in:", error);
       toast.error(error?.message);
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -85,14 +90,23 @@ export function Login() {
               />
             </LabelInputContainer>
             <button
-              className="bg-gradient-to-br cursor-pointer relative group/btn from-black
-                dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full
-                text-white rounded-md h-10 font-medium
+              className={`bg-gradient-to-br relative group/btn from-black dark:from-zinc-900
+                dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white
+                rounded-md h-10 font-medium
                 shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset]
-                dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-              type="submit"
+                dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]
+                ${loading ? "cursor-not-allowed" : "cursor-pointer"}`}
+              type={loading ? "button" : "submit"}
             >
-              Login &rarr; <BottomGradient />
+              {loading ? (
+                <div className="flex items-center justify-center space-x-3">
+                  <FaSpinner className="animate-spin" />
+                  <div>Loading...</div>
+                </div>
+              ) : (
+                <div>Login &rarr;</div>
+              )}
+              <BottomGradient />
             </button>
             <div
               className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700

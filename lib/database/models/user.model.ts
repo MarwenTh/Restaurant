@@ -15,8 +15,12 @@ const UserSchema = new Schema(
       default:
         "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y",
     },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = models?.User || model("User", UserSchema);

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Confirmation</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f9f9f9;
+      }
+      .container {
+        max-width: 700px;
+        margin: 10px auto;
+        padding: 30px 40px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333333;
+        font-size: 28px;
+        text-align: center;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+      }
+      p {
+        color: #666666;
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+      .highlight {
+        color: #007bff;
+      }
+      .code {
+        font-size: 36px;
+        color: #007bff;
+        text-align: center;
+        margin-bottom: 30px;
+        border: 3px solid #007bff;
+        border-radius: 20px;
+        padding: 20px;
+        background-color: #f0f8ff;
+      }
+      .footer {
+        color: #999999;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 40px;
+      }
+      .highlight-name {
+        color: #020817;
+        font:
+          bold 1.2em Arial,
+          sans-serif;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Dear <span class="highlight"><%= name %></span>,</h1>
+      <p>
+        Thank you for signing up for an account with
+        <span class="highlight-name">FoodGuide</span>. To ensure the security of
+        your account, please verify you account by clicking the link bellow
+      </p>
+      <a href="<%= verificationLink %>" target="_blank">
+        <strong>Verify your account</strong>
+      </a>
+      <p>
+        If you did not sign up for an account with us or received this email by
+        mistake, please disregard it.
+      </p>
+      <div class="footer">
+        Best regards, <span class="highlight-name">FoodGuide</span>
+      </div>
+    </div>
+  </body>
+</html>

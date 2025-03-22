@@ -30,9 +30,7 @@ export default function RootLayout({
   return (
     <SessionWrapper>
       <html lang="en" suppressHydrationWarning>
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+        <body className={"font- antialiased"}>
           <NextThemesProvider
             attribute="class"
             defaultTheme="system"
@@ -41,7 +39,7 @@ export default function RootLayout({
           >
             {/* <ThemeDataProvider> */}
             <TooltipProvider>
-              <Toaster position="top-right" />
+              <Toaster position="top-right" richColors />
               {children}
             </TooltipProvider>
             {/* </ThemeDataProvider> */}

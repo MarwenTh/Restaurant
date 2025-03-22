@@ -5,6 +5,9 @@ import { NextResponse } from "next/server";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { Session } from "next-auth";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import Verification from "@/lib/database/models/verification.model";
+import sendMail from "@/utils/sendMail";
 
 export async function getSession(): Promise<Session | null> {
   return await getServerSession(authOptions);
@@ -45,7 +48,7 @@ export async function GET(request: Request) {
     console.error("Error fetching user page:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -73,13 +76,13 @@ export async function DELETE(request: Request) {
 
     return NextResponse.json(
       { message: "User deleted successfully!" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error deleting user:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -92,20 +95,32 @@ export async function POST(request: Request) {
     if (!email || !name || !password || !role) {
       return NextResponse.json(
         { error: "All fields are required!" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const isUserExists = await User.findOne({ email });
+    const isUserHaveToken = await Verification.findOne({ email });
 
     if (isUserExists) {
       return NextResponse.json(
         { error: "User already exists with this email" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    // Generate a verification token (JWT)
+    let verificationToken;
+    if (!isUserHaveToken) {
+      verificationToken = jwt.sign(
+        { email },
+        process.env.JWT_SECRET!,
+        { expiresIn: "1h" }, // Token expires in 1 hour
+      );
+    } else {
+      verificationToken = isUserHaveToken.token;
+    }
 
     const user = await User.create({
       email,
@@ -115,12 +130,29 @@ export async function POST(request: Request) {
       image,
     });
 
-    return NextResponse.json({ user }, { status: 201 });
+    const verification = await Verification.create({
+      email,
+      token: verificationToken,
+    });
+
+    const verificationLink = `${process.env.BASE_URL}/verify?token=${verificationToken}`;
+
+    await sendMail({
+      email: user.email,
+      subject: "Verify your account",
+      template: "verifyEmail.ejs",
+      data: { name: user.name, verificationLink },
+    });
+
+    return NextResponse.json(
+      { message: "User registered successfully. Please verify your email." },
+      { status: 201 },
+    );
   } catch (error) {
     console.error("Error creating user:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -155,7 +187,7 @@ export async function PUT(request: Request) {
     console.error("Error updating user:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

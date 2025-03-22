@@ -17,6 +17,7 @@ import { MdOutlineDeliveryDining } from "react-icons/md";
 import { TbReportMoney } from "react-icons/tb";
 
 import { FiUser } from "react-icons/fi";
+import { FaSpinner } from "react-icons/fa6";
 export function Signup() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState("Please select your role");
@@ -25,6 +26,7 @@ export function Signup() {
   const [password, setPassword] = useState("");
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (session) {
@@ -37,16 +39,7 @@ export function Signup() {
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (
-      !email ||
-      !name ||
-      !password ||
-      selectedItem === "Please select your role"
-    ) {
-      toast.error("All fields are required!");
-      return;
-    }
+    setLoading(true);
 
     try {
       const result = await axios.post("/api/user", {
@@ -71,6 +64,8 @@ export function Signup() {
       } else {
         toast.error("Oops! Something went wrong. Please try again.");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -186,14 +181,22 @@ export function Signup() {
               </AnimatePresence>
             </LabelInputContainer>
             <button
-              className="bg-gradient-to-br cursor-pointer relative group/btn from-black
-                dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full
-                text-white rounded-md h-10 font-medium
+              className={`bg-gradient-to-br relative group/btn from-black dark:from-zinc-900
+                dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white
+                rounded-md h-10 font-medium
                 shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset]
-                dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-              type="submit"
+                dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]
+                ${loading ? "cursor-not-allowed" : "cursor-pointer"}`}
+              type={loading ? "button" : "submit"}
             >
-              Sign up &rarr;
+              {loading ? (
+                <div className="flex items-center justify-center space-x-3">
+                  <FaSpinner className="animate-spin" />
+                  <div>Loading...</div>
+                </div>
+              ) : (
+                <div>Signup &rarr;</div>
+              )}
               <BottomGradient />
             </button>
             <div
