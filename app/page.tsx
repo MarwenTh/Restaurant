@@ -1,7 +1,8 @@
 "use client";
-import { Navbar } from "@/components/landing-page/navbar";
+import { Navbar } from "@/components/navbar";
 import React from "react";
 import { ThreeDMarquee } from "@/components/ui/3d-marquee";
+import Index from "@/components/landing-page/pages/Index";
 
 type Props = {};
 
@@ -43,7 +44,7 @@ const page = (props: Props) => {
   return (
     <div>
       {/* <Navbar /> */}
-      <div
+      {/* <div
         className="relative flex h-screen w-full flex-col items-center justify-center
           overflow-hidden"
       >
@@ -51,14 +52,14 @@ const page = (props: Props) => {
           className="relative z-20 mx-auto max-w-4xl text-center text-2xl font-bold text-balance
             text-white md:text-4xl lg:text-6xl"
         >
-          This is your life and it&apos;s ending one{" "}
+          This is your life and it&apos;s ending one
           <span
             className="relative z-20 inline-block rounded-xl bg-blue-500/40 px-4 py-1 text-white
               underline decoration-sky-500 decoration-[6px] underline-offset-[16px]
               backdrop-blur-sm"
           >
             moment
-          </span>{" "}
+          </span>
           at a time.
         </h2>
         <p
@@ -88,13 +89,13 @@ const page = (props: Props) => {
           </button>
         </div>
 
-        {/* overlay */}
         <div className="absolute inset-0 z-10 h-full w-full bg-black/80 dark:bg-black/40" />
         <ThreeDMarquee
           className="pointer-events-none absolute inset-0 h-full w-full"
           images={images}
         />
-      </div>
+      </div> */}
+      <Index />
     </div>
   );
 };

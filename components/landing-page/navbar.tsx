@@ -1,158 +1,145 @@
 "use client";
-
-import * as React from "react";
-import Link from "next/link";
-import { SiIfood } from "react-icons/si";
+import React, { useState, useEffect } from "react";
+import { Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@/components/ui/navigation-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { SiIfood } from "react-icons/si";
+import { useSession } from "next-auth/react";
+import ThemeModeToggle from "../theme-mode-toggle";
+import UserDropdown from "../dashboard/userDropdown";
 
-export function Navbar() {
-  const [isScrolled, setIsScrolled] = React.useState(false);
+const NAV_ITEMS = [
+  { name: "Home", href: "#hero" },
+  { name: "Features", href: "#features" },
+  { name: "How It Works", href: "#how-it-works" },
+  { name: "About", href: "#about" },
+  { name: "Services", href: "#services" },
+  { name: "Areas", href: "#areas" },
+  { name: "Testimonials", href: "#testimonials" },
+];
 
-  React.useEffect(() => {
+const Navbar = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { data: session } = useSession();
+
+  useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10);
+      if (window.scrollY > 60) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
+  const scrollToSection = (href: string) => {
+    setIsMobileMenuOpen(false);
+    const element = document.querySelector(href);
+    if (element) {
+      const offsetTop =
+        element.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({
+        top: offsetTop,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-200 ${
+    <nav
+      className={cn(
+        "fixed top-0 left-0 w-full z-50 transition-all duration-300 px-10",
         isScrolled
-          ? "bg-background/95 backdrop-blur-sm shadow-sm"
-          : "bg-transparent"
-        }`}
+          ? "py-3 bg-white/80 backdrop-blur-lg shadow-sm"
+          : "py-5 bg-transparent",
+      )}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          <Link
-            href="/"
-            className="font-bold text-xl flex flex-row items-center space-x-5"
-          >
-            <SiIfood size={50} />
-            <div>FoodGuide</div>
-          </Link>
+      <div className="container-custom flex items-center justify-between">
+        {/* Logo */}
+        <a href="#" className="flex items-center">
+          <span className="text-xl md:text-2xl font-bold text-[#f97415] flex items-center space-x-2">
+            <SiIfood size={40} />
+            Food<span className="text-[#e64d19]">Guide</span>
+          </span>
+        </a>
 
-          {/* Desktop Navigation */}
-          <NavigationMenu className="hidden md:flex">
-            <NavigationMenuList>
-              <NavigationMenuItem>
-                <Link href="/" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Home
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <NavigationMenuTrigger>Menu</NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-2">
-                    <li className="row-span-3">
-                      <NavigationMenuLink asChild>
-                        <a
-                          className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b
-                            from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                          href="#"
-                        >
-                          <div className="mb-2 mt-4 text-lg font-medium">
-                            Today's Specials
-                          </div>
-                          <p className="text-sm leading-tight text-muted-foreground">
-                            Check out our chef's special dishes available today
-                            only
-                          </p>
-                        </a>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <a
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline
-                            outline-none transition-colors hover:bg-accent hover:text-accent-foreground
-                            focus:bg-accent focus:text-accent-foreground"
-                          href="#"
-                        >
-                          <div className="text-sm font-medium leading-none">
-                            Appetizers
-                          </div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Start your meal with our delicious appetizers
-                          </p>
-                        </a>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <a
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline
-                            outline-none transition-colors hover:bg-accent hover:text-accent-foreground
-                            focus:bg-accent focus:text-accent-foreground"
-                          href="#"
-                        >
-                          <div className="text-sm font-medium leading-none">
-                            Main Courses
-                          </div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Explore our signature main dishes
-                          </p>
-                        </a>
-                      </NavigationMenuLink>
-                    </li>
-                    <li>
-                      <NavigationMenuLink asChild>
-                        <a
-                          className="block select-none space-y-1 rounded-md p-3 leading-none no-underline
-                            outline-none transition-colors hover:bg-accent hover:text-accent-foreground
-                            focus:bg-accent focus:text-accent-foreground"
-                          href="#"
-                        >
-                          <div className="text-sm font-medium leading-none">
-                            Desserts
-                          </div>
-                          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                            Finish your meal with our sweet treats
-                          </p>
-                        </a>
-                      </NavigationMenuLink>
-                    </li>
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/about" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    About
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-              <NavigationMenuItem>
-                <Link href="/contact" legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    Contact
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-8">
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.name}
+              onClick={() => scrollToSection(item.href)}
+              className={cn(
+                `text-white/90 cursor-pointer hover:text-[#f97415] relative after:absolute
+                after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[#f97415]
+                after:transition-all hover:after:w-full`,
+                isScrolled && "text-black/80",
+              )}
+            >
+              {item.name}
+            </button>
+          ))}
+        </div>
 
-          <div className="hidden md:flex items-center gap-4">
-            <Button variant="outline">Order Online</Button>
-            <Button>Reserve a Table</Button>
+        <div className="hidden md:flex items-center space-x-4">
+          <ThemeModeToggle />
+          {!session ? (
+            <>
+              <Button variant="outline" className="font-medium cursor-pointer">
+                Partner with us
+              </Button>
+              <Button className="font-medium cursor-pointer">Order Now</Button>
+            </>
+          ) : (
+            <UserDropdown session={session} />
+          )}
+        </div>
+
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden text-[#020817]"
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile Navigation */}
+      <div
+        className={cn(
+          `md:hidden absolute w-full bg-white/95 backdrop-blur-lg transition-all
+          duration-300 shadow-md`,
+          isMobileMenuOpen
+            ? "max-h-[500px] py-5"
+            : "max-h-0 py-0 overflow-hidden",
+        )}
+      >
+        <div className="container-custom flex flex-col space-y-4">
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.name}
+              onClick={() => scrollToSection(item.href)}
+              className="py-2 text-[#020817]/80 hover:text-[#f97415] text-left"
+            >
+              {item.name}
+            </button>
+          ))}
+          <div className="flex flex-col space-y-3 pt-3">
+            <Button variant="outline" className="w-full">
+              Partner with us
+            </Button>
+            <Button className="w-full">Order Now</Button>
           </div>
         </div>
       </div>
-    </header>
+    </nav>
   );
-}
+};
+
+export default Navbar;

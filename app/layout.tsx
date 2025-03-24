@@ -30,7 +30,7 @@ export default function RootLayout({
   return (
     <SessionWrapper>
       <html lang="en" suppressHydrationWarning>
-        <body className={"font- antialiased"}>
+        <body className={"font-winky"}>
           <NextThemesProvider
             attribute="class"
             defaultTheme="system"
