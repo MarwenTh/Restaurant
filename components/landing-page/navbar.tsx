@@ -10,12 +10,12 @@ import UserDropdown from "../dashboard/userDropdown";
 
 const NAV_ITEMS = [
   { name: "Home", href: "#hero" },
-  { name: "Features", href: "#features" },
-  { name: "How It Works", href: "#how-it-works" },
   { name: "About", href: "#about" },
-  { name: "Services", href: "#services" },
+  { name: "How It Works", href: "#how-it-works" },
+  { name: "Features", href: "#featured" },
   { name: "Areas", href: "#areas" },
   { name: "Testimonials", href: "#testimonials" },
+  { name: "Contact Us", href: "#contact-us" },
 ];
 
 const Navbar = () => {
@@ -56,7 +56,7 @@ const Navbar = () => {
       className={cn(
         "fixed top-0 left-0 w-full z-50 transition-all duration-300 px-10",
         isScrolled
-          ? "py-3 bg-white/80 backdrop-blur-lg shadow-sm"
+          ? "py-3 bg-white/80 dark:bg-black/80 backdrop-blur-lg shadow-sm"
           : "py-5 bg-transparent",
       )}
     >
@@ -76,9 +76,9 @@ const Navbar = () => {
               key={item.name}
               onClick={() => scrollToSection(item.href)}
               className={cn(
-                `text-white/90 cursor-pointer hover:text-[#f97415] relative after:absolute
-                after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-[#f97415]
-                after:transition-all hover:after:w-full`,
+                `text-white/90 dark:text-gray-200 cursor-pointer hover:text-[#f97415] relative
+                after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0
+                after:bg-[#f97415] after:transition-all hover:after:w-full`,
                 isScrolled && "text-black/80",
               )}
             >
@@ -113,8 +113,8 @@ const Navbar = () => {
       {/* Mobile Navigation */}
       <div
         className={cn(
-          `md:hidden absolute w-full bg-white/95 backdrop-blur-lg transition-all
-          duration-300 shadow-md`,
+          `md:hidden absolute w-full bg-white/95 dark:bg-black/80 backdrop-blur-lg
+          transition-all duration-300 shadow-md`,
           isMobileMenuOpen
             ? "max-h-[500px] py-5"
             : "max-h-0 py-0 overflow-hidden",
@@ -125,7 +125,7 @@ const Navbar = () => {
             <button
               key={item.name}
               onClick={() => scrollToSection(item.href)}
-              className="py-2 text-[#020817]/80 hover:text-[#f97415] text-left"
+              className="py-2 text-[#020817]/80 dark:text-gray-200 hover:text-[#f97415] text-left"
             >
               {item.name}
             </button>

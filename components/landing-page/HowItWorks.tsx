@@ -97,7 +97,7 @@ const HowItWorks = () => {
     <section
       id="how-it-works"
       ref={sectionRef}
-      className="py-20 md:py-28 bg-gray-50"
+      className="py-20 md:py-28 bg-gray-50 dark:bg-gray-900"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -107,10 +107,13 @@ const HowItWorks = () => {
           >
             HOW IT WORKS
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 font-serif reveal">
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 font-serif reveal
+              dark:text-white"
+          >
             Seamless Experience for Everyone
           </h2>
-          <p className="text-gray-700 text-lg reveal">
+          <p className="text-gray-700 dark:text-gray-300 text-lg reveal">
             Our platform is designed to create a smooth experience for both food
             lovers and restaurant owners. Whether you're looking for your next
             meal or wanting to showcase your culinary creations, we've
@@ -119,12 +122,12 @@ const HowItWorks = () => {
         </div>
 
         <div className="mb-12 flex justify-center reveal">
-          <div className="bg-white rounded-full p-1 shadow-[#D4AF37] inline-flex">
+          <div className="bg-white dark:bg-gray-800 rounded-full p-1 shadow-[#D4AF37] inline-flex">
             <button
               className={`px-6 py-3 rounded-full text-base font-medium transition-all cursor-pointer ${
                 activeTab === "customer"
                   ? "bg-[#D4AF37] text-white shadow-sm"
-                  : "text-gray-600 hover:text-[#D4AF37]"
+                  : "text-gray-600 dark:text-gray-300 hover:text-[#D4AF37]"
                 }`}
               onClick={() => setActiveTab("customer")}
             >
@@ -134,7 +137,7 @@ const HowItWorks = () => {
               className={`px-6 py-3 rounded-full text-base font-medium transition-all cursor-pointer ${
                 activeTab === "restaurant"
                   ? "bg-[#D4AF37] text-white shadow-sm"
-                  : "text-gray-600 hover:text-[#D4AF37]"
+                  : "text-gray-600 dark:text-gray-300 hover:text-[#D4AF37]"
                 }`}
               onClick={() => setActiveTab("restaurant")}
             >
@@ -148,12 +151,16 @@ const HowItWorks = () => {
             (step, index) => (
               <div
                 key={index}
-                className="bg-white p-8 rounded-lg shadow-[#D4AF37]/50 shadow-2xl border border-gray-100
-                  text-center hover:shadow-[#D4AF37] transition-all duration-300 reveal"
+                className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-[#D4AF37]/50 shadow-2xl border
+                  border-gray-100 dark:border-gray-700 text-center hover:shadow-[#D4AF37]
+                  transition-all duration-300 reveal"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
                 <div className="relative mb-6 mx-auto">
-                  <div className="h-16 w-16 bg-[#D4AF37]/10 rounded-full flex items-center justify-center mx-auto">
+                  <div
+                    className="h-16 w-16 bg-[#D4AF37]/10 dark:bg-[#D4AF37]/20 rounded-full flex items-center
+                      justify-center mx-auto"
+                  >
                     {step.icon}
                   </div>
                   <div
@@ -163,8 +170,12 @@ const HowItWorks = () => {
                     {index + 1}
                   </div>
                 </div>
-                <h3 className="text-xl font-semibold mb-4">{step.title}</h3>
-                <p className="text-gray-600">{step.description}</p>
+                <h3 className="text-xl font-semibold mb-4 dark:text-white">
+                  {step.title}
+                </h3>
+                <p className="text-gray-600 dark:text-gray-300">
+                  {step.description}
+                </p>
               </div>
             ),
           )}

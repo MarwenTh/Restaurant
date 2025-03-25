@@ -5,15 +5,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme {
+:root {
   --font-winky: "Winky", sans-serif;
 }
 
-/* .reveal {
+.reveal {
   opacity: 0;
   transform: translateY(30px);
   transition: all 1s;
-} */
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 @theme inline {
   --color-background: var(--background);

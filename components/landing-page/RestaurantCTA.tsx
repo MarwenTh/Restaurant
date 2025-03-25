@@ -38,7 +38,7 @@ const RestaurantCTA = () => {
 
   return (
     <section
-      id="join-us"
+      id="contact-us"
       ref={sectionRef}
       className="py-20 md:py-28 relative"
       style={{

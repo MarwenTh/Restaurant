@@ -95,20 +95,23 @@ const Testimonials = () => {
     <section
       id="testimonials"
       ref={sectionRef}
-      className="py-20 md:py-28 bg-white"
+      className="py-20 md:py-28 bg-white dark:bg-gray-900"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span
             className="inline-block px-4 py-2 bg-[#D4AF37]/10 text-[#D4AF37] rounded-full text-sm
-              font-medium tracking-wider mb-6 reveal"
+              font-medium tracking-wider mb-6 reveal dark:bg-[#D4AF37]/20 dark:text-[#D4AF37]"
           >
             TESTIMONIALS
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif mb-6 reveal">
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif mb-6 reveal text-gray-900
+              dark:text-white"
+          >
             What Our Users Say
           </h2>
-          <p className="text-gray-700 text-lg reveal">
+          <p className="text-gray-700 text-lg reveal dark:text-gray-300">
             Don't just take our word for it. Hear from the food enthusiasts and
             restaurant owners who have experienced the FoodGuide difference.
           </p>
@@ -117,10 +120,10 @@ const Testimonials = () => {
         <div className="relative max-w-4xl mx-auto">
           <div
             ref={testimonialRef}
-            className="bg-[#F8F8F8] rounded-lg shadow-[#D4AF37]/50 shadow-2xl p-8 md:p-12
-              overflow-hidden"
+            className="bg-[#F8F8F8] dark:bg-gray-800 rounded-lg shadow-[#D4AF37]/50 shadow-2xl p-8
+              md:p-12 overflow-hidden"
           >
-            <div className="absolute top-8 right-8 text-[#D4AF37]/20">
+            <div className="absolute top-8 right-8 text-[#D4AF37]/20 dark:text-[#D4AF37]/30">
               <Quote size={80} />
             </div>
 
@@ -133,14 +136,15 @@ const Testimonials = () => {
                     <img
                       src={testimonials[currentTestimonial].image}
                       alt={testimonials[currentTestimonial].name}
-                      className="h-16 w-16 rounded-full object-cover border-2 border-[#D4AF37]"
+                      className="h-16 w-16 rounded-full object-cover border-2 border-[#D4AF37]
+                        dark:border-[#D4AF37]"
                     />
                   </div>
                   <div>
-                    <h3 className="text-xl font-semibold">
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
                       {testimonials[currentTestimonial].name}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-gray-600 dark:text-gray-400">
                       {testimonials[currentTestimonial].role}
                     </p>
                     <div className="flex mt-1">
@@ -150,7 +154,7 @@ const Testimonials = () => {
                           className={`h-4 w-4 ${
                           index < testimonials[currentTestimonial].rating
                               ? "text-[#D4AF37] fill-[#D4AF37]"
-                              : "text-gray-300"
+                              : "text-gray-300 dark:text-gray-600"
                           }`}
                         />
                       ))}
@@ -158,7 +162,7 @@ const Testimonials = () => {
                   </div>
                 </div>
 
-                <p className="text-gray-700 text-lg italic mb-8 reveal">
+                <p className="text-gray-700 text-lg italic mb-8 reveal dark:text-gray-300">
                   "{testimonials[currentTestimonial].content}"
                 </p>
               </div>
@@ -168,9 +172,10 @@ const Testimonials = () => {
           <div className="flex justify-between items-center mt-8">
             <button
               onClick={goToPrevTestimonial}
-              className="bg-white shadow-[#D4AF37]/50 shadow-sm cursor-pointer h-12 w-12 rounded-full
-                flex items-center justify-center text-gray-700 hover:text-[#D4AF37]
-                transition-colors focus:outline-none"
+              className="bg-white dark:bg-gray-800 shadow-[#D4AF37]/50 shadow-sm cursor-pointer h-12 w-12
+                rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300
+                hover:text-[#D4AF37] dark:hover:text-[#D4AF37] transition-colors
+                focus:outline-none"
               aria-label="Previous testimonial"
               disabled={isAnimating}
             >
@@ -185,7 +190,7 @@ const Testimonials = () => {
                   className={`h-2 w-2 rounded-full transition-all ${
                   currentTestimonial === index
                       ? "bg-[#D4AF37] w-6"
-                      : "bg-gray-300"
+                      : "bg-gray-300 dark:bg-gray-600"
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                   disabled={isAnimating}
@@ -195,9 +200,10 @@ const Testimonials = () => {
 
             <button
               onClick={goToNextTestimonial}
-              className="bg-white shadow-[#D4AF37]/50 shadow-sm cursor-pointer h-12 w-12 rounded-full
-                flex items-center justify-center text-gray-700 hover:text-[#D4AF37]
-                transition-colors focus:outline-none"
+              className="bg-white dark:bg-gray-800 shadow-[#D4AF37]/50 shadow-sm cursor-pointer h-12 w-12
+                rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300
+                hover:text-[#D4AF37] dark:hover:text-[#D4AF37] transition-colors
+                focus:outline-none"
               aria-label="Next testimonial"
               disabled={isAnimating}
             >

@@ -31,6 +31,28 @@ const Hero = () => {
     }
   };
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("active");
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+      },
+    );
+
+    const elements = document.querySelectorAll(".reveal");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, []);
+
   return (
     <section
       id="hero"
@@ -49,13 +71,16 @@ const Hero = () => {
         className={`z-10 max-w-7xl mx-auto px-4 md:px-8 text-center transition-all duration-1000
           ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
       >
-        <div className="inline-block mb-6">
+        <div className="inline-block mb-6 reveal">
           <span className="px-4 py-1.5 mb-6 bg-[#f97415]/10 text-[#f97415] rounded-full font-medium text-sm">
             THE PREMIUM FOOD MARKETPLACE
           </span>
         </div>
 
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 md:mb-8 leading-tight">
+        <h1
+          className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 md:mb-8 leading-tight
+            reveal"
+        >
           <span className="relative block h-[60px] md:h-[80px] overflow-hidden">
             {headlines.map((headline, index) => (
               <span
@@ -73,15 +98,15 @@ const Hero = () => {
           <span className="block mt-2 text-[#D4AF37]">Taste, Order, Enjoy</span>
         </h1>
 
-        <p className="max-w-3xl mx-auto text-lg md:text-xl text-white/90 mb-10">
+        <p className="max-w-3xl mx-auto text-lg md:text-xl text-white/90 mb-10 reveal">
           Where exceptional restaurants meet food enthusiasts. Our marketplace
           brings together the best local eateries and hungry customers in one
           seamless platform.
         </p>
 
         <div
-          className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0
-            sm:space-x-6"
+          className="reveal flex flex-col sm:flex-row justify-center items-center space-y-4
+            sm:space-y-0 sm:space-x-6"
         >
           <button
             className="bg-[#D4AF37] cursor-pointer text-white px-6 py-3 rounded-md font-medium
@@ -104,7 +129,7 @@ const Hero = () => {
 
       <button
         onClick={scrollToNextSection}
-        className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white
+        className="reveal absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white
           hover:text-[#D4AF37] transition-colors animate-bounce cursor-pointer"
         aria-label="Scroll down"
       >

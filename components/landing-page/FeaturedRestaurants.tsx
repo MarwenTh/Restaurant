@@ -137,19 +137,26 @@ const FeaturedRestaurants = () => {
     restaurants.slice(i * 3, (i + 1) * 3),
   );
   return (
-    <section id="featured" ref={sectionRef} className="py-20 md:py-28 bg-white">
+    <section
+      id="featured"
+      ref={sectionRef}
+      className="py-20 md:py-28 bg-white dark:bg-gray-900"
+    >
       <div className="max-w-7xl mx-auto px-4 md:px-8 py-16 md:py-24">
         <div className="text-center max-w-3xl mx-auto mb-16">
           <span
             className="inline-block px-4 py-2 bg-[#D4AF37]/10 text-[#D4AF37] rounded-full text-sm
-              font-medium tracking-wider mb-6 reveal"
+              font-medium tracking-wider mb-6 reveal dark:bg-[#D4AF37]/20"
           >
             FEATURED RESTAURANTS
           </span>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif mb-6 reveal">
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif mb-6 reveal
+              dark:text-white"
+          >
             Explore Our Top-Rated Partners
           </h2>
-          <p className="text-gray-700 text-lg reveal">
+          <p className="text-gray-700 text-lg reveal dark:text-gray-300">
             Discover the most loved restaurants on our platform, known for their
             exceptional food quality, service, and unique culinary experiences.
           </p>
@@ -171,8 +178,9 @@ const FeaturedRestaurants = () => {
                   {slideRestaurants.map((restaurant, index) => (
                     <div
                       key={index}
-                      className="bg-white rounded-lg shadow-[#D4AF37]/50 overflow-hidden flex-1 reveal border
-                        border-gray-100 hover:shadow-[#D4AF37] transition-all duration-300"
+                      className="bg-white dark:bg-gray-800 rounded-lg shadow-[#D4AF37]/50 overflow-hidden flex-1
+                        reveal border border-gray-100 dark:border-gray-700 hover:shadow-[#D4AF37]
+                        transition-all duration-300"
                       style={{ animationDelay: `${index * 100}ms` }}
                     >
                       <div className="relative h-48 overflow-hidden">
@@ -189,32 +197,33 @@ const FeaturedRestaurants = () => {
                         </div>
                       </div>
                       <div className="p-6">
-                        <h3 className="text-xl font-semibold mb-2">
+                        <h3 className="text-xl font-semibold mb-2 dark:text-white">
                           {restaurant.name}
                         </h3>
                         <div className="flex items-center mb-4">
                           <div className="flex items-center mr-4">
                             <Star className="h-4 w-4 text-[#D4AF37] mr-1 fill-[#D4AF37]" />
-                            <span className="text-gray-700">
+                            <span className="text-gray-700 dark:text-gray-300">
                               {restaurant.rating}
                             </span>
                           </div>
                           <div className="flex items-center">
                             <Clock className="h-4 w-4 text-[#D4AF37] mr-1" />
-                            <span className="text-gray-700">
+                            <span className="text-gray-700 dark:text-gray-300">
                               {restaurant.deliveryTime} min
                             </span>
                           </div>
                         </div>
-                        <div className="border-t border-gray-100 pt-4">
-                          <p className="text-sm text-gray-600 font-medium mb-2">
+                        <div className="border-t border-gray-100 dark:border-gray-700 pt-4">
+                          <p className="text-sm text-gray-600 dark:text-gray-400 font-medium mb-2">
                             Popular Dishes:
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {restaurant.dishes.map((dish, i) => (
                               <span
                                 key={i}
-                                className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs"
+                                className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1
+                                  rounded-full text-xs"
                               >
                                 {dish}
                               </span>
@@ -232,9 +241,9 @@ const FeaturedRestaurants = () => {
           <button
             onClick={goToPrevSlide}
             className="absolute top-1/2 left-0 -translate-y-1/2 -translate-x-1/2 bg-white
-              shadow-[#D4AF37]/50 shadow-sm cursor-pointer h-12 w-12 rounded-full flex
-              items-center justify-center text-gray-700 hover:text-[#D4AF37] transition-colors
-              z-10 focus:outline-none"
+              dark:bg-gray-800 shadow-[#D4AF37]/50 shadow-sm cursor-pointer h-12 w-12
+              rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300
+              hover:text-[#D4AF37] transition-colors z-10 focus:outline-none"
             aria-label="Previous slide"
           >
             <ChevronLeft className="h-6 w-6" />
@@ -243,9 +252,9 @@ const FeaturedRestaurants = () => {
           <button
             onClick={goToNextSlide}
             className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-1/2 bg-white
-              shadow-[#D4AF37]/50 shadow-sm cursor-pointer h-12 w-12 rounded-full flex
-              items-center justify-center text-gray-700 hover:text-[#D4AF37] transition-colors
-              z-10 focus:outline-none"
+              dark:bg-gray-800 shadow-[#D4AF37]/50 shadow-sm cursor-pointer h-12 w-12
+              rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300
+              hover:text-[#D4AF37] transition-colors z-10 focus:outline-none"
             aria-label="Next slide"
           >
             <ChevronRight className="h-6 w-6" />
@@ -258,7 +267,10 @@ const FeaturedRestaurants = () => {
               key={index}
               onClick={() => goToSlide(index)}
               className={`h-2 w-2 rounded-full mx-1 transition-all ${
-              currentSlide === index ? "bg-[#D4AF37] w-6" : "bg-gray-300" }`}
+              currentSlide === index
+                  ? "bg-[#D4AF37] w-6"
+                  : "bg-gray-300 dark:bg-gray-600"
+              }`}
               aria-label={`Go to slide ${index + 1}`}
             />
           ))}
