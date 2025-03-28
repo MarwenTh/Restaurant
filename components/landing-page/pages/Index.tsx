@@ -9,6 +9,7 @@ import Testimonials from "../Testimonials";
 import RestaurantCTA from "../RestaurantCTA";
 import Footer from "../Footer";
 import Areas from "../Areas";
+import ScrollToTop from "../ScrollToTop";
 
 const Index = () => {
   useEffect(() => {
@@ -64,6 +65,7 @@ const Index = () => {
       <Testimonials />
       <RestaurantCTA />
       <Footer />
+      <ScrollToTop />
     </div>
   );
 };
