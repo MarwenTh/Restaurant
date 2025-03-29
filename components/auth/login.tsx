@@ -58,7 +58,7 @@ export function Login() {
       <div className="flex justify-between items-center">
         <Image src={FoodPNG} alt="food" />{" "}
         <div
-          className="max-w-xl w-full  rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white/60
+          className="max-w-xl w-full rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white/60
             dark:bg-black/60"
         >
           <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">

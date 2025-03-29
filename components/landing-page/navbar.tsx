@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import ThemeModeToggle from "../theme-mode-toggle";
 import UserDropdown from "../dashboard/userDropdown";
 import useUser from "@/hooks/useUser";
+import Link from "next/link";
 
 const NAV_ITEMS = [
   { name: "Home", href: "#hero" },
@@ -94,12 +95,11 @@ const Navbar = () => {
         <div className="hidden md:flex items-center space-x-4">
           <ThemeModeToggle />
           {!session ? (
-            <>
+            <Link href={"/signup"}>
               <Button variant="outline" className="font-medium cursor-pointer">
-                Partner with us
+                Join us now
               </Button>
-              <Button className="font-medium cursor-pointer">Order Now</Button>
-            </>
+            </Link>
           ) : (
             <UserDropdown session={session} />
           )}
@@ -138,7 +138,6 @@ const Navbar = () => {
             <Button variant="outline" className="w-full">
               Partner with us
             </Button>
-            <Button className="w-full">Order Now</Button>
           </div>
         </div>
       </div>

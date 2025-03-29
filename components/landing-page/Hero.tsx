@@ -1,5 +1,7 @@
 "use client";
 import { ArrowDown } from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const Hero = () => {
@@ -10,6 +12,7 @@ const Hero = () => {
     "The Ultimate Food Marketplace Experience",
     "Discover Culinary Treasures Near You",
   ];
+  const { data: session } = useSession();
 
   useEffect(() => {
     setIsVisible(true);
@@ -65,7 +68,7 @@ const Hero = () => {
         backgroundAttachment: "fixed",
       }}
     >
-      {/* <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/40"></div> */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/40"></div>
 
       <div
         className={`z-10 max-w-7xl mx-auto px-4 md:px-8 text-center transition-all duration-1000
@@ -116,14 +119,16 @@ const Hero = () => {
           >
             Find Restaurants
           </button>
-          <button
-            className="border border-[#D4AF37] text-[#D4AF37] px-6 py-3 rounded-md font-medium
-              transition-all hover:bg-[#D4AF37] hover:text-white hover:shadow-2xl
-              hover:shadow-[#D4AF37] min-w-[180px] animate-fade-in cursor-pointer"
-            style={{ animationDelay: "500ms" }}
-          >
-            Join as Restaurant
-          </button>
+          <Link href={`${session ? "/dashboard" : "signup"}`}>
+            <button
+              className="border border-[#D4AF37] text-[#D4AF37] px-6 py-3 rounded-md font-medium
+                transition-all hover:bg-[#D4AF37] hover:text-white hover:shadow-2xl
+                hover:shadow-[#D4AF37] min-w-[180px] animate-fade-in cursor-pointer"
+              style={{ animationDelay: "500ms" }}
+            >
+              Join us now
+            </button>
+          </Link>
         </div>
       </div>
 
