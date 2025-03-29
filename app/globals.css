@@ -217,7 +217,7 @@ html {
   }
 }
 
-:root {
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
   --primary: #fed835;
@@ -226,7 +226,7 @@ html {
   --primary-accent: #e5c230;
   --foreground-accent: #454545;
   --hero-background: #f3f3f5;
-}
+} */
 
 html {
   @apply scroll-smooth;

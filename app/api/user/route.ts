@@ -17,33 +17,48 @@ export async function GET(request: Request) {
   try {
     await connectToDatabase();
     const session = await getSession();
-    const currentUser = await User.findOne({ email: session?.user?.email });
 
-    if (!currentUser || currentUser.role !== "Admin") {
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Parse query parameters
+    const currentUser = await User.findOne({ email: session?.user?.email });
+    if (!currentUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     const { searchParams } = new URL(request.url);
+    const email = searchParams.get("email");
+    if (email) {
+      const user = await User.findOne({ email }).select(
+        "name email role image createdAt updatedAt",
+      );
+      if (!user) {
+        return NextResponse.json(
+          { error: "User not found with this email!" },
+          { status: 404 },
+        );
+      }
+      return NextResponse.json({ users: user, totalUsers: 1 }, { status: 200 });
+    }
+
+    // Check admin privileges before fetching all users
+    if (currentUser.role !== "Admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    // Pagination parameters
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "6", 10);
     const skip = (page - 1) * limit;
 
     // Fetch paginated users
-    const allUsers = await User.find().skip(skip).limit(limit);
-
-    const usersInfo = allUsers.map((user) => ({
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      image: user.image,
-    }));
-
-    // Get total count
+    const allUsers = await User.find()
+      .select("name email role image createdAt updatedAt")
+      .skip(skip)
+      .limit(limit);
     const totalUsers = await User.countDocuments();
 
-    return NextResponse.json({ users: usersInfo, totalUsers }, { status: 200 });
+    return NextResponse.json({ users: allUsers, totalUsers }, { status: 200 });
   } catch (error) {
     console.error("Error fetching user page:", error);
     return NextResponse.json(

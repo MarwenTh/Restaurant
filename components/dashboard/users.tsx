@@ -13,14 +13,7 @@ import { MoreHorizontal } from "lucide-react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  image: string;
-}
+import { User } from "@/interface";
 
 const Users = () => {
   return (

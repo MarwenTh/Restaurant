@@ -7,6 +7,7 @@ import { SiIfood } from "react-icons/si";
 import { useSession } from "next-auth/react";
 import ThemeModeToggle from "../theme-mode-toggle";
 import UserDropdown from "../dashboard/userDropdown";
+import useUser from "@/hooks/useUser";
 
 const NAV_ITEMS = [
   { name: "Home", href: "#hero" },
@@ -22,6 +23,9 @@ const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
+  const { user, loading, error } = useUser();
+
+  // console.log(users);
 
   useEffect(() => {
     const handleScroll = () => {

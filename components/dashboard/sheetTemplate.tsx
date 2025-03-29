@@ -12,13 +12,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  image: string;
-}
+import { User } from "@/interface";
 
 type Props = {
   selectedUser: User | null;

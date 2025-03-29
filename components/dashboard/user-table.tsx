@@ -34,39 +34,20 @@ import Swal from "sweetalert2";
 import SheetTemplate from "./sheetTemplate";
 import DrawerTemplate from "./drawerTemplate";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  image: string;
-}
+import useUsers from "@/hooks/useUsers";
+import { User } from "@/interface";
+import { FaSpinner } from "react-icons/fa6";
 
 export function UserTable() {
   const usersPerPage = 5;
-  const [users, setUsers] = useState<User[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalUsers, setTotalUsers] = useState(0);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-
-  const getAllUsers = async (page: number) => {
-    try {
-      const response = await axios.get(
-        `/api/user?page=${page}&limit=${usersPerPage}`,
-      );
-      setUsers(response.data.users);
-      setTotalUsers(response.data.totalUsers);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
-  };
-
-  useEffect(() => {
-    getAllUsers(currentPage);
-  }, [currentPage]);
+  const { users, totalUsers, loading, error, refetch } = useUsers(
+    currentPage,
+    usersPerPage,
+  );
 
   const handleDeleteUser = (id: string) => async () => {
     try {
@@ -86,7 +67,7 @@ export function UserTable() {
             text: "The user has been deleted successfully.",
             icon: "success",
           });
-          getAllUsers(currentPage);
+          refetch();
         }
       });
     } catch (error) {
@@ -108,118 +89,139 @@ export function UserTable() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="hidden w-[100px] sm:table-cell"></TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="hidden md:table-cell">
-                Email Address
-              </TableHead>
-              <TableHead className="hidden md:table-cell">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user, idx) => (
-              <Tooltip key={idx}>
-                <TooltipTrigger asChild>
-                  <TableRow
-                    key={idx}
-                    // onClick={() => {
-                    //   setSelectedUser(user);
-                    //   setIsDrawerOpen(true);
-                    // }}
-                    onDoubleClick={() => {
-                      setSelectedUser(user);
-                      setIsDrawerOpen(true);
-                    }}
-                    className="cursor-pointer"
-                  >
-                    <TableCell className="hidden sm:table-cell">
-                      <Image
-                        alt="User image"
-                        className="aspect-square rounded-md object-cover"
-                        height="64"
-                        src={user.image}
-                        width="64"
-                      />
-                    </TableCell>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className={` capitalize ${
-                        user.role === "Admin"
-                            ? "bg-green-500 text-green-100"
-                            : user.role === "Client"
-                              ? "bg-blue-500 text-blue-100"
-                              : user.role === "Restaurant"
-                                ? "bg-yellow-500 text-yellow-100"
-                                : user.role === "Delivery"
-                                  ? "bg-purple-500 text-purple-100"
-                                  : user.role === "Vendor"
-                                    ? "bg-indigo-500 text-indigo-100"
-                                    : ""
-                        } `}
+        {loading ? (
+          <div className="w-full flex justify-center items-center">
+            <FaSpinner size={40} className="animate-spin" />
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="hidden w-[100px] sm:table-cell"></TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Email Address
+                </TableHead>
+                <TableHead className="hidden md:table-cell">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user, idx) => {
+                return (
+                  <Tooltip key={idx}>
+                    <TooltipTrigger asChild>
+                      <TableRow
+                        key={idx}
+                        // onClick={() => {
+                        //   setSelectedUser(user);
+                        //   setIsDrawerOpen(true);
+                        // }}
+                        onDoubleClick={() => {
+                          setSelectedUser(user);
+                          setIsDrawerOpen(true);
+                        }}
+                        className="cursor-pointer"
                       >
-                        {user.role}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {user.email}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger
-                          asChild
-                          className="cursor-pointer z-10"
-                        >
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
+                        <TableCell className="hidden sm:table-cell">
+                          <Image
+                            alt="User image"
+                            className="aspect-square rounded-md object-cover"
+                            height="64"
+                            src={user.image}
+                            width="64"
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {user.name}
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={` capitalize ${
+                              user.role === "Admin"
+                                ? "bg-green-500 text-green-100"
+                                : user.role === "Client"
+                                  ? "bg-blue-500 text-blue-100"
+                                  : user.role === "Restaurant"
+                                    ? "bg-yellow-500 text-yellow-100"
+                                    : user.role === "Delivery"
+                                      ? "bg-purple-500 text-purple-100"
+                                      : user.role === "Vendor"
+                                        ? "bg-indigo-500 text-indigo-100"
+                                        : ""
+                              } `}
                           >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem
-                            className="text-purple-500 hover:text-purple-600 cursor-pointer"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setIsSheetOpen(true);
-                            }}
-                          >
-                            Edit {user.role} Info
-                          </DropdownMenuItem>
-                          {user.role !== "Admin" && (
-                            <DropdownMenuItem
-                              className="cursor-pointer text-red-500"
-                              onClick={handleDeleteUser(user.id)}
+                            {user.role}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {user.email}
+                        </TableCell>
+                        <TableCell>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger
+                              asChild
+                              className="cursor-pointer z-10"
                             >
-                              Delete this {user.role}
-                            </DropdownMenuItem>
-                          )}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                    <TooltipContent key={idx}>
-                      <p>Double tap to view {user.name} activity</p>
-                    </TooltipContent>
-                  </TableRow>
-                </TooltipTrigger>
-              </Tooltip>
-            ))}
-          </TableBody>
-        </Table>
+                              <Button
+                                aria-haspopup="true"
+                                size="icon"
+                                variant="ghost"
+                              >
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem
+                                className="text-purple-500 hover:text-purple-600 cursor-pointer"
+                                onClick={() => {
+                                  setSelectedUser(user);
+                                  setIsSheetOpen(true);
+                                }}
+                              >
+                                Edit {user.role} Info
+                              </DropdownMenuItem>
+                              {user.role !== "Admin" && (
+                                <DropdownMenuItem
+                                  className="cursor-pointer text-red-500"
+                                  onClick={handleDeleteUser(user._id)}
+                                >
+                                  Delete this {user.role}
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                        <TooltipContent key={idx}>
+                          <p>Double tap to view {user.name} activity</p>
+                        </TooltipContent>
+                      </TableRow>
+                    </TooltipTrigger>
+                  </Tooltip>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
       <CardFooter className="flex justify-between items-center">
         <div className="text-xs text-muted-foreground">
-          Showing <strong>{(currentPage - 1) * usersPerPage + 1}</strong> -{" "}
-          <strong>{Math.min(currentPage * usersPerPage, totalUsers)}</strong> of{" "}
-          <strong>{totalUsers}</strong> users
+          {!loading ? (
+            <div>
+              Showing <strong>{(currentPage - 1) * usersPerPage + 1}</strong> -{" "}
+              <strong>
+                {Math.min(currentPage * usersPerPage, totalUsers)}
+              </strong>{" "}
+              of <strong>{totalUsers}</strong> users
+            </div>
+          ) : (
+            <div className="flex items-center">
+              <span>Loading...</span>
+              <FaSpinner size={13} className="animate-spin" />
+            </div>
+          )}
         </div>
         <div className="flex">
           <Button

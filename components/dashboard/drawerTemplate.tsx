@@ -12,14 +12,7 @@ import {
 } from "../ui/drawer";
 import { Button } from "../ui/button";
 import BarChartTemplate from "../barChart";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: string;
-  image: string;
-}
+import { User } from "@/interface";
 
 type Props = {
   selectedUser: User | null;
@@ -39,10 +32,10 @@ const DrawerTemplate: FC<Props> = ({
       <DrawerContent>
         <div className="mx-auto w-full px-8">
           <DrawerHeader>
-            <DrawerTitle className=" text-center">
+            <DrawerTitle className="text-center">
               {selectedUser?.name + " Top Activity"}
             </DrawerTitle>
-            <DrawerDescription className=" text-center">
+            <DrawerDescription className="text-center">
               {selectedUser?.email}
             </DrawerDescription>
           </DrawerHeader>
