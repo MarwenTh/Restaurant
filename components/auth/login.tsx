@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
-import { BottomGradient, Input, LabelInputContainer } from "../ui/input";
+import { BottomGradient, Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import Image from "next/image";
@@ -69,7 +69,7 @@ export function Login() {
           </p>
 
           <form className="my-5" onSubmit={handleSubmit}>
-            <LabelInputContainer className="mb-4">
+            <div className="mb-4">
               <Label htmlFor="email">Email Address</Label>
               <Input
                 id="email"
@@ -78,8 +78,8 @@ export function Login() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </LabelInputContainer>
-            <LabelInputContainer className="mb-4">
+            </div>
+            <div className="mb-4">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
@@ -88,7 +88,7 @@ export function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </LabelInputContainer>
+            </div>
             <button
               className={`bg-gradient-to-br relative group/btn from-black dark:from-zinc-900
                 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white

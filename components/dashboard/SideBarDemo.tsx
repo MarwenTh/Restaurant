@@ -18,7 +18,7 @@ import {
   MdRestaurantMenu,
 } from "react-icons/md";
 import { BsCart3 } from "react-icons/bs";
-import { FaSackDollar } from "react-icons/fa6";
+import { FaSackDollar, FaSpinner } from "react-icons/fa6";
 import { IoAnalyticsSharp } from "react-icons/io5";
 import { CiCalendar } from "react-icons/ci";
 import { SiIfood } from "react-icons/si";
@@ -51,7 +51,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
         user?.role === "Admin"
           ? "/sellers"
           : user?.role === "Seller"
-            ? "/menu-items"
+            ? "/dashboard/menu-items"
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",
@@ -72,7 +72,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
         user?.role === "Admin"
           ? "/customers"
           : user?.role === "Seller"
-            ? "/orders"
+            ? "/dashboard/orders"
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",
@@ -93,7 +93,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
         user?.role === "Admin"
           ? "/deliveries"
           : user?.role === "Seller"
-            ? "/earnings"
+            ? "/dashboard/earnings"
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",
@@ -175,18 +175,22 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
         "h-screen", // for your use case, use `h-screen` instead of `h-[60vh]`
       )}
     >
-      <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
-          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
-            <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
-                <SidebarLink key={idx} link={link} />
-              ))}
+      {loading ? (
+        <FaSpinner className="animate-spin" size={25} />
+      ) : (
+        <Sidebar open={open} setOpen={setOpen}>
+          <SidebarBody className="justify-between gap-10">
+            <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+              {open ? <Logo /> : <LogoIcon />}
+              <div className="mt-8 flex flex-col gap-2">
+                {links.map((link, idx) => (
+                  <SidebarLink key={idx} link={link} />
+                ))}
+              </div>
             </div>
-          </div>
-        </SidebarBody>
-      </Sidebar>
+          </SidebarBody>
+        </Sidebar>
+      )}
     </div>
   );
 };

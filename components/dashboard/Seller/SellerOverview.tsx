@@ -151,7 +151,7 @@ const SellerOverview: React.FC = () => {
           />
         ))}
       </div>
-      <main className="flex-1 p-2">
+      <main className="flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="lg:col-span-2">
             <RevenueChart data={revenueData} title="This Week's Revenue" />

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
-import { BottomGradient, Input, LabelInputContainer } from "../ui/input";
+import { BottomGradient, Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import Image from "next/image";
@@ -98,11 +98,11 @@ export function Signup() {
 
           <form className="my-5" onSubmit={handleSubmit}>
             <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
-              {/* <LabelInputContainer>
+              {/* <div>
                 <Label htmlFor="firstname">First name</Label>
                 <Input id="firstname" placeholder="Foulen" type="text" />
-              </LabelInputContainer> */}
-              <LabelInputContainer>
+              </div> */}
+              <div className="w-full">
                 <Label htmlFor="lastname">Fullname</Label>
                 <Input
                   id="fullname"
@@ -111,9 +111,9 @@ export function Signup() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
-              </LabelInputContainer>
+              </div>
             </div>
-            <LabelInputContainer className="mb-4">
+            <div className="mb-4">
               <Label htmlFor="email">Email Address</Label>
               <Input
                 id="email"
@@ -122,8 +122,8 @@ export function Signup() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </LabelInputContainer>
-            <LabelInputContainer className="mb-4">
+            </div>
+            <div className="mb-4">
               <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
@@ -132,9 +132,9 @@ export function Signup() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </LabelInputContainer>
+            </div>
 
-            <LabelInputContainer className="mb-4 relative">
+            <div className="mb-4 relative">
               <Label htmlFor="role">Role</Label>
               <button
                 className="cursor-pointer flex h-10 w-full border-none bg-gray-50 dark:bg-zinc-800
@@ -179,7 +179,7 @@ export function Signup() {
                   </motion.div>
                 )}
               </AnimatePresence>
-            </LabelInputContainer>
+            </div>
             <button
               className={`bg-gradient-to-br relative group/btn from-black dark:from-zinc-900
                 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white
