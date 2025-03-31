@@ -17,7 +17,7 @@ export default function Layout({ children }: LayoutProps) {
         <SidebarDemo user={user} loading={loading} />
         <div className="flex flex-col bg-gray-100 dark:bg-neutral-800 flex-1 px-6">
           <Navbar />
-          <div className="overflow-y-auto py-2">{children}</div>
+          <div className="overflow-y-auto py-2 h-screen">{children}</div>
         </div>
       </div>
     </div>
