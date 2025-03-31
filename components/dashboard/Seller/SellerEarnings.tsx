@@ -120,7 +120,7 @@ const SellerEarnings: React.FC = () => {
     <div>
       <div className="animate-fade-in">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <Card className="bg-gradient-to-br from-food-orange/20 to-food-orange/10 border-food-orange/30">
+          <Card className="bg-gradient-to-br from-[#FF9F43]/20 to-[#FF9F43]/10 border-[#FF9F43]/30">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
@@ -129,8 +129,8 @@ const SellerEarnings: React.FC = () => {
                   </p>
                   <h3 className="text-2xl font-bold">$3,245.87</h3>
                   <div className="flex items-center mt-2">
-                    <ArrowUp className="text-food-green" size={14} />
-                    <span className="text-xs font-medium text-food-green ml-1">
+                    <ArrowUp className="text-[#28C76F]" size={14} />
+                    <span className="text-xs font-medium text-[#28C76F] ml-1">
                       12.8%
                     </span>
                     <span className="text-xs text-gray-500 ml-1">
@@ -138,8 +138,8 @@ const SellerEarnings: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                <div className="p-3 rounded-full bg-food-orange/30">
-                  <CircleDollarSign className="text-food-orange" size={24} />
+                <div className="p-3 rounded-full bg-[#FF9F43]/30">
+                  <CircleDollarSign className="text-[#FF9F43]" size={24} />
                 </div>
               </div>
             </CardContent>
@@ -154,8 +154,8 @@ const SellerEarnings: React.FC = () => {
                   </p>
                   <h3 className="text-2xl font-bold">$1,528.40</h3>
                   <div className="flex items-center mt-2">
-                    <ArrowUp className="text-food-green" size={14} />
-                    <span className="text-xs font-medium text-food-green ml-1">
+                    <ArrowUp className="text-[#28C76F]" size={14} />
+                    <span className="text-xs font-medium text-[#28C76F] ml-1">
                       8.3%
                     </span>
                     <span className="text-xs text-gray-500 ml-1">
@@ -164,7 +164,7 @@ const SellerEarnings: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-3 rounded-full bg-green-200">
-                  <Calendar className="text-food-green" size={24} />
+                  <Calendar className="text-[#28C76F]" size={24} />
                 </div>
               </div>
             </CardContent>
@@ -179,8 +179,8 @@ const SellerEarnings: React.FC = () => {
                   </p>
                   <h3 className="text-2xl font-bold">$428.75</h3>
                   <div className="flex items-center mt-2">
-                    <ArrowUp className="text-food-green" size={14} />
-                    <span className="text-xs font-medium text-food-green ml-1">
+                    <ArrowUp className="text-[#28C76F]" size={14} />
+                    <span className="text-xs font-medium text-[#28C76F] ml-1">
                       5.2%
                     </span>
                     <span className="text-xs text-gray-500 ml-1">
@@ -189,7 +189,7 @@ const SellerEarnings: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-3 rounded-full bg-blue-200">
-                  <Calendar className="text-food-blue" size={24} />
+                  <Calendar className="text-[#00CFE8]" size={24} />
                 </div>
               </div>
             </CardContent>
@@ -219,20 +219,19 @@ const SellerEarnings: React.FC = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="lg:col-span-2">
-            <Card>
+            <Card className="h-full">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Revenue Overview</CardTitle>
-                <Tabs defaultValue="weekly">
+                <CardTitle>Weekly Revenue Overview</CardTitle>
+                {/* <Tabs defaultValue="weekly">
                   <TabsList>
                     <TabsTrigger value="weekly">Weekly</TabsTrigger>
-                    <TabsTrigger value="monthly">Monthly</TabsTrigger>
                   </TabsList>
-                </Tabs>
+                </Tabs> */}
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="weekly">
                   <TabsContent value="weekly" className="mt-0">
-                    <div className="h-[300px]">
+                    <div className="h-[400px]">
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart
                           data={weeklyRevenue}
@@ -300,76 +299,6 @@ const SellerEarnings: React.FC = () => {
                       </ResponsiveContainer>
                     </div>
                   </TabsContent>
-
-                  <TabsContent value="monthly" className="mt-0">
-                    <div className="h-[300px]">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart
-                          data={monthlyRevenue}
-                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                        >
-                          <defs>
-                            <linearGradient
-                              id="colorMonthlyRevenue"
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                            >
-                              <stop
-                                offset="5%"
-                                stopColor="#3B82F6"
-                                stopOpacity={0.8}
-                              />
-                              <stop
-                                offset="95%"
-                                stopColor="#3B82F6"
-                                stopOpacity={0}
-                              />
-                            </linearGradient>
-                            <linearGradient
-                              id="colorMonthlyProfit"
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                            >
-                              <stop
-                                offset="5%"
-                                stopColor="#22C55E"
-                                stopOpacity={0.8}
-                              />
-                              <stop
-                                offset="95%"
-                                stopColor="#22C55E"
-                                stopOpacity={0}
-                              />
-                            </linearGradient>
-                          </defs>
-                          <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                          <XAxis dataKey="name" />
-                          <YAxis />
-                          <Tooltip formatter={(value) => [`$${value}`, ""]} />
-                          <Area
-                            type="monotone"
-                            dataKey="revenue"
-                            stroke="#3B82F6"
-                            fillOpacity={1}
-                            fill="url(#colorMonthlyRevenue)"
-                            name="Revenue"
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="profit"
-                            stroke="#22C55E"
-                            fillOpacity={1}
-                            fill="url(#colorMonthlyProfit)"
-                            name="Profit"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
-                  </TabsContent>
                 </Tabs>
               </CardContent>
             </Card>
@@ -412,34 +341,43 @@ const SellerEarnings: React.FC = () => {
                 </div>
 
                 <div className="mt-4 space-y-4">
-                  <div className="flex justify-between items-center">
+                  <div
+                    className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-amber-50
+                      to-transparent border border-amber-100"
+                  >
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 bg-food-orange rounded-full"></div>
-                      <span className="text-sm">Food Items</span>
+                      <div className="w-3 h-3 bg-[#FF9F43] rounded-full"></div>
+                      <span className="text-sm font-medium">Food Items</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="font-medium">$2,435.20</span>
-                      <ChevronUp className="text-food-green" size={16} />
+                      <ChevronUp className="text-[#28C76F]" size={16} />
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div
+                    className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-blue-50
+                      to-transparent border border-blue-100"
+                  >
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
-                      <span className="text-sm">Beverages</span>
+                      <span className="text-sm font-medium">Beverages</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="font-medium">$698.40</span>
-                      <ChevronDown className="text-food-red" size={16} />
+                      <ChevronDown className="text-[#EA5455]" size={16} />
                     </div>
                   </div>
-                  <div className="flex justify-between items-center">
+                  <div
+                    className="flex justify-between items-center p-3 rounded-lg bg-gradient-to-r from-purple-50
+                      to-transparent border border-purple-100"
+                  >
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 bg-purple-400 rounded-full"></div>
-                      <span className="text-sm">Desserts</span>
+                      <span className="text-sm font-medium">Desserts</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="font-medium">$419.04</span>
-                      <ChevronUp className="text-food-green" size={16} />
+                      <ChevronUp className="text-[#28C76F]" size={16} />
                     </div>
                   </div>
                 </div>

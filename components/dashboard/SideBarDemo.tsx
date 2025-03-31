@@ -114,7 +114,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
         user?.role === "Admin"
           ? "/reviews"
           : user?.role === "Seller"
-            ? "/analytics"
+            ? "/dashboard/analytics"
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",
@@ -135,7 +135,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
         user?.role === "Admin"
           ? "/analytics"
           : user?.role === "Seller"
-            ? "/schedule"
+            ? "/dashboard/schedule"
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",
@@ -156,7 +156,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
         user?.role === "Admin"
           ? "/revenue"
           : user?.role === "Seller"
-            ? "/reviews"
+            ? "/dashboard/reviews"
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",

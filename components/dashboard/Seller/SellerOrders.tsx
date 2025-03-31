@@ -24,6 +24,7 @@ import {
   ArrowRight,
   Calendar,
   CircleDollarSign,
+  TrendingUp,
 } from "lucide-react";
 import { Order } from "./OrdersTable";
 
@@ -128,71 +129,123 @@ const SellerOrders: React.FC = () => {
     <div>
       <div className="animate-fade-in">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <Card className="bg-yellow-50 border-yellow-200">
+          <Card
+            className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200 shadow-md
+              hover:shadow-lg transition-all duration-300"
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[#FFE66D] mb-1">
+                  <p className="text-sm font-medium text-yellow-800 mb-1">
                     Pending
                   </p>
-                  <h3 className="text-2xl font-bold">{pendingOrders.length}</h3>
+                  <h3 className="text-2xl font-bold text-yellow-900">
+                    {pendingOrders.length}
+                  </h3>
+                  <div className="flex items-center mt-2">
+                    <TrendingUp className="text-green-600" size={14} />
+                    <span className="text-xs font-medium text-green-600 ml-1">
+                      {Math.round((pendingOrders.length / orders.length) * 100)}
+                      %
+                    </span>
+                    <span className="text-xs text-gray-500 ml-1">of total</span>
+                  </div>
                 </div>
-                <div className="p-3 rounded-full bg-yellow-100">
-                  <Clock className="text-[#FFE66D]" size={20} />
+                <div className="p-3 rounded-full bg-gradient-to-br from-yellow-200 to-yellow-300 shadow-inner">
+                  <Clock className="text-yellow-700" size={24} />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-blue-50 border-blue-200">
+          <Card
+            className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-md
+              hover:shadow-lg transition-all duration-300"
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[#00CFE8] mb-1">
+                  <p className="text-sm font-medium text-blue-800 mb-1">
                     Processing
                   </p>
-                  <h3 className="text-2xl font-bold">
+                  <h3 className="text-2xl font-bold text-blue-900">
                     {processingOrders.length}
                   </h3>
+                  <div className="flex items-center mt-2">
+                    <TrendingUp className="text-green-600" size={14} />
+                    <span className="text-xs font-medium text-green-600 ml-1">
+                      {Math.round(
+                        (processingOrders.length / orders.length) * 100,
+                      )}
+                      %
+                    </span>
+                    <span className="text-xs text-gray-500 ml-1">of total</span>
+                  </div>
                 </div>
-                <div className="p-3 rounded-full bg-blue-100">
-                  <ArrowRight className="text-[#00CFE8]" size={20} />
+                <div className="p-3 rounded-full bg-gradient-to-br from-blue-200 to-blue-300 shadow-inner">
+                  <ArrowRight className="text-blue-700" size={24} />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-green-50 border-green-200">
+          <Card
+            className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-md
+              hover:shadow-lg transition-all duration-300"
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[#28C76F] mb-1">
+                  <p className="text-sm font-medium text-green-800 mb-1">
                     Completed
                   </p>
-                  <h3 className="text-2xl font-bold">
+                  <h3 className="text-2xl font-bold text-green-900">
                     {completedOrders.length}
                   </h3>
+                  <div className="flex items-center mt-2">
+                    <TrendingUp className="text-green-600" size={14} />
+                    <span className="text-xs font-medium text-green-600 ml-1">
+                      {Math.round(
+                        (completedOrders.length / orders.length) * 100,
+                      )}
+                      %
+                    </span>
+                    <span className="text-xs text-gray-500 ml-1">of total</span>
+                  </div>
                 </div>
-                <div className="p-3 rounded-full bg-green-100">
-                  <Check className="text-[#28C76F]" size={20} />
+                <div className="p-3 rounded-full bg-gradient-to-br from-green-200 to-green-300 shadow-inner">
+                  <Check className="text-green-700" size={24} />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-red-50 border-red-200">
+          <Card
+            className="bg-gradient-to-br from-red-50 to-red-100 border-red-200 shadow-md
+              hover:shadow-lg transition-all duration-300"
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-[#EA5455] mb-1">
+                  <p className="text-sm font-medium text-red-800 mb-1">
                     Cancelled
                   </p>
-                  <h3 className="text-2xl font-bold">
+                  <h3 className="text-2xl font-bold text-red-900">
                     {cancelledOrders.length}
                   </h3>
+                  <div className="flex items-center mt-2">
+                    <TrendingUp className="text-red-600" size={14} />
+                    <span className="text-xs font-medium text-red-600 ml-1">
+                      {Math.round(
+                        (cancelledOrders.length / orders.length) * 100,
+                      )}
+                      %
+                    </span>
+                    <span className="text-xs text-gray-500 ml-1">of total</span>
+                  </div>
                 </div>
-                <div className="p-3 rounded-full bg-red-100">
-                  <X className="text-[#EA5455]" size={20} />
+                <div className="p-3 rounded-full bg-gradient-to-br from-red-200 to-red-300 shadow-inner">
+                  <X className="text-red-700" size={24} />
                 </div>
               </div>
             </CardContent>
