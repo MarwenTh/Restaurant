@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { Label } from "../ui/label";
-import { BottomGradient, Input } from "../ui/input";
+import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import Image from "next/image";
@@ -197,7 +197,7 @@ export function Signup() {
               ) : (
                 <div>Signup &rarr;</div>
               )}
-              <BottomGradient />
+              {/* <BottomGradient /> */}
             </button>
             <div
               className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700
@@ -215,7 +215,7 @@ export function Signup() {
                 <span className="text-neutral-700 dark:text-neutral-300 text-sm">
                   GitHub
                 </span>
-                <BottomGradient />
+                {/* <BottomGradient /> */}
               </button>
               {/* <button
                 className=" relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"

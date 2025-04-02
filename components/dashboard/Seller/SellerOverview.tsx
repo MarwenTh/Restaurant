@@ -16,6 +16,7 @@ import { Progress } from "@/components/ui/progress";
 import RevenueChart from "../RevenueChart";
 import OrdersTable from "../OrdersTable";
 import MetricsCard from "../MetricsCard";
+import StatCard from "@/components/StatCard";
 
 const revenueData = [
   { name: "Mon", revenue: 150 },
@@ -138,18 +139,39 @@ const metrics = [
 const SellerOverview: React.FC = () => {
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {metrics.map((metric, index) => (
-          <MetricsCard
-            key={index}
-            title={metric.title}
-            value={metric.value}
-            icon={metric.icon}
-            change={metric.change}
-            trend={metric.trend}
-            iconColor={metric.iconColor}
-          />
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        <StatCard
+          title="Today's Orders"
+          value="24"
+          icon={<ShoppingCart size={24} />}
+          percentageChange={15.8}
+          color="orange"
+          delay={0}
+        />
+        <StatCard
+          title="Processing Time"
+          value="18 min"
+          icon={<Clock size={24} />}
+          percentageChange={-12.4}
+          color="green"
+          delay={1}
+        />
+        <StatCard
+          title="Today's Revenue"
+          value="$842.50"
+          icon={<CircleDollarSign size={24} />}
+          percentageChange={23.6}
+          color="blue"
+          delay={2}
+        />
+        <StatCard
+          title="Rating"
+          value="4.8/5"
+          icon={<Star size={24} />}
+          percentageChange={4.2}
+          color="yellow"
+          delay={3}
+        />
       </div>
       <main className="flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">

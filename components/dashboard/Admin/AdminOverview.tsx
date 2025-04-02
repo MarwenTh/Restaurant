@@ -17,15 +17,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import MetricsCard from "../MetricsCard";
 import RecentActivityList from "../RecentlyActivityList";
 import { Progress } from "@/components/ui/progress";
+import StatCard from "@/components/StatCard";
 
 const AdminOverview = () => {
   const metrics = [
     {
       title: "Total Revenue",
-      value: "$83,248.42",
+      value: "$84,248.42",
       icon: DollarSign,
       change: 12.5,
       trend: "up" as const,
@@ -74,16 +74,22 @@ const AdminOverview = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {metrics.map((metric, index) => (
-          <MetricsCard
-            key={index}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+        {metrics.map((metric, idx) => (
+          <StatCard
+            key={idx}
             title={metric.title}
             value={metric.value}
-            icon={metric.icon}
-            change={metric.change}
-            trend={metric.trend}
-            iconColor={metric.iconColor}
+            icon={<metric.icon />}
+            percentageChange={metric.change}
+            color={
+              metric.trend === "up"
+                ? "green"
+                : metric.trend === "down"
+                  ? "red"
+                  : "orange"
+            }
+            delay={idx}
           />
         ))}
       </div>

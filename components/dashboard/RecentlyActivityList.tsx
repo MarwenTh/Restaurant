@@ -125,7 +125,7 @@ const RecentActivityList: React.FC = () => {
                   <p className="text-sm font-medium leading-none">
                     {activity.title}
                   </p>
-                  <span className="text-xs text-[#f1f5f9]">
+                  <span className="text-xs text-[#5e6369]">
                     {activity.time}
                   </span>
                 </div>
