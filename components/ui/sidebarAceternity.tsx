@@ -5,6 +5,7 @@ import React, { useState, createContext, useContext } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MdOutlineMenu } from "react-icons/md";
 import { FaXmark } from "react-icons/fa6";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Links {
   label: string;
@@ -169,6 +170,8 @@ export const SidebarLink = ({
   props?: LinkProps;
 }) => {
   const { open, animate } = useSidebar();
+  const pathname = usePathname();
+
   return (
     <Link
       href={link.href}
@@ -178,15 +181,27 @@ export const SidebarLink = ({
       )}
       {...props}
     >
-      {link.icon}
+      <span
+        className={`${
+          pathname === link.href
+            ? "text-food-orange"
+            : "text-neutral-700 dark:text-neutral-200"
+          }`}
+      >
+        {link.icon}
+      </span>
 
       <motion.span
         animate={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
         }}
-        className="text-neutral-700 dark:text-neutral-200 text-sm group-hover/sidebar:translate-x-1
-          transition duration-150 whitespace-pre inline-block !p-0 !m-0"
+        className={` text-sm group-hover/sidebar:translate-x-1 transition duration-150
+          whitespace-pre inline-block !p-0 !m-0 ${
+          pathname === link.href
+              ? "text-food-orange"
+              : "text-neutral-700 dark:text-neutral-200"
+          }`}
       >
         {link.label}
       </motion.span>

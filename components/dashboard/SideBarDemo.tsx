@@ -35,9 +35,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
     {
       label: "Overview",
       href: "/dashboard",
-      icon: (
-        <MdOutlineDashboard className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-      ),
+      icon: <MdOutlineDashboard className="h-5 w-5 shrink-0" />,
     },
     {
       label:
@@ -58,9 +56,9 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
               : "/Test 2",
       icon:
         user?.role === "Admin" ? (
-          <Users className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+          <Users className="h-5 w-5 shrink-0" />
         ) : (
-          <MdRestaurantMenu className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+          <MdRestaurantMenu className="h-5 w-5 shrink-0" />
         ),
     },
     user?.role !== "Admin" && {
@@ -76,9 +74,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
           : user?.role === "Client"
             ? "/Test"
             : "/Test 2",
-      icon: (
-        <BsCart3 className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-      ),
+      icon: <BsCart3 className="h-5 w-5 shrink-0" />,
     },
     {
       label:
@@ -99,9 +95,9 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
               : "/Test 2",
       icon:
         user?.role === "Admin" ? (
-          <Truck className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+          <Truck className="h-5 w-5 shrink-0" />
         ) : (
-          <FaSackDollar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+          <FaSackDollar className="h-5 w-5 shrink-0" />
         ),
     },
     {
@@ -121,9 +117,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",
-      icon: (
-        <IoAnalyticsSharp className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-      ),
+      icon: <IoAnalyticsSharp className="h-5 w-5 shrink-0" />,
     },
     user?.role !== "Admin" && {
       label:
@@ -138,9 +132,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
           : user?.role === "Client"
             ? "/Test"
             : "/Test 2",
-      icon: (
-        <CiCalendar className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-      ),
+      icon: <CiCalendar className="h-5 w-5 shrink-0" />,
     },
     {
       label:
@@ -159,9 +151,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",
-      icon: (
-        <MdOutlineReviews className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-      ),
+      icon: <MdOutlineReviews className="h-5 w-5 shrink-0" />,
     },
     {
       label:
@@ -180,9 +170,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
             : user?.role === "Client"
               ? "/Test"
               : "/Test 2",
-      icon: (
-        <Settings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
-      ),
+      icon: <Settings className="h-5 w-5 shrink-0" />,
     },
   ].filter((link): link is { label: string; href: string; icon: any } =>
     Boolean(link),
