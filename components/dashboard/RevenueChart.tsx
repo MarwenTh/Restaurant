@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -11,19 +12,34 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-interface RevenueDataPoint {
+export interface RevenueDataPoint {
   name: string;
-  revenue: number;
+  revenue?: number;
+  value?: number;
 }
 
 interface RevenueChartProps {
   data: RevenueDataPoint[];
   title?: string;
+  dataKey?: string;
+  height?: number;
+  gradient?: {
+    id: string;
+    startColor: string;
+    stopColor: string;
+  };
 }
 
 const RevenueChart: React.FC<RevenueChartProps> = ({
   data,
   title = "Revenue Overview",
+  dataKey = "revenue",
+  height = 300,
+  gradient = {
+    id: "colorRevenue",
+    startColor: "#3B82F6",
+    stopColor: "#3B82F6",
+  },
 }) => {
   const formatValue = (value: number | string): string => {
     if (typeof value === "number") {
@@ -32,16 +48,30 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
     return `$${value}`;
   };
 
+  // Ensure data has the right property (either revenue or value)
+  const normalizedData = data.map((item) => {
+    if (
+      dataKey === "revenue" &&
+      item.value !== undefined &&
+      item.revenue === undefined
+    ) {
+      return { ...item, revenue: item.value };
+    }
+    return item;
+  });
+
   return (
     <Card className="animate-fade-in">
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
+      {title && (
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+      )}
       <CardContent>
-        <div className="h-[300px]">
+        <div className="h-[300px]" style={{ height: `${height}px` }}>
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart
-              data={data}
+              data={normalizedData}
               margin={{
                 top: 10,
                 right: 20,
@@ -50,9 +80,17 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
               }}
             >
               <defs>
-                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                <linearGradient id={gradient.id} x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor={gradient.startColor}
+                    stopOpacity={0.8}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor={gradient.stopColor}
+                    stopOpacity={0}
+                  />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
@@ -84,10 +122,10 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
               />
               <Area
                 type="monotone"
-                dataKey="revenue"
-                stroke="#3B82F6"
+                dataKey={dataKey}
+                stroke={gradient.startColor}
                 fillOpacity={1}
-                fill="url(#colorRevenue)"
+                fill={`url(#${gradient.id})`}
               />
             </AreaChart>
           </ResponsiveContainer>

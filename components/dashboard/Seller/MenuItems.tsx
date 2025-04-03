@@ -45,7 +45,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import SellerLayout from "./SellerLayout";
 
 interface MenuItem {
   id: string;
