@@ -10,14 +10,14 @@ export async function POST(request: NextRequest) {
     await connectToDatabase();
 
     const session = await getSession();
-    //     if (!session) {
-    //       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    //     }
-    //
-    //     const currentUser = await User.findOne({ email: session.user?.email });
-    //     if (!currentUser) {
-    //       return NextResponse.json({ error: "User not found" }, { status: 404 });
-    //     }
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const currentUser = await User.findOne({ email: session.user?.email });
+    if (!currentUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
 
     const body = await request.json();
 
