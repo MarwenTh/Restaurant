@@ -12,10 +12,11 @@ export async function GET(request: NextRequest) {
     await connectToDatabase();
 
     const session = await getSession();
+    console.log(session);
 
-    //     if (!session?.user?.email) {
-    //       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    //     }
+    // if (!session?.user?.email) {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
     //
     //     const currentUser = await User.findOne({ email: session.user.email });
     //
@@ -25,24 +26,46 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const sellerId = searchParams.get("seller");
+    // Pagination parameters
+    const page = parseInt(searchParams.get("page") || "1", 10);
+    const limit = parseInt(searchParams.get("limit") || "6", 10);
+    const skip = (page - 1) * limit;
 
-    let menuItems;
     if (sellerId) {
-      menuItems = await MenuItem.find({ seller: sellerId }).populate({
-        path: "seller",
-        select: "-password -__v -updatedAt", // exclude sensitive/unnecessary fields
-      });
-    } else {
-      menuItems = await MenuItem.find().populate({
-        path: "seller",
-        select: "-password -__v -updatedAt", // exclude sensitive/unnecessary fields
-      });
+      const menuItems = await MenuItem.find({ seller: sellerId })
+        .populate({
+          path: "seller",
+          select: "-password -__v -updatedAt", // exclude sensitive/unnecessary fields
+        })
+        .skip(skip)
+        .limit(limit);
+
+      const totalMenuItems = menuItems.length;
+
+      if (!menuItems) {
+        return NextResponse.json(
+          { error: "No menu items found for this seller" },
+          { status: 404 },
+        );
+      }
+      return NextResponse.json({ menuItems, totalMenuItems }, { status: 200 });
     }
 
-    return NextResponse.json(
-      { menuItems, totalMenuItems: menuItems.length },
-      { status: 200 },
-    );
+    // check for admin privileges before fetching all menu items
+    // if (currentUser.role !== "Admin") {
+    //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // }
+
+    const allMenuItems = await MenuItem.find()
+      .populate({
+        path: "seller",
+        select: "-password -__v -updatedAt", // exclude sensitive/unnecessary fields
+      })
+      .skip(skip)
+      .limit(limit);
+    const totalMenuItems = await MenuItem.countDocuments();
+
+    return NextResponse.json({ allMenuItems, totalMenuItems }, { status: 200 });
   } catch (error: any) {
     console.error("Error fetching menu items:", error);
     return NextResponse.json(

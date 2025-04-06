@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -36,6 +37,8 @@ import {
   ShieldAlert,
   EyeOff,
   LayoutDashboard,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -45,79 +48,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { MenuItem } from "@/interface";
+import useMenuItems from "@/hooks/useMenuItems";
+import { HashLoader } from "react-spinners";
+import { FaSpinner } from "react-icons/fa6";
 
-interface MenuItem {
-  id: string;
-  name: string;
-  category: string;
-  price: number;
-  status: "available" | "out_of_stock" | "hidden";
-  image: string;
-  popularity: number;
-}
-
-const menuItems: MenuItem[] = [
-  {
-    id: "1",
-    name: "Margherita Pizza",
-    category: "Pizza",
-    price: 14.99,
-    status: "available",
-    image:
-      "https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8cGl6emF8ZW58MHx8MHx8fDA%3D",
-    popularity: 95,
-  },
-  {
-    id: "2",
-    name: "Pasta Carbonara",
-    category: "Pasta",
-    price: 12.99,
-    status: "available",
-    image:
-      "https://images.unsplash.com/photo-1608756687911-aa1599ab3bd9?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGFzdGElMjBjYXJib25hcmF8ZW58MHx8MHx8fDA%3D",
-    popularity: 87,
-  },
-  {
-    id: "3",
-    name: "Tiramisu",
-    category: "Dessert",
-    price: 7.99,
-    status: "out_of_stock",
-    image:
-      "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8dGlyYW1pc3V8ZW58MHx8MHx8fDA%3D",
-    popularity: 78,
-  },
-  {
-    id: "4",
-    name: "Caprese Salad",
-    category: "Salad",
-    price: 9.99,
-    status: "available",
-    image:
-      "https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2FwcmVzZSUyMHNhbGFkfGVufDB8fDB8fHww",
-    popularity: 65,
-  },
-  {
-    id: "5",
-    name: "Garlic Bread",
-    category: "Appetizer",
-    price: 5.99,
-    status: "available",
-    image:
-      "https://images.unsplash.com/photo-1619535860434-a54f8cec9ad7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Z2FybGljJTIwYnJlYWR8ZW58MHx8MHx8fDA%3D",
-    popularity: 70,
-  },
-  {
-    id: "6",
-    name: "Chocolate Lava Cake",
-    category: "Dessert",
-    price: 8.99,
-    status: "hidden",
-    image:
-      "https://images.unsplash.com/photo-1611329695518-1763319fffce?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8Y2hvY29sYXRlJTIwbGF2YSUyMGNha2V8ZW58MHx8MHx8fDA%3D",
-    popularity: 82,
-  },
-];
+// const menuItems: MenuItem[] = [];
 
 const statusColors = {
   available: "bg-green-100 text-[#28C76F] border-[#28C76F]",
@@ -133,8 +69,15 @@ const statusLabels = {
 
 const MenuItems: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  // const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
+  const menuItemsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
+  const { menuItems, loading, error, refetch, totalMenuItems } = useMenuItems(
+    currentPage,
+    menuItemsPerPage,
+  );
 
-  const filteredItems = menuItems.filter(
+  const filteredItems = menuItems?.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.category.toLowerCase().includes(searchTerm.toLowerCase()),
@@ -142,8 +85,8 @@ const MenuItems: React.FC = () => {
 
   return (
     <div>
-      <div className="animate-fade-in">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-3">
+      <Card className="animate-fade-in p-3">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4">
           <div>
             <CardTitle>Menu Items</CardTitle>
             <CardDescription>Manage all your menu here</CardDescription>
@@ -168,16 +111,16 @@ const MenuItems: React.FC = () => {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                   <Download className="h-4 w-4 mr-2" />
-                  Export Users
+                  Export Menu
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <Upload className="h-4 w-4 mr-2" />
-                  Import Users
+                  Import Menu
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
-        </div>
+        </CardHeader>
 
         <div className="mb-6">
           <div className="relative mb-6 mx-1">
@@ -221,343 +164,407 @@ const MenuItems: React.FC = () => {
                 Hidden
               </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="all" className="mt-0">
-              <Card>
-                <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Popularity</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredItems.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            <div className="h-12 w-12 rounded-md overflow-hidden">
-                              <img
-                                src={item.image}
-                                alt={item.name}
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell className="font-medium">
-                            {item.name}
-                          </TableCell>
-                          <TableCell>{item.category}</TableCell>
-                          <TableCell>${item.price.toFixed(2)}</TableCell>
-                          <TableCell>
-                            <Badge
-                              variant="outline"
-                              className={`${statusColors[item.status]} border`}
-                            >
-                              {statusLabels[item.status]}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <div className="w-full max-w-24 bg-gray-200 rounded-full h-2">
-                                <div
-                                  className="bg-[#FF9F43] h-2 rounded-full"
-                                  style={{ width: `${item.popularity}%` }}
-                                ></div>
-                              </div>
-                              <span className="text-xs">
-                                {item.popularity}%
-                              </span>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreVertical size={16} />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                  <Eye size={14} className="mr-2" /> View
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Edit size={14} className="mr-2" /> Edit
-                                </DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-600">
-                                  <Trash2 size={14} className="mr-2" /> Delete
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="available" className="mt-0">
-              {/* Filter for available items */}
-              <Card>
-                <CardContent className="p-0">
-                  <Table>
-                    {/* Similar table structure with filtered items */}
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Popularity</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredItems
-                        .filter((item) => item.status === "available")
-                        .map((item) => (
-                          <TableRow key={item.id}>
-                            <TableCell>
-                              <div className="h-12 w-12 rounded-md overflow-hidden">
-                                <img
-                                  src={item.image}
-                                  alt={item.name}
-                                  className="h-full w-full object-cover"
-                                />
-                              </div>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {item.name}
-                            </TableCell>
-                            <TableCell>{item.category}</TableCell>
-                            <TableCell>${item.price.toFixed(2)}</TableCell>
-                            <TableCell>
-                              <Badge
-                                variant="outline"
-                                className={`${statusColors[item.status]} border`}
-                              >
-                                {statusLabels[item.status]}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <div className="w-full max-w-24 bg-gray-200 rounded-full h-2">
-                                  <div
-                                    className="bg-[#FF9F43] h-2 rounded-full"
-                                    style={{ width: `${item.popularity}%` }}
-                                  ></div>
-                                </div>
-                                <span className="text-xs">
-                                  {item.popularity}%
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon">
-                                    <MoreVertical size={16} />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem>
-                                    <Eye size={14} className="mr-2" /> View
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Edit size={14} className="mr-2" /> Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem className="text-red-600">
-                                    <Trash2 size={14} className="mr-2" /> Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <HashLoader color="ff6b00" />
+              </div>
+            ) : (
+              <>
+                <TabsContent value="all" className="mt-0">
+                  <Card>
+                    <CardContent className="p-0">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="hidden w-[100px] sm:table-cell"></TableHead>
+                            {/* <TableHead className="">Image</TableHead> */}
+                            <TableHead>Name</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Popularity</TableHead>
+                            <TableHead className="text-right pr-2">
+                              Actions
+                            </TableHead>
                           </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="out_of_stock" className="mt-0">
-              {/* Filter for out_of_stock items */}
-              <Card>
-                <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Popularity</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredItems
-                        .filter((item) => item.status === "out_of_stock")
-                        .map((item) => (
-                          <TableRow key={item.id}>
-                            <TableCell>
-                              <div className="h-12 w-12 rounded-md overflow-hidden">
-                                <img
-                                  src={item.image}
-                                  alt={item.name}
-                                  className="h-full w-full object-cover"
-                                />
-                              </div>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {item.name}
-                            </TableCell>
-                            <TableCell>{item.category}</TableCell>
-                            <TableCell>${item.price.toFixed(2)}</TableCell>
-                            <TableCell>
-                              <Badge
-                                variant="outline"
-                                className={`${statusColors[item.status]} border`}
-                              >
-                                {statusLabels[item.status]}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <div className="w-full max-w-24 bg-gray-200 rounded-full h-2">
-                                  <div
-                                    className="bg-[#FF9F43] h-2 rounded-full"
-                                    style={{ width: `${item.popularity}%` }}
-                                  ></div>
+                        </TableHeader>
+                        <TableBody>
+                          {filteredItems?.map((item) => (
+                            <TableRow key={item._id}>
+                              <TableCell>
+                                <div className="h-12 w-12 rounded-md overflow-hidden">
+                                  <img
+                                    src={item.image}
+                                    alt={item.name}
+                                    className="h-full w-full object-cover"
+                                  />
                                 </div>
-                                <span className="text-xs">
-                                  {item.popularity}%
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon">
-                                    <MoreVertical size={16} />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem>
-                                    <Eye size={14} className="mr-2" /> View
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Edit size={14} className="mr-2" /> Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem className="text-red-600">
-                                    <Trash2 size={14} className="mr-2" /> Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="hidden" className="mt-0">
-              {/* Filter for hidden items */}
-              <Card>
-                <CardContent className="p-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[80px]">Image</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Popularity</TableHead>
-                        <TableHead className="text-right">Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredItems
-                        .filter((item) => item.status === "hidden")
-                        .map((item) => (
-                          <TableRow key={item.id}>
-                            <TableCell>
-                              <div className="h-12 w-12 rounded-md overflow-hidden">
-                                <img
-                                  src={item.image}
-                                  alt={item.name}
-                                  className="h-full w-full object-cover"
-                                />
-                              </div>
-                            </TableCell>
-                            <TableCell className="font-medium">
-                              {item.name}
-                            </TableCell>
-                            <TableCell>{item.category}</TableCell>
-                            <TableCell>${item.price.toFixed(2)}</TableCell>
-                            <TableCell>
-                              <Badge
-                                variant="outline"
-                                className={`${statusColors[item.status]} border`}
-                              >
-                                {statusLabels[item.status]}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex items-center gap-2">
-                                <div className="w-full max-w-24 bg-gray-200 rounded-full h-2">
-                                  <div
-                                    className="bg-[#FF9F43] h-2 rounded-full"
-                                    style={{ width: `${item.popularity}%` }}
-                                  ></div>
+                              </TableCell>
+                              <TableCell className="font-medium">
+                                {item.name}
+                              </TableCell>
+                              <TableCell>{item.category}</TableCell>
+                              <TableCell>${item.price.toFixed(2)}</TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant="outline"
+                                  className={`${statusColors[item.status]} border`}
+                                >
+                                  {statusLabels[item.status]}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-full max-w-24 bg-gray-200 rounded-full h-2">
+                                    <div
+                                      className="bg-[#FF9F43] h-2 rounded-full"
+                                      style={{ width: `${item.popularity}%` }}
+                                    ></div>
+                                  </div>
+                                  <span className="text-xs">
+                                    {item.popularity}%
+                                  </span>
                                 </div>
-                                <span className="text-xs">
-                                  {item.popularity}%
-                                </span>
-                              </div>
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button variant="ghost" size="icon">
-                                    <MoreVertical size={16} />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem>
-                                    <Eye size={14} className="mr-2" /> View
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Edit size={14} className="mr-2" /> Edit
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem className="text-red-600">
-                                    <Trash2 size={14} className="mr-2" /> Delete
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </TableCell>
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon">
+                                      <MoreVertical size={16} />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem>
+                                      <Eye size={14} className="mr-2" /> View
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                      <Edit size={14} className="mr-2" /> Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="text-red-600">
+                                      <Trash2 size={14} className="mr-2" />{" "}
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="available" className="mt-0">
+                  {/* Filter for available items */}
+                  <Card>
+                    <CardContent className="p-0">
+                      <Table>
+                        {/* Similar table structure with filtered items */}
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="hidden w-[100px] sm:table-cell"></TableHead>
+                            {/* <TableHead className="">Image</TableHead> */}
+                            <TableHead>Name</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Popularity</TableHead>
+                            <TableHead className="text-right pr-2">
+                              Actions
+                            </TableHead>
                           </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                        </TableHeader>
+                        <TableBody>
+                          {(filteredItems ?? [])
+                            .filter((item) => item.status === "available")
+                            .map((item) => (
+                              <TableRow key={item._id}>
+                                <TableCell>
+                                  <div className="h-12 w-12 rounded-md overflow-hidden">
+                                    <img
+                                      src={item.image}
+                                      alt={item.name}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  </div>
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  {item.name}
+                                </TableCell>
+                                <TableCell>{item.category}</TableCell>
+                                <TableCell>${item.price.toFixed(2)}</TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant="outline"
+                                    className={`${statusColors[item.status]} border`}
+                                  >
+                                    {statusLabels[item.status]}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-full max-w-24 bg-gray-200 rounded-full h-2">
+                                      <div
+                                        className="bg-[#FF9F43] h-2 rounded-full"
+                                        style={{ width: `${item.popularity}%` }}
+                                      ></div>
+                                    </div>
+                                    <span className="text-xs">
+                                      {item.popularity}%
+                                    </span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="icon">
+                                        <MoreVertical size={16} />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem>
+                                        <Eye size={14} className="mr-2" /> View
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Edit size={14} className="mr-2" /> Edit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem className="text-red-600">
+                                        <Trash2 size={14} className="mr-2" />{" "}
+                                        Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="out_of_stock" className="mt-0">
+                  {/* Filter for out_of_stock items */}
+                  <Card>
+                    <CardContent className="p-0">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="hidden w-[100px] sm:table-cell"></TableHead>
+                            {/* <TableHead className="">Image</TableHead> */}
+                            <TableHead>Name</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Popularity</TableHead>
+                            <TableHead className="text-right pr-2">
+                              Actions
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {(filteredItems ?? [])
+                            .filter((item) => item.status === "out_of_stock")
+                            .map((item) => (
+                              <TableRow key={item._id}>
+                                <TableCell>
+                                  <div className="h-12 w-12 rounded-md overflow-hidden">
+                                    <img
+                                      src={item.image}
+                                      alt={item.name}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  </div>
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  {item.name}
+                                </TableCell>
+                                <TableCell>{item.category}</TableCell>
+                                <TableCell>${item.price.toFixed(2)}</TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant="outline"
+                                    className={`${statusColors[item.status]} border`}
+                                  >
+                                    {statusLabels[item.status]}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-full max-w-24 bg-gray-200 rounded-full h-2">
+                                      <div
+                                        className="bg-[#FF9F43] h-2 rounded-full"
+                                        style={{ width: `${item.popularity}%` }}
+                                      ></div>
+                                    </div>
+                                    <span className="text-xs">
+                                      {item.popularity}%
+                                    </span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="icon">
+                                        <MoreVertical size={16} />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem>
+                                        <Eye size={14} className="mr-2" /> View
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Edit size={14} className="mr-2" /> Edit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem className="text-red-600">
+                                        <Trash2 size={14} className="mr-2" />{" "}
+                                        Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="hidden" className="mt-0">
+                  {/* Filter for hidden items */}
+                  <Card>
+                    <CardContent className="p-0">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="hidden w-[100px] sm:table-cell"></TableHead>
+                            {/* <TableHead className="">Image</TableHead> */}
+                            <TableHead>Name</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Price</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Popularity</TableHead>
+                            <TableHead className="text-right pr-2">
+                              Actions
+                            </TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {(filteredItems ?? [])
+                            .filter((item) => item.status === "hidden")
+                            .map((item) => (
+                              <TableRow key={item._id}>
+                                <TableCell>
+                                  <div className="h-12 w-12 rounded-md overflow-hidden">
+                                    <img
+                                      src={item.image}
+                                      alt={item.name}
+                                      className="h-full w-full object-cover"
+                                    />
+                                  </div>
+                                </TableCell>
+                                <TableCell className="font-medium">
+                                  {item.name}
+                                </TableCell>
+                                <TableCell>{item.category}</TableCell>
+                                <TableCell>${item.price.toFixed(2)}</TableCell>
+                                <TableCell>
+                                  <Badge
+                                    variant="outline"
+                                    className={`${statusColors[item.status]} border`}
+                                  >
+                                    {statusLabels[item.status]}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  <div className="flex items-center gap-2">
+                                    <div className="w-full max-w-24 bg-gray-200 rounded-full h-2">
+                                      <div
+                                        className="bg-[#FF9F43] h-2 rounded-full"
+                                        style={{ width: `${item.popularity}%` }}
+                                      ></div>
+                                    </div>
+                                    <span className="text-xs">
+                                      {item.popularity}%
+                                    </span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button variant="ghost" size="icon">
+                                        <MoreVertical size={16} />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end">
+                                      <DropdownMenuItem>
+                                        <Eye size={14} className="mr-2" /> View
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem>
+                                        <Edit size={14} className="mr-2" /> Edit
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem className="text-red-600">
+                                        <Trash2 size={14} className="mr-2" />{" "}
+                                        Delete
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </>
+            )}
           </Tabs>
         </div>
-      </div>
+        <CardFooter className="flex justify-between items-center">
+          <div className="text-xs text-muted-foreground">
+            {!loading ? (
+              <div>
+                Showing{" "}
+                <strong>{(currentPage - 1) * menuItemsPerPage + 1}</strong> -{" "}
+                <strong>
+                  {Math.min(currentPage * menuItemsPerPage, totalMenuItems)}
+                </strong>{" "}
+                of <strong>{totalMenuItems}</strong> users
+              </div>
+            ) : (
+              <div className="flex items-center">
+                <span>Loading...</span>
+                <FaSpinner size={13} className="animate-spin" />
+              </div>
+            )}
+          </div>
+          <div className="flex">
+            <Button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              variant="ghost"
+              size="sm"
+              disabled={currentPage === 1}
+              className={`${currentPage === 1 ? "" : "cursor-pointer"}`}
+            >
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Prev
+            </Button>
+            <Button
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              variant="ghost"
+              size="sm"
+              disabled={currentPage * menuItemsPerPage >= totalMenuItems}
+              className={`${currentPage * menuItemsPerPage >= totalMenuItems ? "" : "cursor-pointer"}`}
+            >
+              Next
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

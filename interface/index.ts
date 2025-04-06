@@ -14,25 +14,36 @@ export interface UseUsersResponse {
   refetch: () => void;
 }
 
+export interface UseMenuItemsResponse {
+  menuItems: MenuItem[];
+  totalMenuItems: number;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
 export interface MenuItem {
+  _id: string;
   name: string;
-  seller: string;
-  description: string;
+  seller?: string;
+  description?: string;
   price: number;
   category: string;
-  image?: string;
+  image: string;
   calories?: number;
-  ingredients: string[];
+  ingredients?: string[];
   allergens?: string[];
   dietaryInfo?: {
     isVegetarian: boolean;
     isVegan: boolean;
     isGlutenFree: boolean;
   };
-  isAvailable: boolean;
+  isAvailable?: boolean;
   isSpicy?: boolean;
   isPopular?: boolean;
   preparationTime?: number; // In minutes
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  popularity: number;
+  status: "available" | "out_of_stock" | "hidden";
 }

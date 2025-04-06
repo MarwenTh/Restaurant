@@ -10,6 +10,7 @@ export interface IMenuItem extends Document {
   image?: string;
   calories?: number;
   ingredients: string[];
+  status: "available" | "out_of_stock" | "hidden";
   allergens?: string[];
   dietaryInfo?: {
     isVegetarian: boolean;
@@ -18,6 +19,7 @@ export interface IMenuItem extends Document {
   };
   isAvailable: boolean;
   isSpicy?: boolean;
+  popularity: number;
   isPopular?: boolean;
   preparationTime?: number; // In minutes
   createdAt: Date;
@@ -39,6 +41,11 @@ const MenuItemSchema = new Schema<IMenuItem>(
     image: { type: String },
     calories: { type: Number },
     ingredients: [{ type: String }],
+    status: {
+      type: String,
+      enum: ["available", "out_of_stock", "hidden"],
+      default: "available",
+    },
     allergens: [{ type: String }],
     dietaryInfo: {
       isVegetarian: { type: Boolean, default: false },
@@ -47,6 +54,7 @@ const MenuItemSchema = new Schema<IMenuItem>(
     },
     isAvailable: { type: Boolean, default: true },
     isSpicy: { type: Boolean, default: false },
+    popularity: { type: Number, default: 0 },
     isPopular: { type: Boolean, default: false },
     preparationTime: { type: Number }, // In minutes
   },
