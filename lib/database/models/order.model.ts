@@ -53,7 +53,7 @@ const OrderSchema = new Schema<IOrder>(
     client: { type: Schema.Types.ObjectId, ref: "User", required: true },
     seller: {
       type: Schema.Types.ObjectId,
-      ref: "Restaurant",
+      ref: "User",
       required: true,
     },
     items: [

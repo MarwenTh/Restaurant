@@ -24,7 +24,7 @@ const ReviewSchema = new Schema<IReview>(
   {
     Seller: {
       type: Schema.Types.ObjectId,
-      ref: "Restaurant",
+      ref: "User",
       required: true,
     },
     client: { type: Schema.Types.ObjectId, ref: "User", required: true },

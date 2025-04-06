@@ -30,7 +30,7 @@ const MenuItemSchema = new Schema<IMenuItem>(
     name: { type: String, required: true },
     seller: {
       type: Schema.Types.ObjectId,
-      ref: "Restaurant",
+      ref: "User",
       required: true,
     },
     description: { type: String, required: true },
