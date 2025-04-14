@@ -207,7 +207,7 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
 export const Logo = () => {
   return (
     <Link
-      href="#"
+      href="/"
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
     >
       <SiIfood className="h-7 w-7 rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm shrink-0" />

@@ -25,7 +25,7 @@ export interface UseMenuItemsResponse {
 export interface MenuItem {
   _id: string;
   name: string;
-  seller?: string;
+  seller?: User;
   description?: string;
   price: number;
   category: string;

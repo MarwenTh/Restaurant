@@ -5,8 +5,8 @@ import { getServerSession } from "next-auth";
 import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 
-// All menu-items GET /api/menu-items
-// Based on the seller ID GET /api/menu-items?seller=123
+// All menu-items GET /api/menu-item
+// Based on the seller ID GET /api/menu-item?seller=123
 export async function GET(request: NextRequest) {
   try {
     await connectToDatabase();

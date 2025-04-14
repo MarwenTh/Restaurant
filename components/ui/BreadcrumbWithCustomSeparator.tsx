@@ -20,7 +20,7 @@ const BreadcrumbWithCustomSeparator: FC<Props> = ({ pathSegments }) => {
       <BreadcrumbList>
         {/* Home Link */}
         <BreadcrumbItem>
-          <BreadcrumbLink>
+          <BreadcrumbLink asChild>
             <Link href="/">Home</Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
@@ -36,7 +36,7 @@ const BreadcrumbWithCustomSeparator: FC<Props> = ({ pathSegments }) => {
                 {isLast ? (
                   <BreadcrumbPage>{segment}</BreadcrumbPage>
                 ) : (
-                  <BreadcrumbLink>
+                  <BreadcrumbLink asChild>
                     <Link href={href}>{segment}</Link>
                   </BreadcrumbLink>
                 )}

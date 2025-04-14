@@ -27,13 +27,10 @@ import {
   Trash2,
   Eye,
   MoreVertical,
-  ArrowUpDown,
   Filter,
   Download,
   Upload,
-  User,
   Building2,
-  Truck,
   ShieldAlert,
   EyeOff,
   LayoutDashboard,
@@ -72,7 +69,7 @@ const MenuItems: React.FC = () => {
   // const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const menuItemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const { menuItems, loading, error, refetch, totalMenuItems } = useMenuItems(
+  const { menuItems, loading, totalMenuItems } = useMenuItems(
     currentPage,
     menuItemsPerPage,
   );
