@@ -1,4 +1,4 @@
-import connectToDatabase from "@/lib/database";
+import { connectToDatabase } from "@/lib/database";
 import MenuItem from "@/lib/database/models/menuItem.model";
 import User from "@/lib/database/models/user.model";
 import { getServerSession } from "next-auth";
@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
     await connectToDatabase();
 
     const session = await getSession();
-    console.log(session);
 
     // if (!session?.user?.email) {
     //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

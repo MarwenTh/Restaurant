@@ -3,7 +3,7 @@ import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { signIn } from "next-auth/react";
 import { Account, User as AuthUser } from "next-auth";
-import connectToDatabase from "@/lib/database";
+import { connectToDatabase } from "@/lib/database";
 import User from "@/lib/database/models/user.model";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";

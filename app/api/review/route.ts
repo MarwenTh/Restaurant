@@ -1,4 +1,4 @@
-import connectToDatabase from "@/lib/database";
+import { connectToDatabase } from "@/lib/database";
 import Review from "@/lib/database/models/review.model";
 import User from "@/lib/database/models/user.model";
 import { getServerSession } from "next-auth";

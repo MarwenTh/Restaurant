@@ -4,7 +4,7 @@ const MONGODB_URI = process.env.MONGODB_URI!;
 
 let cachedConnection: typeof mongoose | null = null;
 
-const connectToDatabase = async () => {
+export const connectToDatabase = async () => {
   if (cachedConnection) {
     console.log("Using cached database connection");
     return cachedConnection;
@@ -27,4 +27,10 @@ const connectToDatabase = async () => {
   }
 };
 
-export default connectToDatabase;
+export const disconnectFromDatabase = async () => {
+  if (cachedConnection) {
+    await mongoose.disconnect();
+    console.log("Database connection closed");
+    cachedConnection = null;
+  }
+};

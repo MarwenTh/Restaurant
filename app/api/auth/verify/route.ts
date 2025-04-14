@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
-import connectToDatabase from "@/lib/database";
+import { connectToDatabase } from "@/lib/database";
 import User from "@/lib/database/models/user.model";
 import Verification from "@/lib/database/models/verification.model";
 
