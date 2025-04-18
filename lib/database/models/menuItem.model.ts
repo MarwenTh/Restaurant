@@ -6,7 +6,10 @@ export interface IMenuItem extends Document {
   seller: Types.ObjectId; // Reference to Restaurant
   description: string;
   price: number;
-  category: string;
+  category: Array<string>;
+  deliveryTime?: string;
+  rating?: number;
+  reviews?: number;
   image?: string;
   calories?: number;
   ingredients: string[];
@@ -37,7 +40,10 @@ const MenuItemSchema = new Schema<IMenuItem>(
     },
     description: { type: String, required: true },
     price: { type: Number, required: true },
-    category: { type: String, required: true },
+    category: [{ type: String, required: true }],
+    rating: { type: Number, default: 0 },
+    reviews: { type: Number, default: 0 },
+    deliveryTime: { type: String },
     image: { type: String },
     calories: { type: Number },
     ingredients: [{ type: String }],

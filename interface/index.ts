@@ -22,13 +22,24 @@ export interface UseMenuItemsResponse {
   refetch: () => void;
 }
 
+export interface UseCategoryResponse {
+  categories: Category[];
+  totalCategories: number;
+  loading: boolean;
+  error: string | null;
+  refetch: () => void;
+}
+
 export interface MenuItem {
   _id: string;
   name: string;
   seller?: User;
   description?: string;
   price: number;
-  category: string;
+  category: Array<string>;
+  deliveryTime?: string;
+  rating?: number;
+  reviews?: number;
   image: string;
   calories?: number;
   ingredients?: string[];
@@ -46,4 +57,11 @@ export interface MenuItem {
   updatedAt?: Date;
   popularity: number;
   status: "available" | "out_of_stock" | "hidden";
+}
+
+export interface Category {
+  _id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

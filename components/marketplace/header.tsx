@@ -6,39 +6,75 @@ import {
   Search,
   ShoppingBag,
   Star,
+  DollarSign,
+  ThumbsUp,
+  ArrowUpDown,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { Input } from "../ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuCheckboxItem,
+  DropdownMenuLabel,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { SiIfood } from "react-icons/si";
 
-type Props = {};
+type FilterKeys = "minRating" | "maxDeliveryTime" | "maxPrice" | "sortBy";
 
-const Header = (props: Props) => {
+type Props = {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+  filters: {
+    minRating: number;
+    maxDeliveryTime: number;
+    maxPrice: number;
+    sortBy: string;
+  };
+  setFilters: (filters: any) => void;
+};
+
+const Header = ({
+  searchQuery,
+  setSearchQuery,
+  filters,
+  setFilters,
+}: Props) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleFilterChange = (key: FilterKeys, value: number | string) => {
+    const newValue =
+      filters[key] === value ? (key === "sortBy" ? "" : 0) : value;
+
+    setFilters({ ...filters, [key]: newValue });
+  };
+
   return (
-    <main>
-      <Link
-        href="/"
-        className="font-normal flex space-x-2 items-center text-sm text-black py-1 mx-7 pt-7
-          relative z-20"
-      >
-        <SiIfood className="h-10 w-10 rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm shrink-0" />
-        <span className="font-medium text-black dark:text-white whitespace-pre text-lg">
-          FoodGuide
-        </span>
-      </Link>
+    <main className="bg-gradient-to-b from-white to-amber-50/50">
+      <div className="bg-white shadow-sm sticky top-0 z-30">
+        <div className="container mx-auto px-4 py-4">
+          <Link
+            href="/"
+            className="font-normal flex space-x-2 items-center text-sm text-black"
+          >
+            <span className="text-xl md:text-2xl font-bold text-[#f97415] flex items-center space-x-2">
+              <SiIfood size={40} />
+              Food<span className="text-[#e64d19]">Guide</span>
+            </span>
+          </Link>
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 py-8">
         <section className="mb-12">
           <div
-            className="bg-gradient-to-r from-[#D4AF37]/10 to-amber-50 rounded-xl p-8 md:p-12 shadow-md
-              relative overflow-hidden"
+            className="bg-gradient-to-r from-[#D4AF37]/10 to-amber-50 rounded-2xl p-8 md:p-12 shadow-lg
+              relative overflow-hidden border border-[#D4AF37]/10"
           >
             <div
               className="absolute inset-0
@@ -63,37 +99,220 @@ const Header = (props: Props) => {
                   <Input
                     placeholder="Search for food, restaurants, cuisines..."
                     className="pl-12 py-6 text-base border-[#D4AF37]/20 focus:border-[#D4AF37]
-                      focus:ring-[#D4AF37]/30 shadow-sm bg-white/80 backdrop-blur-sm"
-                    //   value={searchQuery}
-                    //   onChange={(e) => setSearchQuery(e.target.value)}
+                      focus:ring-[#D4AF37]/30 shadow-md bg-white/80 backdrop-blur-sm rounded-xl"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
 
-                <DropdownMenu>
+                <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
                   <DropdownMenuTrigger asChild>
                     <Button
                       variant="outline"
                       className="flex gap-2 py-6 border-[#D4AF37]/20 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37]
-                        cursor-pointer"
+                        cursor-pointer rounded-xl shadow-md"
                     >
                       <Filter className="h-5 w-5" />
                       <span className="text-base">Filters</span>
                       <ChevronDown className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem>
-                      <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />
-                      Rating: 4+ stars
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Clock className="h-4 w-4 mr-2 text-[#D4AF37]" />
-                      Delivery time: Under 30 min
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <ShoppingBag className="h-4 w-4 mr-2 text-[#D4AF37]" />
-                      Price: Under $15
-                    </DropdownMenuItem>
+                  <DropdownMenuContent
+                    align="end"
+                    className="w-72 p-4 rounded-xl shadow-lg"
+                  >
+                    <DropdownMenuLabel className="font-semibold">
+                      Filter Options
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+
+                    <div className="py-2">
+                      <h3 className="text-sm font-medium mb-2 flex items-center">
+                        <Star className="h-4 w-4 mr-2 text-[#D4AF37]" />
+                        Minimum Rating
+                      </h3>
+                      <div className="flex gap-2">
+                        {[1, 2, 3, 4, 5].map((rating) => (
+                          <Button
+                            key={rating}
+                            variant={
+                              filters.minRating === rating
+                                ? "default"
+                                : "outline"
+                            }
+                            size="sm"
+                            className={
+                              filters.minRating === rating
+                                ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
+                                : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                            }
+                            onClick={() =>
+                              handleFilterChange("minRating", rating)
+                            }
+                          >
+                            {rating}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <DropdownMenuSeparator />
+
+                    <div className="py-2">
+                      <h3 className="text-sm font-medium mb-2 flex items-center">
+                        <Clock className="h-4 w-4 mr-2 text-[#D4AF37]" />
+                        Maximum Delivery Time
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {[15, 30, 45, 60].map((time) => (
+                          <Button
+                            key={time}
+                            variant={
+                              filters.maxDeliveryTime === time
+                                ? "default"
+                                : "outline"
+                            }
+                            size="sm"
+                            className={
+                              filters.maxDeliveryTime === time
+                                ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
+                                : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                            }
+                            onClick={() =>
+                              handleFilterChange("maxDeliveryTime", time)
+                            }
+                          >
+                            {time} min
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <DropdownMenuSeparator />
+
+                    <div className="py-2">
+                      <h3 className="text-sm font-medium mb-2 flex items-center">
+                        <DollarSign className="h-4 w-4 mr-2 text-[#D4AF37]" />
+                        Maximum Price
+                      </h3>
+                      <div className="flex flex-wrap gap-2">
+                        {[10, 15, 20, 30, 50].map((price) => (
+                          <Button
+                            key={price}
+                            variant={
+                              filters.maxPrice === price ? "default" : "outline"
+                            }
+                            size="sm"
+                            className={
+                              filters.maxPrice === price
+                                ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
+                                : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                            }
+                            onClick={() =>
+                              handleFilterChange("maxPrice", price)
+                            }
+                          >
+                            ${price}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <DropdownMenuSeparator />
+
+                    <div className="py-2">
+                      <h3 className="text-sm font-medium mb-2 flex items-center">
+                        <ArrowUpDown className="h-4 w-4 mr-2 text-[#D4AF37]" />
+                        Sort By
+                      </h3>
+                      <div className="flex flex-col gap-1">
+                        <Button
+                          variant={
+                            filters.sortBy === "price-asc"
+                              ? "default"
+                              : "outline"
+                          }
+                          size="sm"
+                          className={
+                            filters.sortBy === "price-asc"
+                              ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
+                              : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                          }
+                          onClick={() =>
+                            handleFilterChange("sortBy", "price-asc")
+                          }
+                        >
+                          Price: Low to High
+                        </Button>
+                        <Button
+                          variant={
+                            filters.sortBy === "price-desc"
+                              ? "default"
+                              : "outline"
+                          }
+                          size="sm"
+                          className={
+                            filters.sortBy === "price-desc"
+                              ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
+                              : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                          }
+                          onClick={() =>
+                            handleFilterChange("sortBy", "price-desc")
+                          }
+                        >
+                          Price: High to Low
+                        </Button>
+                        <Button
+                          variant={
+                            filters.sortBy === "rating" ? "default" : "outline"
+                          }
+                          size="sm"
+                          className={
+                            filters.sortBy === "rating"
+                              ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
+                              : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                          }
+                          onClick={() => handleFilterChange("sortBy", "rating")}
+                        >
+                          Rating
+                        </Button>
+                        <Button
+                          variant={
+                            filters.sortBy === "popularity"
+                              ? "default"
+                              : "outline"
+                          }
+                          size="sm"
+                          className={
+                            filters.sortBy === "popularity"
+                              ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
+                              : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
+                          }
+                          onClick={() =>
+                            handleFilterChange("sortBy", "popularity")
+                          }
+                        >
+                          Popularity
+                        </Button>
+                      </div>
+                    </div>
+
+                    <DropdownMenuSeparator />
+
+                    <Button
+                      variant="outline"
+                      className="w-full mt-2 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] hover:border-[#D4AF37]"
+                      onClick={() => {
+                        setFilters({
+                          minRating: 0,
+                          maxDeliveryTime: 0,
+                          maxPrice: 0,
+                          sortBy: "",
+                        });
+                      }}
+                    >
+                      Reset Filters
+                    </Button>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
