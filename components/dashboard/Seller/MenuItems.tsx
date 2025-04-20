@@ -49,6 +49,7 @@ import { MenuItem } from "@/interface";
 import useMenuItems from "@/hooks/useMenuItems";
 import { HashLoader } from "react-spinners";
 import { FaSpinner } from "react-icons/fa6";
+import { formatCurrency } from "@/lib/utils";
 
 // const menuItems: MenuItem[] = [];
 
@@ -77,7 +78,10 @@ const MenuItems: React.FC = () => {
   const filteredItems = menuItems?.filter(
     (item) =>
       item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase()),
+      (Array.isArray(item.category) &&
+        item.category.some((cat) =>
+          cat.toLowerCase().includes(searchTerm.toLowerCase()),
+        )),
   );
 
   return (
@@ -201,7 +205,9 @@ const MenuItems: React.FC = () => {
                                 {item.name}
                               </TableCell>
                               <TableCell>{item.category}</TableCell>
-                              <TableCell>${item.price.toFixed(2)}</TableCell>
+                              <TableCell>
+                                {formatCurrency(item.price)}
+                              </TableCell>
                               <TableCell>
                                 <Badge
                                   variant="outline"
@@ -290,7 +296,9 @@ const MenuItems: React.FC = () => {
                                   {item.name}
                                 </TableCell>
                                 <TableCell>{item.category}</TableCell>
-                                <TableCell>${item.price.toFixed(2)}</TableCell>
+                                <TableCell>
+                                  {formatCurrency(item.price)}
+                                </TableCell>
                                 <TableCell>
                                   <Badge
                                     variant="outline"
@@ -378,7 +386,9 @@ const MenuItems: React.FC = () => {
                                   {item.name}
                                 </TableCell>
                                 <TableCell>{item.category}</TableCell>
-                                <TableCell>${item.price.toFixed(2)}</TableCell>
+                                <TableCell>
+                                  {formatCurrency(item.price)}
+                                </TableCell>
                                 <TableCell>
                                   <Badge
                                     variant="outline"
@@ -466,7 +476,9 @@ const MenuItems: React.FC = () => {
                                   {item.name}
                                 </TableCell>
                                 <TableCell>{item.category}</TableCell>
-                                <TableCell>${item.price.toFixed(2)}</TableCell>
+                                <TableCell>
+                                  {formatCurrency(item.price)}
+                                </TableCell>
                                 <TableCell>
                                   <Badge
                                     variant="outline"

@@ -15,6 +15,7 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
+import { cn, formatCurrency } from "@/lib/utils";
 
 type FoodCarouselProps = {
   title?: string;
@@ -135,7 +136,7 @@ const FoodCarousel: React.FC<FoodCarouselProps> = ({
                             {item.name}
                           </h3>
                           <span className="font-semibold text-food-orange text-sm">
-                            ${item.price.toFixed(2)}
+                            {formatCurrency(item.price)}
                           </span>
                         </div>
                         <p className="text-sm text-gray-500 line-clamp-1">

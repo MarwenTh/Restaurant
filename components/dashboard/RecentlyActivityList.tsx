@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ShoppingBag, Users, Star, AlertCircle, Bell } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 // Activity types
 type ActivityType = "order" | "user" | "review" | "alert" | "notification";
@@ -32,7 +33,7 @@ const activities: Activity[] = [
     id: 1,
     type: "order",
     title: "New order received",
-    description: "Order #58912 - $124.00",
+    description: `Order #58912 - ${formatCurrency(124.0)}`,
     time: "5 minutes ago",
     user: {
       name: "Sarah Johnson",

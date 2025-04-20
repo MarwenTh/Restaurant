@@ -17,6 +17,7 @@ import RevenueChart from "../RevenueChart";
 import OrdersTable from "../OrdersTable";
 import MetricsCard from "../MetricsCard";
 import StatCard from "@/components/StatCard";
+import { formatCurrency } from "@/lib/utils";
 
 const revenueData = [
   { name: "Mon", revenue: 150 },
@@ -158,7 +159,7 @@ const SellerOverview: React.FC = () => {
         />
         <StatCard
           title="Today's Revenue"
-          value="$842.50"
+          value={formatCurrency(842.5)}
           icon={<CircleDollarSign size={24} />}
           percentageChange={23.6}
           color="blue"

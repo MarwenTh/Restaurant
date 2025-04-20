@@ -1,20 +1,21 @@
 import { connectToDatabase } from "@/lib/database";
 import Order from "@/lib/database/models/order.model";
 import User from "@/lib/database/models/user.model";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
 
-    const session = await getSession();
+    const session = await getServerSession();
 
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const currentUser = await User.findOne({ email: session.user?.email });
+    const currentUser = await User.findOne({ email: session?.user?.email });
+
     if (!currentUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -25,7 +26,6 @@ export async function POST(request: NextRequest) {
       seller,
       items,
       totalAmount,
-      paymentMethod,
       deliveryType,
       paymentStatus,
       deliveryAddress,
@@ -39,10 +39,11 @@ export async function POST(request: NextRequest) {
       promoCodeApplied,
       discountAmount,
       specialInstructions,
+      quantity,
     } = body;
 
     // Validate required fields
-    if (!seller || !items || !totalAmount || !paymentMethod || !deliveryType) {
+    if (!seller || !items || !totalAmount || !deliveryType) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 },
@@ -54,7 +55,6 @@ export async function POST(request: NextRequest) {
       seller,
       items,
       totalAmount,
-      paymentMethod,
       deliveryType,
       paymentStatus: paymentStatus || "pending",
       deliveryFee,
@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
             specialInstructions: deliveryAddress.specialInstructions,
           }
         : undefined,
+      quantity,
     });
 
     return NextResponse.json(

@@ -21,7 +21,6 @@ export interface IOrder extends Document {
   totalAmount: number;
   deliveryFee?: number;
   tip?: number;
-  paymentMethod: "credit-card" | "debit-card" | "cash" | "wallet";
   paymentStatus: "pending" | "paid" | "failed" | "refunded";
   deliveryAddress?: {
     street: string;
@@ -30,7 +29,7 @@ export interface IOrder extends Document {
     zipCode: string;
     specialInstructions?: string;
   };
-  deliveryType: "delivery" | "pickup" | "dine-in";
+  deliveryType?: "delivery" | "pickup" | "dine-in";
   scheduledFor?: Date; // For scheduled delivery/pickup
   estimatedDeliveryTime?: Date;
   actualDeliveryTime?: Date;
@@ -45,6 +44,7 @@ export interface IOrder extends Document {
   specialInstructions?: string;
   createdAt: Date;
   updatedAt: Date;
+  quantity: number;
 }
 
 // Schema definition
@@ -85,11 +85,7 @@ const OrderSchema = new Schema<IOrder>(
     totalAmount: { type: Number, required: true },
     deliveryFee: { type: Number },
     tip: { type: Number, default: 0 },
-    paymentMethod: {
-      type: String,
-      required: true,
-      enum: ["credit-card", "debit-card", "cash", "wallet"],
-    },
+
     paymentStatus: {
       type: String,
       required: true,
@@ -122,6 +118,7 @@ const OrderSchema = new Schema<IOrder>(
     promoCodeApplied: { type: String },
     discountAmount: { type: Number, default: 0 },
     specialInstructions: { type: String },
+    quantity: { type: Number, required: true },
   },
   { timestamps: true },
 );

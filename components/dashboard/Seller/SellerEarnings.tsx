@@ -34,6 +34,7 @@ import {
   Calendar,
   CircleDollarSign,
 } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 // Sample data for charts
 const monthlyRevenue = [
@@ -177,7 +178,9 @@ const SellerEarnings: React.FC = () => {
                   <p className="text-sm font-medium text-gray-600 mb-1">
                     This Week
                   </p>
-                  <h3 className="text-2xl font-bold">$428.75</h3>
+                  <h3 className="text-2xl font-bold">
+                    {formatCurrency(428.75)}
+                  </h3>
                   <div className="flex items-center mt-2">
                     <ArrowUp className="text-[#28C76F]" size={14} />
                     <span className="text-xs font-medium text-[#28C76F] ml-1">
@@ -202,7 +205,9 @@ const SellerEarnings: React.FC = () => {
                   <p className="text-sm font-medium text-gray-600 mb-1">
                     Pending Payout
                   </p>
-                  <h3 className="text-2xl font-bold">$845.12</h3>
+                  <h3 className="text-2xl font-bold">
+                    {formatCurrency(845.12)}
+                  </h3>
                   <div className="flex items-center mt-2">
                     <span className="text-xs text-gray-500">
                       Next payout in 3 days
@@ -350,7 +355,9 @@ const SellerEarnings: React.FC = () => {
                       <span className="text-sm font-medium">Food Items</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="font-medium">$2,435.20</span>
+                      <span className="font-medium">
+                        {formatCurrency(2435.2)}
+                      </span>
                       <ChevronUp className="text-[#28C76F]" size={16} />
                     </div>
                   </div>
@@ -363,7 +370,9 @@ const SellerEarnings: React.FC = () => {
                       <span className="text-sm font-medium">Beverages</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="font-medium">$698.40</span>
+                      <span className="font-medium">
+                        {formatCurrency(698.4)}
+                      </span>
                       <ChevronDown className="text-[#EA5455]" size={16} />
                     </div>
                   </div>
@@ -376,7 +385,9 @@ const SellerEarnings: React.FC = () => {
                       <span className="text-sm font-medium">Desserts</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <span className="font-medium">$419.04</span>
+                      <span className="font-medium">
+                        {formatCurrency(419.04)}
+                      </span>
                       <ChevronUp className="text-[#28C76F]" size={16} />
                     </div>
                   </div>
@@ -429,7 +440,7 @@ const SellerEarnings: React.FC = () => {
                             : "text-green-600"
                         }
                       >
-                        ${Math.abs(transaction.amount).toFixed(2)}
+                        {formatCurrency(Math.abs(transaction.amount))}
                       </span>
                     </TableCell>
                   </TableRow>

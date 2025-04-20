@@ -11,6 +11,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { formatCurrency } from "@/lib/utils";
 
 export interface RevenueDataPoint {
   name: string;
@@ -43,7 +44,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
 }) => {
   const formatValue = (value: number | string): string => {
     if (typeof value === "number") {
-      return `$${value.toFixed(2)}`;
+      return formatCurrency(value);
     }
     return `$${value}`;
   };

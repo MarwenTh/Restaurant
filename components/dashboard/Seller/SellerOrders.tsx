@@ -27,6 +27,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { Order } from "./OrdersTable";
+import { formatCurrency } from "@/lib/utils";
 
 const orders: (Order & { status: keyof typeof statusColors })[] = [
   {
@@ -323,7 +324,7 @@ const OrdersTabContent: React.FC<OrdersTabContentProps> = ({
                     <TableCell className="font-medium">#{order.id}</TableCell>
                     <TableCell>{order.customer}</TableCell>
                     <TableCell>{order.items}</TableCell>
-                    <TableCell>${order.total.toFixed(2)}</TableCell>
+                    <TableCell>{formatCurrency(order.total)}</TableCell>
                     <TableCell>
                       <Badge
                         variant="outline"

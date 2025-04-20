@@ -67,3 +67,49 @@ export interface Category {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface Order {
+  client: string; // Reference to User (client)
+  seller: string; // Reference to Restaurant
+  items: {
+    menuItem: MenuItem; // Reference to MenuItem
+    quantity: number;
+    unitPrice: number;
+    specialInstructions?: string;
+  }[];
+  status:
+    | "pending"
+    | "confirmed"
+    | "preparing"
+    | "ready"
+    | "in-delivery"
+    | "delivered"
+    | "cancelled";
+  totalAmount: number;
+  deliveryFee?: number;
+  tip?: number;
+  paymentStatus: "pending" | "paid" | "failed" | "refunded";
+  deliveryAddress?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    specialInstructions?: string;
+  };
+  deliveryType?: "delivery" | "pickup" | "dine-in";
+  scheduledFor?: Date; // For scheduled delivery/pickup
+  estimatedDeliveryTime?: Date;
+  actualDeliveryTime?: Date;
+  driver?: string; // Reference to User (driver)
+  refundInfo?: {
+    amount: number;
+    reason: string;
+    date: Date;
+  };
+  promoCodeApplied?: string;
+  discountAmount?: number;
+  specialInstructions?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  quantity: number;
+}

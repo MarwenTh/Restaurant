@@ -23,6 +23,7 @@ import useFood from "@/hooks/useFood";
 import Image from "next/image";
 import Categories from "./categories";
 import { useUrlFilters } from "@/hooks/useUrlFilters";
+import { cn, formatCurrency } from "@/lib/utils";
 
 const Food = () => {
   const { loading, error, menuItems, refetch, totalMenuItems } = useFood();
@@ -191,7 +192,7 @@ const Food = () => {
                         group-hover:opacity-100 transition-opacity duration-300"
                     ></div>
                     <Badge className="absolute bottom-3 left-3 bg-[#D4AF37] text-white hover:bg-[#D4AF37]/90 z-10">
-                      ${item.price.toFixed(2)}
+                      {formatCurrency(item.price)}
                     </Badge>
                   </div>
                   <CardContent className="p-6">

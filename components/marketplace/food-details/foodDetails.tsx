@@ -1,40 +1,14 @@
 "use client";
-import React, { useState, useEffect, FC } from "react";
-import { useParams } from "next/navigation";
+import React, { useState, FC } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  Clock,
-  Heart,
-  MapPin,
-  Minus,
-  Plus,
-  Share2,
-  ShoppingBag,
-  Star,
-  ThumbsUp,
-  Leaf,
-  AlertCircle,
-  CheckCircle2,
-  Timer,
-  Utensils,
-  ChefHat,
-  Calendar,
-  Award,
-} from "lucide-react";
+import { ArrowLeft, Clock, Heart, Star, ChefHat } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import useFood from "@/hooks/useFood";
 import { MenuItem, User } from "@/interface";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
+import useOrderStore from "@/store/useOrderStore";
+import useUser from "@/hooks/useUser";
+import { useRouter } from "next/navigation";
 
 interface Review {
   id: string;
@@ -53,11 +27,13 @@ type Props = {
 };
 
 const FoodDetails: FC<Props> = ({ id, foodItem }) => {
+  const { user, loading: userLoading } = useUser();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
   const [reviewText, setReviewText] = useState("");
   const [userRating, setUserRating] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isOrdering, setIsOrdering] = useState(false);
   const liked = false;
   const [reviews, setReviews] = useState<Review[]>([
     {
@@ -94,6 +70,48 @@ const FoodDetails: FC<Props> = ({ id, foodItem }) => {
       date: "2 weeks ago",
     },
   ]);
+
+  const navigate = useRouter();
+
+  const {
+    order,
+    isLoading,
+    error,
+    setOrder,
+    clearOrder,
+    setIsLoading,
+    setError,
+  } = useOrderStore();
+
+  const handleOrderNow = () => {
+    if (!user) {
+      navigate.push("/auth/login");
+      return;
+    }
+
+    setIsOrdering(true);
+    setOrder({
+      client: user._id || "",
+      seller: foodItem.seller?._id || "",
+      items: [
+        {
+          menuItem: foodItem,
+          quantity,
+          unitPrice: foodItem.price,
+        },
+      ],
+      status: "pending",
+      totalAmount: foodItem.price * quantity,
+      discountAmount: foodItem.discount
+        ? (foodItem.price * foodItem.discount) / 100
+        : 0,
+      paymentStatus: "pending",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      quantity: quantity,
+    });
+    navigate.push("/order");
+  };
 
   const handleQuantityChange = (increment: boolean) => {
     if (increment) {
@@ -227,14 +245,13 @@ const FoodDetails: FC<Props> = ({ id, foodItem }) => {
               {foodItem.discount ? (
                 <>
                   <span className="text-3xl font-bold text-food-orange">
-                    $
-                    {(
+                    {formatCurrency(
                       foodItem.price -
-                      (foodItem.price * foodItem.discount) / 100
-                    ).toFixed(2)}
+                        (foodItem.price * foodItem.discount) / 100,
+                    )}
                   </span>
                   <span className="text-xl text-gray-400 line-through">
-                    ${foodItem.price.toFixed(2)}
+                    {formatCurrency(foodItem.price)}
                   </span>
                   <span className="text-sm font-medium bg-food-redLight text-food-red px-2 py-0.5 rounded-md">
                     {foodItem.discount}% OFF
@@ -242,7 +259,7 @@ const FoodDetails: FC<Props> = ({ id, foodItem }) => {
                 </>
               ) : (
                 <span className="text-3xl font-bold text-food-orange">
-                  ${foodItem.price.toFixed(2)}
+                  {formatCurrency(foodItem.price)}
                 </span>
               )}
             </div>
@@ -255,15 +272,65 @@ const FoodDetails: FC<Props> = ({ id, foodItem }) => {
               >
                 Add to Cart
               </Button>
-              <Link href={"/order"}>
-                <Button
-                  variant="outline"
-                  className="border-food-orange text-food-orange hover:bg-food-orangeLight rounded-full px-8
-                    h-12 cursor-pointer"
-                >
-                  Order Now
-                </Button>
-              </Link>
+              <Button
+                onClick={handleOrderNow}
+                variant="outline"
+                className="border-food-orange text-food-orange hover:bg-food-orangeLight rounded-full px-8
+                  h-12 cursor-pointer"
+                disabled={userLoading || isOrdering}
+              >
+                {userLoading ? (
+                  <span className="flex items-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-food-orange"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Loading...
+                  </span>
+                ) : isOrdering ? (
+                  <span className="flex items-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-food-orange"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  "Order Now"
+                )}
+              </Button>
             </div>
           </div>
         </div>
