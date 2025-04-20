@@ -255,13 +255,15 @@ const FoodDetails: FC<Props> = ({ id, foodItem }) => {
               >
                 Add to Cart
               </Button>
-              <Button
-                variant="outline"
-                className="border-food-orange text-food-orange hover:bg-food-orangeLight rounded-full px-8
-                  h-12 cursor-pointer"
-              >
-                Order Now
-              </Button>
+              <Link href={"/order"}>
+                <Button
+                  variant="outline"
+                  className="border-food-orange text-food-orange hover:bg-food-orangeLight rounded-full px-8
+                    h-12 cursor-pointer"
+                >
+                  Order Now
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
