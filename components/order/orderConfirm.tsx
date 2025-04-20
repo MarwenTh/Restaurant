@@ -24,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
+import { useToast } from "../landing-page/hooks/use-toast";
 
 const OrderConfirm = () => {
   const [deliveryMethod, setDeliveryMethod] = useState<"delivery" | "pickup">(
@@ -45,7 +46,7 @@ const OrderConfirm = () => {
   const [promoCode, setPromoCode] = useState("");
   const [appliedPromoCode, setAppliedPromoCode] = useState<string | null>(null);
   const [promoDiscount, setPromoDiscount] = useState(0); // percentage
-
+  const { toast: toastSuccess } = useToast();
   const {
     order,
     isLoading,
@@ -186,11 +187,15 @@ const OrderConfirm = () => {
 
     try {
       const response = await axios.post("/api/order", updatedOrder);
-      console.log("response: ", response);
+      toastSuccess({ title: response.data.message });
       navigate.push("/order/success");
     } catch (error) {
       console.error("Error creating order:", error);
       setError("Failed to create order. Please try again.");
+      toastSuccess({
+        title: "Uh oh! Something went wrong.",
+        description: "Failed to create order. Please try again.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -294,7 +299,7 @@ const OrderConfirm = () => {
                             real-time tracking
                           </p>
                           <p className="text-food-orange font-medium mt-2">
-                            Delivery Fee: $4.99
+                            Delivery Fee: 4.99 TND
                           </p>
                         </div>
                       </div>
