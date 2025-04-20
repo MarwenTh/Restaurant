@@ -1,7 +1,6 @@
 import { connectToDatabase } from "@/lib/database";
 import Order from "@/lib/database/models/order.model";
 import User from "@/lib/database/models/user.model";
-import { getServerSession } from "next-auth";
 import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -42,7 +41,7 @@ export async function POST(request: NextRequest) {
       specialInstructions,
     } = body;
 
-    // Required field validation
+    // Validate required fields
     if (!seller || !items || !totalAmount || !paymentMethod || !deliveryType) {
       return NextResponse.json(
         { error: "Missing required fields" },
@@ -58,17 +57,26 @@ export async function POST(request: NextRequest) {
       paymentMethod,
       deliveryType,
       paymentStatus: paymentStatus || "pending",
-      deliveryAddress,
       deliveryFee,
-      tip,
+      tip: tip ?? 0,
       scheduledFor,
       estimatedDeliveryTime,
       actualDeliveryTime,
       driver,
       refundInfo,
       promoCodeApplied,
-      discountAmount,
+      discountAmount: discountAmount ?? 0,
       specialInstructions,
+      deliveryAddress: deliveryAddress
+        ? {
+            street: deliveryAddress.street,
+            city: deliveryAddress.city,
+            state: deliveryAddress.state,
+            zipCode: deliveryAddress.zipCode,
+            country: deliveryAddress.country,
+            specialInstructions: deliveryAddress.specialInstructions,
+          }
+        : undefined,
     });
 
     return NextResponse.json(
