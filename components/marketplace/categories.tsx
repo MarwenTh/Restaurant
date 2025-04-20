@@ -4,15 +4,13 @@ import React, { useState, useRef } from "react";
 import { Badge } from "../ui/badge";
 import useCategory from "@/hooks/useCategory";
 import { Button } from "../ui/button";
+import { useUrlFilters } from "@/hooks/useUrlFilters";
 
-type Props = {
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
-};
-
-const Categories = ({ selectedCategory, setSelectedCategory }: Props) => {
+const Categories = () => {
   const { categories, loading, error, refetch } = useCategory();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { filters, toggleFilter } = useUrlFilters();
+  const selectedCategory = filters.category;
 
   const scrollLeft = () => {
     if (scrollContainerRef.current) {
@@ -70,7 +68,7 @@ const Categories = ({ selectedCategory, setSelectedCategory }: Props) => {
                       ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-white"
                       : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                   }`}
-                onClick={() => setSelectedCategory("all")}
+                onClick={() => toggleFilter("category", "all")}
               >
                 All Categories
               </Badge>
@@ -86,7 +84,7 @@ const Categories = ({ selectedCategory, setSelectedCategory }: Props) => {
                       ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-white"
                       : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                   }`}
-                  onClick={() => setSelectedCategory(category.name)}
+                  onClick={() => toggleFilter("category", category.name)}
                 >
                   {category.name}
                 </Badge>

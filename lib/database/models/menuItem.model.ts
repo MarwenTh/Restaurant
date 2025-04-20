@@ -27,6 +27,8 @@ export interface IMenuItem extends Document {
   preparationTime?: number; // In minutes
   createdAt: Date;
   updatedAt: Date;
+  discount?: number;
+  isDiscounted?: boolean;
 }
 
 // Schema definition
@@ -63,6 +65,8 @@ const MenuItemSchema = new Schema<IMenuItem>(
     popularity: { type: Number, default: 0 },
     isPopular: { type: Boolean, default: false },
     preparationTime: { type: Number }, // In minutes
+    discount: { type: Number, default: 0 },
+    isDiscounted: { type: Boolean, default: false },
   },
   { timestamps: true },
 );

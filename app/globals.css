@@ -140,10 +140,27 @@
   --color-food-orange: hsl(29, 100%, 63%);
   --color-food-red: hsl(360, 78%, 62%);
   --color-food-green: hsl(147, 67%, 47%);
+  --color-food-greenLight: hsl(147, 67%, 87%);
   --color--food-blue: hsl(186, 100%, 45%);
   --color-food-yellow: hsl(50, 100%, 71%);
   --color-food-dark: hsl(240, 20%, 15%);
   --color-food-light: hsl(260, 23%, 97%);
+  --color-food-orangeLight: hsl(29, 100%, 83%);
+
+  --font-playfair: "Playfair Display", serif;
+
+  --animate-fade-in: fade-in 0.5s ease-in-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   @keyframes accordion-down {
     from {

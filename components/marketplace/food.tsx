@@ -22,28 +22,15 @@ import Link from "next/link";
 import useFood from "@/hooks/useFood";
 import Image from "next/image";
 import Categories from "./categories";
+import { useUrlFilters } from "@/hooks/useUrlFilters";
 
-type Props = {
-  searchQuery: string;
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
-  filters: {
-    minRating: number;
-    maxDeliveryTime: number;
-    maxPrice: number;
-    sortBy: string;
-  };
-};
-
-const Food = ({
-  searchQuery,
-  selectedCategory,
-  setSelectedCategory,
-  filters,
-}: Props) => {
+const Food = () => {
   const { loading, error, menuItems, refetch, totalMenuItems } = useFood();
   const [animatedItems, setAnimatedItems] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState("trending");
+  const { filters } = useUrlFilters();
+
+  const { search: searchQuery, category: selectedCategory } = filters;
 
   // Filter and sort food items based on search query, selected category, and filters
   const filteredFoodItems = menuItems?.filter((item) => {
@@ -149,10 +136,7 @@ const Food = ({
         </div>
       </div>
 
-      <Categories
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-      />
+      <Categories />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-10">
         {loading
@@ -172,7 +156,10 @@ const Food = ({
                 </Card>
               ))
           : sortedFoodItems?.map((item, index) => (
-              <Link href={`/food/${item._id}`} key={item._id}>
+              <Link
+                href={`marketplace/food-details/${item._id}`}
+                key={item._id}
+              >
                 <Card
                   className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all
                     duration-300 bg-white rounded-xl group"

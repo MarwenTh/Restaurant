@@ -57,6 +57,8 @@ export interface MenuItem {
   updatedAt?: Date;
   popularity: number;
   status: "available" | "out_of_stock" | "hidden";
+  discount?: number;
+  isDiscounted?: boolean;
 }
 
 export interface Category {

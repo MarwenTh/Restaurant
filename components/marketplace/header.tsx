@@ -10,7 +10,7 @@ import {
   ThumbsUp,
   ArrowUpDown,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Input } from "../ui/input";
 import {
   DropdownMenu,
@@ -24,34 +24,16 @@ import {
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { SiIfood } from "react-icons/si";
+import { useUrlFilters, FilterKeys } from "@/hooks/useUrlFilters";
 
-type FilterKeys = "minRating" | "maxDeliveryTime" | "maxPrice" | "sortBy";
-
-type Props = {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  filters: {
-    minRating: number;
-    maxDeliveryTime: number;
-    maxPrice: number;
-    sortBy: string;
-  };
-  setFilters: (filters: any) => void;
-};
-
-const Header = ({
-  searchQuery,
-  setSearchQuery,
-  filters,
-  setFilters,
-}: Props) => {
+const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { filters, toggleFilter, resetFilters, updateFilters } =
+    useUrlFilters();
 
-  const handleFilterChange = (key: FilterKeys, value: number | string) => {
-    const newValue =
-      filters[key] === value ? (key === "sortBy" ? "" : 0) : value;
-
-    setFilters({ ...filters, [key]: newValue });
+  // Handle search input with debounce
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateFilters({ search: e.target.value });
   };
 
   return (
@@ -100,8 +82,8 @@ const Header = ({
                     placeholder="Search for food, restaurants, cuisines..."
                     className="pl-12 py-6 text-base border-[#D4AF37]/20 focus:border-[#D4AF37]
                       focus:ring-[#D4AF37]/30 shadow-md bg-white/80 backdrop-blur-sm rounded-xl"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={filters.search}
+                    onChange={handleSearchChange}
                   />
                 </div>
 
@@ -146,9 +128,7 @@ const Header = ({
                                 ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
                                 : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                             }
-                            onClick={() =>
-                              handleFilterChange("minRating", rating)
-                            }
+                            onClick={() => toggleFilter("minRating", rating)}
                           >
                             {rating}
                           </Button>
@@ -179,7 +159,7 @@ const Header = ({
                                 : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                             }
                             onClick={() =>
-                              handleFilterChange("maxDeliveryTime", time)
+                              toggleFilter("maxDeliveryTime", time)
                             }
                           >
                             {time} min
@@ -208,9 +188,7 @@ const Header = ({
                                 ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
                                 : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                             }
-                            onClick={() =>
-                              handleFilterChange("maxPrice", price)
-                            }
+                            onClick={() => toggleFilter("maxPrice", price)}
                           >
                             ${price}
                           </Button>
@@ -238,9 +216,7 @@ const Header = ({
                               ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
                               : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                           }
-                          onClick={() =>
-                            handleFilterChange("sortBy", "price-asc")
-                          }
+                          onClick={() => toggleFilter("sortBy", "price-asc")}
                         >
                           Price: Low to High
                         </Button>
@@ -256,9 +232,7 @@ const Header = ({
                               ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
                               : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                           }
-                          onClick={() =>
-                            handleFilterChange("sortBy", "price-desc")
-                          }
+                          onClick={() => toggleFilter("sortBy", "price-desc")}
                         >
                           Price: High to Low
                         </Button>
@@ -272,7 +246,7 @@ const Header = ({
                               ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
                               : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                           }
-                          onClick={() => handleFilterChange("sortBy", "rating")}
+                          onClick={() => toggleFilter("sortBy", "rating")}
                         >
                           Rating
                         </Button>
@@ -288,9 +262,7 @@ const Header = ({
                               ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
                               : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                           }
-                          onClick={() =>
-                            handleFilterChange("sortBy", "popularity")
-                          }
+                          onClick={() => toggleFilter("sortBy", "popularity")}
                         >
                           Popularity
                         </Button>
@@ -302,14 +274,7 @@ const Header = ({
                     <Button
                       variant="outline"
                       className="w-full mt-2 hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] hover:border-[#D4AF37]"
-                      onClick={() => {
-                        setFilters({
-                          minRating: 0,
-                          maxDeliveryTime: 0,
-                          maxPrice: 0,
-                          sortBy: "",
-                        });
-                      }}
+                      onClick={resetFilters}
                     >
                       Reset Filters
                     </Button>
