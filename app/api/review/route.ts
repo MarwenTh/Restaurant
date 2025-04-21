@@ -2,14 +2,13 @@ import { connectToDatabase } from "@/lib/database";
 import Review from "@/lib/database/models/review.model";
 import User from "@/lib/database/models/user.model";
 import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
   try {
     await connectToDatabase();
 
-    const session = await getSession();
+    const session = await getServerSession();
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

@@ -4,16 +4,16 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { cn } from "@/lib/utils";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
-import Image from "next/image";
-import FoodPNG from "@/public/assets/food.png";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { HashLoader } from "react-spinners";
 import { toast } from "sonner";
 import { FaSpinner } from "react-icons/fa6";
+import { FaUtensils } from "react-icons/fa";
+import { motion } from "framer-motion";
 
-export function Login() {
+const Login = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -53,99 +53,203 @@ export function Login() {
       setLoading(false);
     }
   };
-  return (
-    <div className="w-full py-10 px-14 border-[#8e8d8b] border-2 rounded-4xl mx-36">
-      <div className="flex justify-between items-center">
-        <Image src={FoodPNG} alt="food" />{" "}
-        <div
-          className="max-w-xl w-full rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white/60
-            dark:bg-black/60"
-        >
-          <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-            Welcome to FoodGuide
-          </h2>
-          <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
-            Login to FoodGuide now!!
-          </p>
 
-          <form className="my-5" onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                placeholder="foulenbenfoulen@email.com"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="mb-4">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                placeholder="••••••••"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-            <button
-              className={`bg-gradient-to-br relative group/btn from-black dark:from-zinc-900
-                dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white
-                rounded-md h-10 font-medium
-                shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset]
-                dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]
-                ${loading ? "cursor-not-allowed" : "cursor-pointer"}`}
-              type={loading ? "button" : "submit"}
+  return (
+    <motion.div
+      className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="bg-white/80 backdrop-blur-md rounded-2xl shadow-xl overflow-hidden">
+        <div className="flex flex-col md:flex-row">
+          {/* Left side - Branding */}
+          <div
+            className="md:w-1/2 bg-gradient-to-br from-amber-500 to-orange-600 p-8 md:p-12 flex
+              flex-col justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="text-center md:text-left"
             >
-              {loading ? (
-                <div className="flex items-center justify-center space-x-3">
-                  <FaSpinner className="animate-spin" />
-                  <div>Loading...</div>
+              <div className="flex items-center justify-center md:justify-start mb-6">
+                <FaUtensils className="text-white text-4xl mr-2" />
+                <h1 className="text-3xl font-bold text-white">FoodGuide</h1>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-4">
+                Welcome back!
+              </h2>
+              <p className="text-amber-100 mb-6">
+                Sign in to your account and continue exploring delicious food
+                options.
+              </p>
+              <div className="hidden md:block">
+                <div className="flex items-center space-x-2 mb-4">
+                  <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                    <FaUtensils className="text-white text-xl" />
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">
+                      FoodGuide Marketplace
+                    </p>
+                    <p className="text-amber-100 text-sm">
+                      Your one-stop food destination
+                    </p>
+                  </div>
                 </div>
-              ) : (
-                <div>Login &rarr;</div>
-              )}
-              {/* <BottomGradient /> */}
-            </button>
-            <div
-              className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700
-                to-transparent my-8 h-[1px] w-full"
-            />
-            <div className="flex flex-col space-y-4">
-              <button
-                className="relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4
-                  w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50
-                  dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-                type="button"
-                onClick={() => signIn("github")}
-              >
-                <IconBrandGithub className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-                <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-                  GitHub
-                </span>
-                {/* <BottomGradient /> */}
-              </button>
-              {/* <button
-                className=" relative group/btn cursor-pointer flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium shadow-input bg-gray-50 dark:bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-                type="button"
-              >
-                <IconBrandGoogle className="h-4 w-4 text-neutral-800 dark:text-neutral-300" />
-                <span className="text-neutral-700 dark:text-neutral-300 text-sm">
-                  Google
-                </span>
-                <BottomGradient />
-              </button> */}
+                <p className="text-amber-100 text-sm">
+                  Join thousands of food lovers who trust FoodGuide for their
+                  daily meals.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Right side - Form */}
+          <div className="md:w-1/2 p-8 md:p-12">
+            <div className="max-w-md mx-auto">
+              <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                Sign in to your account
+              </h2>
+              <p className="text-gray-600 text-sm mb-6">
+                Enter your credentials to access your account
+              </p>
+
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <div>
+                  <Label htmlFor="email" className="text-gray-700">
+                    Email Address
+                  </Label>
+                  <Input
+                    id="email"
+                    placeholder="john@example.com"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="mt-1 border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="password" className="text-gray-700">
+                    Password
+                  </Label>
+                  <Input
+                    id="password"
+                    placeholder="••••••••"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="mt-1 border-gray-300 focus:border-amber-500 focus:ring-amber-500"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <input
+                      id="remember-me"
+                      name="remember-me"
+                      type="checkbox"
+                      className="h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                    />
+                    <label
+                      htmlFor="remember-me"
+                      className="ml-2 block text-sm text-gray-700"
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                  <div className="text-sm">
+                    <a
+                      href="#"
+                      className="font-medium text-amber-600 hover:text-amber-500"
+                    >
+                      Forgot your password?
+                    </a>
+                  </div>
+                </div>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md
+                    shadow-sm text-sm font-medium text-white bg-gradient-to-r from-amber-500
+                    to-orange-600 hover:from-amber-600 hover:to-orange-700 focus:outline-none
+                    focus:ring-2 focus:ring-offset-2 focus:ring-amber-500
+                    ${loading ? "opacity-70 cursor-not-allowed" : ""}`}
+                  type={loading ? "button" : "submit"}
+                >
+                  {loading ? (
+                    <div className="flex items-center space-x-2">
+                      <FaSpinner className="animate-spin" />
+                      <span>Signing in...</span>
+                    </div>
+                  ) : (
+                    "Sign in"
+                  )}
+                </motion.button>
+              </form>
+
+              <div className="mt-6">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-6">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="cursor-pointer w-full flex items-center justify-center px-4 py-2 border
+                      border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white
+                      hover:bg-gray-50"
+                    type="button"
+                    onClick={() => signIn("github")}
+                  >
+                    <IconBrandGithub className="h-5 w-5 mr-2" />
+                    <span>GitHub</span>
+                  </motion.button>
+                </div>{" "}
+                <div className="mt-2">
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="cursor-pointer w-full flex items-center justify-center px-4 py-2 border
+                      border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white
+                      hover:bg-gray-50"
+                    type="button"
+                    onClick={() => signIn("google")}
+                  >
+                    <IconBrandGoogle className="h-5 w-5 mr-2" />
+                    <span>Google</span>
+                  </motion.button>
+                </div>
+              </div>
+
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                  Don't have an account yet?{" "}
+                  <Link
+                    href="/signup"
+                    className="font-medium text-amber-600 hover:text-amber-500"
+                  >
+                    Register for free
+                  </Link>
+                </p>
+              </div>
             </div>
-            <div className="flex justify-end space-x-2 mt-4">
-              <p className="text-white">Don't have an account yet?</p>
-              <Link href={"/signup"} className="text-blue-500">
-                Register for free
-              </Link>
-            </div>
-          </form>
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
-}
+};
+
+export default Login;

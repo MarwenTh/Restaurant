@@ -1,7 +1,6 @@
 import { connectToDatabase, disconnectFromDatabase } from "@/lib/database";
 import Category from "@/lib/database/models/categories.model";
 import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {

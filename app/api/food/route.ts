@@ -2,7 +2,6 @@ import { connectToDatabase, disconnectFromDatabase } from "@/lib/database";
 import MenuItem from "@/lib/database/models/menuItem.model";
 import User from "@/lib/database/models/user.model";
 import { getServerSession } from "next-auth";
-import { getSession } from "next-auth/react";
 import { NextRequest, NextResponse } from "next/server";
 
 // All menu-items GET /api/menu-item
