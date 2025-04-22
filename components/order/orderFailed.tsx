@@ -4,9 +4,27 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useEffect } from "react";
+import { HashLoader } from "react-spinners";
 
 const OrderFailed = () => {
+  const { data: session, status } = useSession();
   const navigate = useRouter();
+
+  useEffect(() => {
+    if (!session) {
+      navigate.push("/");
+    }
+  }, [session, navigate]);
+
+  if (status === "loading") {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-30px)]">
+        <HashLoader color="#ff6b00" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

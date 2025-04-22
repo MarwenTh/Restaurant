@@ -25,6 +25,8 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import { formatCurrency } from "@/lib/utils";
 import { useToast } from "../landing-page/hooks/use-toast";
+import { useSession } from "next-auth/react";
+import { HashLoader } from "react-spinners";
 
 const OrderConfirm = () => {
   const [deliveryMethod, setDeliveryMethod] = useState<"delivery" | "pickup">(
@@ -57,6 +59,7 @@ const OrderConfirm = () => {
     setError,
   } = useOrderStore();
 
+  const { data: session, status } = useSession();
   const navigate = useRouter();
 
   // Reset loading state on component mount
@@ -210,6 +213,20 @@ const OrderConfirm = () => {
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    if (!session) {
+      navigate.push("/");
+    }
+  }, [session, navigate]);
+
+  if (status === "loading") {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-30px)]">
+        <HashLoader color="#ff6b00" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

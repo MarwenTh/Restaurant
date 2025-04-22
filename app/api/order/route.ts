@@ -1,8 +1,47 @@
-import { connectToDatabase } from "@/lib/database";
+import { connectToDatabase, disconnectFromDatabase } from "@/lib/database";
 import Order from "@/lib/database/models/order.model";
 import User from "@/lib/database/models/user.model";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(request: NextRequest) {
+  try {
+    await connectToDatabase();
+
+    // Get the current user's session
+    const session = await getServerSession();
+
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get the current user
+    const currentUser = await User.findOne({ email: session?.user?.email });
+
+    if (!currentUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    // Filter orders by seller ID
+    const orders = await Order.find({ seller: currentUser._id })
+      .populate({
+        path: "seller",
+        select: "-password -__v -updatedAt",
+      })
+      .populate({ path: "client", select: "-password -__v -updatedAt" })
+      .populate({
+        path: "items.menuItem",
+      })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const totalOrders = orders.length;
+
+    return NextResponse.json({ orders, totalOrders }, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {

@@ -4,12 +4,31 @@ import { CircleCheck, MapPin, Package, Truck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import AutoConfetti from "../ui/confetti";
+import { useSession } from "next-auth/react";
+import { HashLoader } from "react-spinners";
 
 const OrderSuccess = () => {
+  const { data: session, status } = useSession();
   const navigate = useRouter();
+
+  useEffect(() => {
+    if (!session) {
+      navigate.push("/");
+    }
+  }, [session, navigate]);
+
+  if (status === "loading") {
+    return (
+      <div className="flex justify-center items-center h-[calc(100vh-30px)]">
+        <HashLoader color="#ff6b00" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
+      <AutoConfetti />
       <main className="flex-grow pt-24">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto text-center">

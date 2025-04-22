@@ -21,7 +21,6 @@ export async function POST(request: NextRequest) {
     const { name } = await request.json();
     await connectToDatabase();
     const category = await Category.create({ name });
-    await disconnectFromDatabase();
     return NextResponse.json({ category }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });

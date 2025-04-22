@@ -14,7 +14,6 @@ export async function GET(request: NextRequest) {
     });
     const totalMenuItems = menuItem.length;
 
-    await disconnectFromDatabase();
     return NextResponse.json({ menuItem, totalMenuItems }, { status: 200 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
