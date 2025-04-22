@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SessionWrapper from "@/components/providers/SessionProvider";
-import { Toaster } from "sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes";
 import ThemeDataProvider from "@/context/theme-data-provider";
@@ -39,7 +39,7 @@ export default function RootLayout({
           >
             {/* <ThemeDataProvider> */}
             <TooltipProvider>
-              <Toaster position="top-right" richColors />
+              <Toaster />
               {children}
             </TooltipProvider>
             {/* </ThemeDataProvider> */}

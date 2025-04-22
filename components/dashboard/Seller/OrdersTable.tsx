@@ -72,7 +72,11 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
           <TableBody>
             {orders.length > 0 ? (
               orders.map((order) => (
-                <TableRow key={order.id} className="hover:bg-gray-50">
+                <TableRow
+                  key={order.id}
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => handleViewOrder(order.id)}
+                >
                   <TableCell className="font-medium">#{order.id}</TableCell>
                   <TableCell>{order.customer}</TableCell>
                   <TableCell>{order.items}</TableCell>

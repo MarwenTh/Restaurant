@@ -50,6 +50,7 @@ import useMenuItems from "@/hooks/useMenuItems";
 import { HashLoader } from "react-spinners";
 import { FaSpinner } from "react-icons/fa6";
 import { formatCurrency } from "@/lib/utils";
+import AddMenuItemModal from "./AddMenuItemModal";
 
 // const menuItems: MenuItem[] = [];
 
@@ -70,7 +71,7 @@ const MenuItems: React.FC = () => {
   // const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const menuItemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const { menuItems, loading, totalMenuItems } = useMenuItems(
+  const { menuItems, loading, totalMenuItems, refetch } = useMenuItems(
     currentPage,
     menuItemsPerPage,
   );
@@ -93,9 +94,7 @@ const MenuItems: React.FC = () => {
             <CardDescription>Manage all your menu here</CardDescription>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <Button className="bg-[#FF9F43] hover:bg-[#FF9F43]/90 cursor-pointer">
-              <Plus size={16} className="mr-2" /> Add New Item
-            </Button>
+            <AddMenuItemModal onSuccess={refetch} />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
