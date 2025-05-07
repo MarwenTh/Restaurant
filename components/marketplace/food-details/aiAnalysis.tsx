@@ -108,7 +108,9 @@ const AiAnalysis = ({ foodItem }: Props) => {
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-md">
-      <h3 className="text-xl font-medium mb-6 font-playfair">AI Analysis</h3>
+      <h3 className="text-xl font-medium mb-6 font-playfair">
+        See what our AI thinks about this dish
+      </h3>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-12">

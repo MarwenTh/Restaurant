@@ -1,9 +1,25 @@
 export interface User {
   _id: string;
-  name: string;
   email: string;
-  role: string;
-  image: string;
+  name: string;
+  role: "Admin" | "Client" | "Seller" | "Delivery";
+  image?: string;
+  verified: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  lastLogin?: Date;
+  contactInfo?: {
+    phone: string;
+    email: string;
+    website?: string;
+  };
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+  };
 }
 
 export interface UseUsersResponse {
@@ -69,6 +85,7 @@ export interface Category {
 }
 
 export interface Order {
+  _id: string;
   client: string; // Reference to User (client)
   seller: string; // Reference to Restaurant
   items: {
@@ -112,4 +129,31 @@ export interface Order {
   createdAt: Date;
   updatedAt: Date;
   quantity: number;
+}
+
+export interface Review {
+  _id: string;
+  Seller: User; // Reference to Restaurant
+  client: User; // Reference to User (client)
+  rating: number;
+  comment: string;
+  images?: string[];
+  orderRef?: Order; // Optional reference to Order
+  status: "published" | "flagged" | "rejected";
+  response?: {
+    responder: User; // Reference to User (seller or admin)
+    text: string;
+    date: Date;
+  };
+  helpfulCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Promo {
+  _id: string;
+  code: string;
+  discount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

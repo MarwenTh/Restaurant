@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     const email = searchParams.get("email");
     if (email) {
       const user = await User.findOne({ email }).select(
-        "name email role image createdAt updatedAt",
+        "name email role image contactInfo address createdAt updatedAt",
       );
       if (!user) {
         return NextResponse.json(
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
 
     // Fetch paginated users
     const allUsers = await User.find()
-      .select("name email role image createdAt updatedAt")
+      .select("name email role image createdAt updatedAt contactInfo address")
       .skip(skip)
       .limit(limit);
     const totalUsers = await User.countDocuments();
@@ -178,11 +178,17 @@ export async function PUT(request: Request) {
     const session = await getSession();
     const currentUser = await User.findOne({ email: session?.user?.email });
 
-    if (!currentUser || currentUser.role !== "Admin") {
+    if (!currentUser) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id, name, email, role, image } = await request.json();
+    const { id, name, email, role, image, contactInfo, address } =
+      await request.json();
+
+    // If user is not admin, they can only update their own profile
+    if (currentUser.role !== "Admin" && currentUser._id.toString() !== id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const user = await User.findById(id);
 
@@ -190,14 +196,47 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Update basic info
     user.name = name;
     user.email = email;
-    user.role = role;
+    if (currentUser.role === "Admin") {
+      user.role = role;
+    }
     user.image = image;
+
+    // Update contact info if provided
+    if (contactInfo) {
+      user.contactInfo = {
+        ...user.contactInfo,
+        ...contactInfo,
+      };
+    }
+
+    // Update address if provided
+    if (address) {
+      user.address = {
+        ...user.address,
+        ...address,
+      };
+    }
 
     await user.save();
 
-    return NextResponse.json({ user }, { status: 200 });
+    return NextResponse.json(
+      {
+        message: "Profile updated successfully",
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          image: user.image,
+          contactInfo: user.contactInfo,
+          address: user.address,
+        },
+      },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error updating user:", error);
     return NextResponse.json(

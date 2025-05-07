@@ -51,6 +51,20 @@ import { HashLoader } from "react-spinners";
 import { FaSpinner } from "react-icons/fa6";
 import { formatCurrency } from "@/lib/utils";
 import AddMenuItemModal from "./AddMenuItemModal";
+import { useToast } from "@/components/ui/use-toast";
+import ViewEditMenuItemModal from "./ViewEditMenuItemModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import axios from "axios";
 
 // const menuItems: MenuItem[] = [];
 
@@ -75,6 +89,27 @@ const MenuItems: React.FC = () => {
     currentPage,
     menuItemsPerPage,
   );
+  const { toast } = useToast();
+
+  const handleDelete = async (id: string) => {
+    try {
+      const response = await axios.delete(`/api/menu-item?id=${id}`);
+      if (response.status === 200) {
+        toast({
+          title: "Success",
+          description: "Menu item deleted successfully",
+        });
+        refetch();
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description:
+          error.response?.data?.error || "Failed to delete menu item",
+        variant: "destructive",
+      });
+    }
+  };
 
   const filteredItems = menuItems?.filter(
     (item) =>
@@ -236,16 +271,56 @@ const MenuItems: React.FC = () => {
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end">
-                                    <DropdownMenuItem>
-                                      <Eye size={14} className="mr-2" /> View
+                                    <DropdownMenuItem asChild>
+                                      <ViewEditMenuItemModal
+                                        menuItem={item}
+                                        mode="view"
+                                        onSuccess={refetch}
+                                      />
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem>
-                                      <Edit size={14} className="mr-2" /> Edit
+                                    <DropdownMenuItem asChild>
+                                      <ViewEditMenuItemModal
+                                        menuItem={item}
+                                        mode="edit"
+                                        onSuccess={refetch}
+                                      />
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem className="text-red-600">
-                                      <Trash2 size={14} className="mr-2" />{" "}
-                                      Delete
-                                    </DropdownMenuItem>
+                                    <AlertDialog>
+                                      <AlertDialogTrigger asChild>
+                                        <DropdownMenuItem
+                                          className="text-red-600"
+                                          onSelect={(e) => e.preventDefault()}
+                                        >
+                                          <Trash2 size={14} className="mr-2" />{" "}
+                                          Delete
+                                        </DropdownMenuItem>
+                                      </AlertDialogTrigger>
+                                      <AlertDialogContent>
+                                        <AlertDialogHeader>
+                                          <AlertDialogTitle>
+                                            Are you sure?
+                                          </AlertDialogTitle>
+                                          <AlertDialogDescription>
+                                            This action cannot be undone. This
+                                            will permanently delete the menu
+                                            item.
+                                          </AlertDialogDescription>
+                                        </AlertDialogHeader>
+                                        <AlertDialogFooter>
+                                          <AlertDialogCancel>
+                                            Cancel
+                                          </AlertDialogCancel>
+                                          <AlertDialogAction
+                                            onClick={() =>
+                                              handleDelete(item._id)
+                                            }
+                                            className="bg-red-600 hover:bg-red-700"
+                                          >
+                                            Delete
+                                          </AlertDialogAction>
+                                        </AlertDialogFooter>
+                                      </AlertDialogContent>
+                                    </AlertDialog>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </TableCell>
@@ -327,16 +402,59 @@ const MenuItems: React.FC = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                      <DropdownMenuItem>
-                                        <Eye size={14} className="mr-2" /> View
+                                      <DropdownMenuItem asChild>
+                                        <ViewEditMenuItemModal
+                                          menuItem={item}
+                                          mode="view"
+                                          onSuccess={refetch}
+                                        />
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        <Edit size={14} className="mr-2" /> Edit
+                                      <DropdownMenuItem asChild>
+                                        <ViewEditMenuItemModal
+                                          menuItem={item}
+                                          mode="edit"
+                                          onSuccess={refetch}
+                                        />
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem className="text-red-600">
-                                        <Trash2 size={14} className="mr-2" />{" "}
-                                        Delete
-                                      </DropdownMenuItem>
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <DropdownMenuItem
+                                            className="text-red-600"
+                                            onSelect={(e) => e.preventDefault()}
+                                          >
+                                            <Trash2
+                                              size={14}
+                                              className="mr-2"
+                                            />{" "}
+                                            Delete
+                                          </DropdownMenuItem>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                              Are you sure?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              This action cannot be undone. This
+                                              will permanently delete the menu
+                                              item.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                              Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                              onClick={() =>
+                                                handleDelete(item._id)
+                                              }
+                                              className="bg-red-600 hover:bg-red-700"
+                                            >
+                                              Delete
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 </TableCell>
@@ -417,16 +535,59 @@ const MenuItems: React.FC = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                      <DropdownMenuItem>
-                                        <Eye size={14} className="mr-2" /> View
+                                      <DropdownMenuItem asChild>
+                                        <ViewEditMenuItemModal
+                                          menuItem={item}
+                                          mode="view"
+                                          onSuccess={refetch}
+                                        />
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        <Edit size={14} className="mr-2" /> Edit
+                                      <DropdownMenuItem asChild>
+                                        <ViewEditMenuItemModal
+                                          menuItem={item}
+                                          mode="edit"
+                                          onSuccess={refetch}
+                                        />
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem className="text-red-600">
-                                        <Trash2 size={14} className="mr-2" />{" "}
-                                        Delete
-                                      </DropdownMenuItem>
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <DropdownMenuItem
+                                            className="text-red-600"
+                                            onSelect={(e) => e.preventDefault()}
+                                          >
+                                            <Trash2
+                                              size={14}
+                                              className="mr-2"
+                                            />{" "}
+                                            Delete
+                                          </DropdownMenuItem>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                              Are you sure?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              This action cannot be undone. This
+                                              will permanently delete the menu
+                                              item.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                              Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                              onClick={() =>
+                                                handleDelete(item._id)
+                                              }
+                                              className="bg-red-600 hover:bg-red-700"
+                                            >
+                                              Delete
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 </TableCell>
@@ -507,16 +668,59 @@ const MenuItems: React.FC = () => {
                                       </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                      <DropdownMenuItem>
-                                        <Eye size={14} className="mr-2" /> View
+                                      <DropdownMenuItem asChild>
+                                        <ViewEditMenuItemModal
+                                          menuItem={item}
+                                          mode="view"
+                                          onSuccess={refetch}
+                                        />
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem>
-                                        <Edit size={14} className="mr-2" /> Edit
+                                      <DropdownMenuItem asChild>
+                                        <ViewEditMenuItemModal
+                                          menuItem={item}
+                                          mode="edit"
+                                          onSuccess={refetch}
+                                        />
                                       </DropdownMenuItem>
-                                      <DropdownMenuItem className="text-red-600">
-                                        <Trash2 size={14} className="mr-2" />{" "}
-                                        Delete
-                                      </DropdownMenuItem>
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <DropdownMenuItem
+                                            className="text-red-600"
+                                            onSelect={(e) => e.preventDefault()}
+                                          >
+                                            <Trash2
+                                              size={14}
+                                              className="mr-2"
+                                            />{" "}
+                                            Delete
+                                          </DropdownMenuItem>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>
+                                              Are you sure?
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              This action cannot be undone. This
+                                              will permanently delete the menu
+                                              item.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel>
+                                              Cancel
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                              onClick={() =>
+                                                handleDelete(item._id)
+                                              }
+                                              className="bg-red-600 hover:bg-red-700"
+                                            >
+                                              Delete
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
                                     </DropdownMenuContent>
                                   </DropdownMenu>
                                 </TableCell>
@@ -540,7 +744,7 @@ const MenuItems: React.FC = () => {
                 <strong>
                   {Math.min(currentPage * menuItemsPerPage, totalMenuItems)}
                 </strong>{" "}
-                of <strong>{totalMenuItems}</strong> users
+                of <strong>{totalMenuItems}</strong> items
               </div>
             ) : (
               <div className="flex items-center">

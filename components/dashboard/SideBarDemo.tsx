@@ -23,7 +23,7 @@ import { IoAnalyticsSharp } from "react-icons/io5";
 import { CiCalendar } from "react-icons/ci";
 import { SiIfood } from "react-icons/si";
 import { User } from "@/interface";
-import { Settings, Truck, Users } from "lucide-react";
+import { Settings, TicketMinus, Truck, TruckIcon, Users } from "lucide-react";
 
 type Props = {
   user: User | null;
@@ -43,133 +43,83 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
           ? "Users"
           : user?.role === "Seller"
             ? "Menu Items"
-            : user?.role === "Client"
-              ? "Test"
-              : "Test 2",
+            : "Track Order",
       href:
         user?.role === "Admin"
           ? "/dashboard/users"
           : user?.role === "Seller"
             ? "/dashboard/menu-items"
-            : user?.role === "Client"
-              ? "/Test"
-              : "/Test 2",
+            : "/dashboard/track-order",
       icon:
         user?.role === "Admin" ? (
           <Users className="h-5 w-5 shrink-0" />
-        ) : (
+        ) : user?.role === "Seller" ? (
           <MdRestaurantMenu className="h-5 w-5 shrink-0" />
+        ) : (
+          <TruckIcon className="h-5 w-5 shrink-0" />
         ),
     },
     user?.role !== "Admin" && {
-      label:
-        user?.role === "Seller"
-          ? "Orders"
-          : user?.role === "Client"
-            ? "Test"
-            : "Test 2",
+      label: user?.role === "Seller" ? "Orders" : "Promo Codes",
       href:
         user?.role === "Seller"
           ? "/dashboard/orders"
-          : user?.role === "Client"
-            ? "/Test"
-            : "/Test 2",
-      icon: <BsCart3 className="h-5 w-5 shrink-0" />,
-    },
-    {
-      label:
-        user?.role === "Admin"
-          ? "Deliveries"
-          : user?.role === "Seller"
-            ? "Earnings"
-            : user?.role === "Client"
-              ? "Test"
-              : "Test 2",
-      href:
-        user?.role === "Admin"
-          ? "/dashboard/deliveries"
-          : user?.role === "Seller"
-            ? "/dashboard/earnings"
-            : user?.role === "Client"
-              ? "/Test"
-              : "/Test 2",
+          : "/dashboard/promo-codes",
       icon:
-        user?.role === "Admin" ? (
-          <Truck className="h-5 w-5 shrink-0" />
+        user?.role === "Seller" ? (
+          <BsCart3 className="h-5 w-5 shrink-0" />
         ) : (
-          <FaSackDollar className="h-5 w-5 shrink-0" />
+          <TicketMinus className="h-5 w-5 shrink-0" />
         ),
     },
-    {
-      label:
-        user?.role === "Admin"
-          ? "Analytics"
-          : user?.role === "Seller"
-            ? "Analytics"
-            : user?.role === "Client"
-              ? "Test"
-              : "Test 2",
-      href:
-        user?.role === "Admin"
-          ? "/dashboard/analytics"
-          : user?.role === "Seller"
-            ? "/dashboard/analytics"
-            : user?.role === "Client"
-              ? "/Test"
-              : "/Test 2",
+    user?.role === "Client" && {
+      label: "Profile",
+      href: "/dashboard/profile",
+      icon: <IconUserBolt className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Admin" && {
+      label: "Deliveries",
+      href: "/dashboard/deliveries",
+      icon: <Truck className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Admin" && {
+      label: "Analytics",
+      href: "/dashboard/analytics",
       icon: <IoAnalyticsSharp className="h-5 w-5 shrink-0" />,
     },
-    user?.role !== "Admin" && {
-      label:
-        user?.role === "Seller"
-          ? "Schedule"
-          : user?.role === "Client"
-            ? "Test"
-            : "Test 2",
-      href:
-        user?.role === "Seller"
-          ? "/dashboard/schedule"
-          : user?.role === "Client"
-            ? "/Test"
-            : "/Test 2",
-      icon: <CiCalendar className="h-5 w-5 shrink-0" />,
-    },
-    {
-      label:
-        user?.role === "Admin"
-          ? "Reviews"
-          : user?.role === "Seller"
-            ? "Reviews"
-            : user?.role === "Client"
-              ? "Test"
-              : "Test 2",
-      href:
-        user?.role === "Admin"
-          ? "/dashboard/reviews"
-          : user?.role === "Seller"
-            ? "/dashboard/reviews"
-            : user?.role === "Client"
-              ? "/Test"
-              : "/Test 2",
+    user?.role === "Admin" && {
+      label: "Reviews",
+      href: "/dashboard/reviews",
       icon: <MdOutlineReviews className="h-5 w-5 shrink-0" />,
     },
-    {
-      label:
-        user?.role === "Admin"
-          ? "Settings"
-          : user?.role === "Seller"
-            ? "Settings"
-            : user?.role === "Client"
-              ? "Test"
-              : "Test 2",
-      href:
-        user?.role === "Admin"
-          ? "/dashboard/settings"
-          : user?.role === "Seller"
-            ? "/dashboard/settings"
-            : user?.role === "Client"
-              ? "/Test"
-              : "/Test 2",
+    user?.role === "Admin" && {
+      label: "Settings",
+      href: "/dashboard/settings",
+      icon: <Settings className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Seller" && {
+      label: "Earnings",
+      href: "/dashboard/earnings",
+      icon: <FaSackDollar className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Seller" && {
+      label: "Analytics",
+      href: "/dashboard/analytics",
+      icon: <IoAnalyticsSharp className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Seller" && {
+      label: "Schedule",
+      href: "/dashboard/schedule",
+      icon: <CiCalendar className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Seller" && {
+      label: "Reviews",
+      href: "/dashboard/reviews",
+      icon: <MdOutlineReviews className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Seller" && {
+      label: "Settings",
+      href: "/dashboard/settings",
       icon: <Settings className="h-5 w-5 shrink-0" />,
     },
   ].filter((link): link is { label: string; href: string; icon: any } =>

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +25,9 @@ import {
   ArrowRight,
   CheckCircle2,
   Loader2,
+  Image as ImageIcon,
+  Upload,
+  X,
 } from "lucide-react";
 import { MenuItem } from "@/interface";
 import axios from "axios";
@@ -52,12 +56,15 @@ interface FormData {
   isSpicy: boolean;
   popularity: number;
   preparationTime: number;
+  image: string;
 }
 
 const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string>("");
   const { toast } = useToast();
   const { user } = useUser();
 
@@ -77,6 +84,7 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
     isSpicy: false,
     popularity: 0,
     preparationTime: 0,
+    image: "",
   });
 
   const handleInputChange = (
@@ -143,6 +151,33 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post("/api/upload", formData);
+      setFormData((prev) => ({ ...prev, image: response.data.url }));
+      setImagePreview(response.data.url);
+      toast({
+        title: "Success",
+        description: "Image uploaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to upload image",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 1:
@@ -165,6 +200,7 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
                 onChange={handleInputChange}
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-[#FF9F43]"
+                placeholder="Enter item name"
               />
             </div>
             <div className="space-y-2">
@@ -179,6 +215,7 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
                 onChange={handleInputChange}
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-[#FF9F43] min-h-[100px]"
+                placeholder="Describe your menu item..."
               />
             </div>
             <div className="space-y-2">
@@ -194,6 +231,9 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
                 onChange={handleInputChange}
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-[#FF9F43]"
+                placeholder="0.00"
+                min="0"
+                step="0.01"
               />
             </div>
             <div className="space-y-2">
@@ -208,6 +248,7 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
                 onChange={(e) => handleArrayInputChange(e, "category")}
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-[#FF9F43]"
+                placeholder="e.g., Main Course, Appetizer, Dessert"
               />
             </div>
           </motion.div>
@@ -232,6 +273,7 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
                 onChange={(e) => handleArrayInputChange(e, "ingredients")}
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-[#FF9F43]"
+                placeholder="e.g., Rice, Chicken, Vegetables"
               />
             </div>
             <div className="space-y-2">
@@ -250,6 +292,8 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
                 onChange={handleInputChange}
                 required
                 className="transition-all duration-200 focus:ring-2 focus:ring-[#FF9F43]"
+                placeholder="Enter preparation time"
+                min="0"
               />
             </div>
             <div className="space-y-4">
@@ -339,6 +383,78 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
             </div>
           </motion.div>
         );
+      case 3:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            className="space-y-4"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="image" className="flex items-center gap-2">
+                <ImageIcon className="h-4 w-4" />
+                Item Image
+              </Label>
+              <div className="flex flex-col items-center justify-center w-full">
+                <label
+                  htmlFor="image-upload"
+                  className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed
+                    rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 border-gray-300
+                    hover:border-[#FF9F43] transition-all duration-200"
+                >
+                  {imagePreview ? (
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={imagePreview}
+                        alt="Preview"
+                        fill
+                        className="object-cover rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setImagePreview("");
+                          setFormData((prev) => ({ ...prev, image: "" }));
+                        }}
+                        className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600
+                          transition-all duration-200"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <Upload className="w-8 h-8 mb-4 text-gray-400" />
+                      <p className="mb-2 text-sm text-gray-500">
+                        <span className="font-semibold">Click to upload</span>{" "}
+                        or drag and drop
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        PNG, JPG or WEBP (MAX. 2MB)
+                      </p>
+                    </div>
+                  )}
+                  <input
+                    id="image-upload"
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={isUploading}
+                  />
+                </label>
+                {isUploading && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm text-gray-500">Uploading...</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        );
       default:
         return null;
     }
@@ -375,7 +491,7 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
                 Previous
               </Button>
             )}
-            {currentStep < 2 ? (
+            {currentStep < 3 ? (
               <Button
                 type="button"
                 onClick={() => setCurrentStep((prev) => prev + 1)}
@@ -387,7 +503,7 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
             ) : (
               <Button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || !formData.image}
                 className="flex items-center gap-2 transition-all duration-200 hover:scale-105"
               >
                 {isSubmitting ? (
