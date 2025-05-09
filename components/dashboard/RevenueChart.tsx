@@ -12,6 +12,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { formatCurrency } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export interface RevenueDataPoint {
   name: string;
@@ -29,6 +30,7 @@ interface RevenueChartProps {
     startColor: string;
     stopColor: string;
   };
+  loading?: boolean;
 }
 
 const RevenueChart: React.FC<RevenueChartProps> = ({
@@ -41,6 +43,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
     startColor: "#3B82F6",
     stopColor: "#3B82F6",
   },
+  loading = false,
 }) => {
   const formatValue = (value: number | string): string => {
     if (typeof value === "number") {
@@ -60,6 +63,23 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
     }
     return item;
   });
+
+  if (loading) {
+    return (
+      <Card className="animate-fade-in">
+        {title && (
+          <CardHeader>
+            <CardTitle>{title}</CardTitle>
+          </CardHeader>
+        )}
+        <CardContent>
+          <div className="h-[300px]" style={{ height: `${height}px` }}>
+            <Skeleton className="w-full h-full" />
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="animate-fade-in">

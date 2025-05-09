@@ -20,6 +20,21 @@ export interface User {
     state: string;
     zipCode: string;
   };
+  // Seller specific properties
+  description?: string;
+  cuisine?: string[];
+  businessHours?: {
+    day: string;
+    open: string;
+    close: string;
+    isClosed: boolean;
+  }[];
+  priceRange?: "low" | "medium" | "high";
+  deliveryOptions?: {
+    delivery: boolean;
+    pickup: boolean;
+    dineIn: boolean;
+  };
 }
 
 export interface UseUsersResponse {

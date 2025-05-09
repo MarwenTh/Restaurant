@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -7,621 +7,542 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import {
-  ArrowRight,
-  Bell,
-  CreditCard,
-  Globe,
-  Lock,
-  LogOut,
-  Mail,
-  MapPin,
-  Phone,
-  Save,
-  Shield,
-  Smartphone,
-  Upload,
-  User,
-} from "lucide-react";
-import { User as UserData } from "@/interface";
+import { Save, Upload, LogOut } from "lucide-react";
 import { ScrollArea } from "./ui/scroll-area";
+import useUser from "@/hooks/useUser";
+import { toast } from "sonner";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { FaSpinner } from "react-icons/fa6";
+import { HashLoader } from "react-spinners";
 
-type Props = {
-  user: UserData | null;
-  loading: boolean;
-};
+const UserSettings = () => {
+  const { user, loading, error, refetch } = useUser();
+  const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    cuisine: [] as string[],
+    address: {
+      street: "",
+      city: "",
+      state: "",
+      zipCode: "",
+    },
+    contactInfo: {
+      phone: "",
+      email: "",
+      website: "",
+    },
+    businessHours: [
+      {
+        day: "Monday",
+        open: "09:00",
+        close: "17:00",
+        isClosed: false,
+      },
+      {
+        day: "Tuesday",
+        open: "09:00",
+        close: "17:00",
+        isClosed: false,
+      },
+      {
+        day: "Wednesday",
+        open: "09:00",
+        close: "17:00",
+        isClosed: false,
+      },
+      {
+        day: "Thursday",
+        open: "09:00",
+        close: "17:00",
+        isClosed: false,
+      },
+      {
+        day: "Friday",
+        open: "09:00",
+        close: "17:00",
+        isClosed: false,
+      },
+      {
+        day: "Saturday",
+        open: "10:00",
+        close: "15:00",
+        isClosed: false,
+      },
+      {
+        day: "Sunday",
+        open: "10:00",
+        close: "15:00",
+        isClosed: true,
+      },
+    ],
+    priceRange: "medium" as "low" | "medium" | "high",
+    deliveryOptions: {
+      delivery: true,
+      pickup: true,
+      dineIn: true,
+    },
+  });
 
-const UserSettings: React.FC<Props> = ({ user, loading }) => {
-  const [profileImage, setProfileImage] = useState("/placeholder.svg");
-  const [coverImage, setCoverImage] = useState("/placeholder.svg");
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        description: user.description || "",
+        cuisine: user.cuisine || [],
+        address: user.address || {
+          street: "",
+          city: "",
+          state: "",
+          zipCode: "",
+        },
+        contactInfo: {
+          phone: user.contactInfo?.phone || "",
+          email: user.email || "",
+          website: user.contactInfo?.website || "",
+        },
+        businessHours: user.businessHours || formData.businessHours,
+        priceRange: user.priceRange || "medium",
+        deliveryOptions: user.deliveryOptions || {
+          delivery: true,
+          pickup: true,
+          dineIn: true,
+        },
+      });
+    }
+  }, [user]);
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
+        ...prev,
+        [parent]: {
+          ...(prev[parent as keyof typeof prev] as Record<string, any>),
+          [child]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleBusinessHoursChange = (
+    index: number,
+    field: string,
+    value: string | boolean,
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      businessHours: prev.businessHours.map((hour, i) =>
+        i === index ? { ...hour, [field]: value } : hour,
+      ),
+    }));
+  };
+
+  const handleDeliveryOptionChange = (option: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      deliveryOptions: {
+        ...prev.deliveryOptions,
+        [option]:
+          !prev.deliveryOptions[option as keyof typeof prev.deliveryOptions],
+      },
+    }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to upload image");
+      }
+
+      const data = await response.json();
+      await handleSubmit({ image: data.url });
+      toast.success("Profile picture updated successfully");
+    } catch (error) {
+      toast.error("Failed to upload profile picture");
+      console.error(error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = async (additionalData = {}) => {
+    try {
+      const response = await fetch("/api/user", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...formData, ...additionalData }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update profile");
+      }
+
+      toast.success(data.message || "Profile updated successfully");
+      refetch();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update profile");
+      console.error(error);
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    router.push("/");
+  };
+
+  if (loading) {
+    return (
+      <div className="h-[calc(100vh-80px)] flex justify-center items-center">
+        <HashLoader color="#ff6b00" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
-    <div>
-      <div className="h-full flex flex-col">
-        <Tabs defaultValue="profile" className="w-full h-full flex flex-col">
-          <div className="flex flex-col md:flex-row gap-6 h-[calc(100vh-80px)]">
-            <Card className="md:w-64 lg:w-72">
-              <CardContent className="p-4">
-                <div className="space-y-1 py-2">
-                  <h3 className="text-sm font-medium">Settings</h3>
-                  <TabsList
-                    className="flex flex-col items-stretch mt-2 bg-transparent justify-start h-auto p-0
-                      space-y-1"
-                  >
-                    <TabsTrigger
-                      value="profile"
-                      className="justify-start h-9 px-3 data-[state=active]:bg-[#f1f5f9] cursor-pointer"
-                    >
-                      <User className="mr-2 h-4 w-4" />
-                      Profile
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="business"
-                      className="justify-start h-9 px-3 data-[state=active]:bg-[#f1f5f9] cursor-pointer"
-                    >
-                      <Globe className="mr-2 h-4 w-4" />
-                      Business Info
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="notifications"
-                      className="justify-start h-9 px-3 data-[state=active]:bg-[#f1f5f9] cursor-pointer"
-                    >
-                      <Bell className="mr-2 h-4 w-4" />
-                      Notifications
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="payments"
-                      className="justify-start h-9 px-3 data-[state=active]:bg-[#f1f5f9] cursor-pointer"
-                    >
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Payments
-                    </TabsTrigger>
-                    <TabsTrigger
-                      value="security"
-                      className="justify-start h-9 px-3 data-[state=active]:bg-[#f1f5f9] cursor-pointer"
-                    >
-                      <Lock className="mr-2 h-4 w-4" />
-                      Security
-                    </TabsTrigger>
-                  </TabsList>
+    <div className="container mx-auto py-6 space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Profile Settings</h1>
+        <Button
+          variant="outline"
+          className="text-red-500 hover:text-red-600 hover:bg-red-50"
+          onClick={handleLogout}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          Log out
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Profile Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Profile Information</CardTitle>
+            <CardDescription>
+              Update your personal and contact information
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label>Profile Picture</Label>
+              <div className="flex items-center gap-4">
+                <div className="relative w-20 h-20 overflow-hidden rounded-full border bg-[#f1f5f9]">
+                  <img
+                    src={
+                      user?.image ||
+                      "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+                    }
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                  {uploading && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <FaSpinner
+                        className="animate-spin text-white"
+                        size={24}
+                      />
+                    </div>
+                  )}
                 </div>
-                <div className="border-t pt-4 mt-4">
+                <div>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                  />
                   <Button
+                    size="sm"
                     variant="outline"
-                    className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+                    className="mb-2"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploading}
                   >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Log out
+                    <Upload className="mr-2 h-4 w-4" />
+                    {uploading ? "Uploading..." : "Change"}
                   </Button>
+                  <p className="text-xs text-[#64748b]">
+                    JPG, PNG or GIF. 1MB max.
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
-            <div className="flex-1 overflow-hidden flex flex-col">
-              <ScrollArea className="flex-1">
-                <TabsContent value="profile" className="mt-0 h-full">
-                  <Card className="mb-6">
-                    <CardHeader>
-                      <CardTitle>Profile</CardTitle>
-                      <CardDescription>
-                        Manage your personal information
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="space-y-2">
-                        <Label>Profile Picture</Label>
-                        <div className="flex items-center gap-4">
-                          <div className="relative w-20 h-20 overflow-hidden rounded-full border bg-[#f1f5f9]">
-                            <img
-                              src={profileImage}
-                              alt="Profile"
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="mb-2"
-                            >
-                              <Upload className="mr-2 h-4 w-4" />
-                              Change
-                            </Button>
-                            <p className="text-xs text-[#64748b]">
-                              JPG, PNG or GIF. 1MB max.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="first-name">First Name</Label>
-                          <Input id="first-name" defaultValue="Mario" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="last-name">Last Name</Label>
-                          <Input id="last-name" defaultValue="Rossi" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="email">Email</Label>
-                          <Input
-                            id="email"
-                            type="email"
-                            defaultValue="mario@italianbistro.com"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">Phone</Label>
-                          <Input
-                            id="phone"
-                            type="tel"
-                            defaultValue="+1 (555) 123-4567"
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t px-6 py-4">
-                      <Button>
-                        <Save className="mr-2 h-4 w-4" />
-                        Save Changes
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="business" className="mt-0 h-full">
-                  <Card className="">
-                    <CardHeader>
-                      <CardTitle>Business Information</CardTitle>
-                      <CardDescription>
-                        Update your restaurant details
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="space-y-2">
-                        <Label>Cover Image</Label>
-                        <div className="w-full h-32 rounded-md border bg-[#f1f5f9] overflow-hidden relative">
-                          <img
-                            src={coverImage}
-                            alt="Restaurant"
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute bottom-2 right-2">
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              className="bg-white/80 hover:bg-white"
-                            >
-                              <Upload className="mr-2 h-4 w-4" />
-                              Upload Image
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="restaurant-name">Restaurant Name</Label>
-                        <Input
-                          id="restaurant-name"
-                          defaultValue="Mario's Italian Bistro"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="restaurant-description">
-                          Description
-                        </Label>
-                        <Textarea
-                          id="restaurant-description"
-                          className="min-h-32"
-                          defaultValue="Authentic Italian cuisine prepared with love and tradition. Serving the community since 1998 with family recipes passed down through generations."
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="cuisine-types">Cuisine Types</Label>
-                        <div className="flex flex-wrap gap-2">
-                          <Badge className="px-3 py-1 bg-[#FF9F43]/20 text-[#FF9F43] hover:bg-[#FF9F43]/30 cursor-pointer">
-                            Italian
-                          </Badge>
-                          <Badge className="px-3 py-1 bg-blue-100 text-blue-700 hover:bg-blue-200 cursor-pointer">
-                            Mediterranean
-                          </Badge>
-                          <Badge className="px-3 py-1 bg-green-100 text-green-700 hover:bg-green-200 cursor-pointer">
-                            Vegetarian
-                          </Badge>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-6 text-xs"
-                          >
-                            + Add Cuisine
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="address">Address</Label>
-                          <Input id="address" defaultValue="123 Main Street" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="city">City</Label>
-                          <Input id="city" defaultValue="New York" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="state">State</Label>
-                          <Input id="state" defaultValue="NY" />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="zip">ZIP Code</Label>
-                          <Input id="zip" defaultValue="10001" />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Business Hours</Label>
-                        <div className="space-y-3">
-                          <div className="flex justify-between items-center">
-                            <div className="font-medium">Monday - Friday</div>
-                            <div>11:00 AM - 10:00 PM</div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-[#00CFE8]"
-                            >
-                              Edit
-                            </Button>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="font-medium">Saturday</div>
-                            <div>10:00 AM - 11:00 PM</div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-[#00CFE8]"
-                            >
-                              Edit
-                            </Button>
-                          </div>
-                          <div className="flex justify-between items-center">
-                            <div className="font-medium">Sunday</div>
-                            <div>12:00 PM - 9:00 PM</div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-[#00CFE8]"
-                            >
-                              Edit
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t px-6 py-4">
-                      <Button>
-                        <Save className="mr-2 h-4 w-4" />
-                        Save Changes
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="notifications" className="mt-0 h-full">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Notification Preferences</CardTitle>
-                      <CardDescription>
-                        Manage how you receive notifications
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="space-y-4">
-                        <h3 className="text-sm font-medium">New Orders</h3>
-                        <div className="flex items-center justify-between py-2">
-                          <div className="flex items-center space-x-3">
-                            <Smartphone className="h-5 w-5 text-gray-400" />
-                            <Label htmlFor="push-new-order" className="flex-1">
-                              Push notifications
-                            </Label>
-                          </div>
-                          <Switch
-                            className="cursor-pointer"
-                            id="push-new-order"
-                            defaultChecked
-                          />
-                        </div>
-                        <div className="flex items-center justify-between py-2">
-                          <div className="flex items-center space-x-3">
-                            <Mail className="h-5 w-5 text-gray-400" />
-                            <Label htmlFor="email-new-order" className="flex-1">
-                              Email notifications
-                            </Label>
-                          </div>
-                          <Switch
-                            className="cursor-pointer"
-                            id="email-new-order"
-                            defaultChecked
-                          />
-                        </div>
-                        <div className="flex items-center justify-between py-2">
-                          <div className="flex items-center space-x-3">
-                            <Phone className="h-5 w-5 text-gray-400" />
-                            <Label htmlFor="sms-new-order" className="flex-1">
-                              SMS notifications
-                            </Label>
-                          </div>
-                          <Switch
-                            className="cursor-pointer"
-                            id="sms-new-order"
-                            defaultChecked
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <h3 className="text-sm font-medium">
-                          Reviews & Ratings
-                        </h3>
-                        <div className="flex items-center justify-between py-2">
-                          <div className="flex items-center space-x-3">
-                            <Smartphone className="h-5 w-5 text-gray-400" />
-                            <Label htmlFor="push-reviews" className="flex-1">
-                              Push notifications
-                            </Label>
-                          </div>
-                          <Switch
-                            className="cursor-pointer"
-                            id="push-reviews"
-                            defaultChecked
-                          />
-                        </div>
-                        <div className="flex items-center justify-between py-2">
-                          <div className="flex items-center space-x-3">
-                            <Mail className="h-5 w-5 text-gray-400" />
-                            <Label htmlFor="email-reviews" className="flex-1">
-                              Email notifications
-                            </Label>
-                          </div>
-                          <Switch
-                            className="cursor-pointer"
-                            id="email-reviews"
-                            defaultChecked
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <h3 className="text-sm font-medium">
-                          Marketing & Promotions
-                        </h3>
-                        <div className="flex items-center justify-between py-2">
-                          <div className="flex items-center space-x-3">
-                            <Mail className="h-5 w-5 text-gray-400" />
-                            <div className="flex-1">
-                              <Label
-                                htmlFor="email-marketing"
-                                className="block"
-                              >
-                                Email notifications
-                              </Label>
-                              <p className="text-xs text-gray-500">
-                                Receive tips, updates and offers
-                              </p>
-                            </div>
-                          </div>
-                          <Switch
-                            className="cursor-pointer"
-                            id="email-marketing"
-                          />
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t px-6 py-4">
-                      <Button>
-                        <Save className="mr-2 h-4 w-4" />
-                        Save Preferences
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="payments" className="mt-0 h-full">
-                  <Card className="mb-6">
-                    <CardHeader>
-                      <CardTitle>Payment Methods</CardTitle>
-                      <CardDescription>
-                        Manage your payment information
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
-                        <div className="rounded-lg border p-4 flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="bg-blue-500 text-white p-2 rounded">
-                              <CreditCard className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <p className="font-medium">Visa ending in 4242</p>
-                              <p className="text-sm text-gray-500">
-                                Expires 12/2025
-                              </p>
-                            </div>
-                          </div>
-                          <Badge>Primary</Badge>
-                        </div>
-
-                        <div className="rounded-lg border p-4 flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="bg-red-500 text-white p-2 rounded">
-                              <CreditCard className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <p className="font-medium">
-                                Mastercard ending in 8353
-                              </p>
-                              <p className="text-sm text-gray-500">
-                                Expires 08/2024
-                              </p>
-                            </div>
-                          </div>
-                          <Button variant="ghost" size="sm">
-                            Set as Primary
-                          </Button>
-                        </div>
-
-                        <Button variant="outline" className="w-full mt-4">
-                          <CreditCard className="mr-2 h-4 w-4" />
-                          Add Payment Method
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Billing Information</CardTitle>
-                      <CardDescription>
-                        Manage your billing address
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                      <div className="rounded-lg border p-4">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-center space-x-4">
-                            <MapPin className="h-5 w-5 text-gray-400" />
-                            <div>
-                              <p className="font-medium">Business Address</p>
-                              <p className="text-sm text-gray-500">
-                                Mario's Italian Bistro
-                                <br />
-                                123 Main Street
-                                <br />
-                                New York, NY 10001
-                                <br />
-                                United States
-                              </p>
-                            </div>
-                          </div>
-                          <Button variant="ghost" size="sm">
-                            Edit
-                          </Button>
-                        </div>
-                      </div>
-
-                      <div className="rounded-lg border p-4">
-                        <div className="flex items-center justify-between mb-4">
-                          <p className="font-medium">Tax Information</p>
-                          <Button variant="ghost" size="sm">
-                            Edit
-                          </Button>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div>
-                            <p className="text-sm text-gray-500">
-                              Business Type
-                            </p>
-                            <p className="text-sm">LLC</p>
-                          </div>
-                          <div>
-                            <p className="text-sm text-gray-500">Tax ID</p>
-                            <p className="text-sm">XX-XXXXXXX</p>
-                          </div>
-                        </div>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t px-6 py-4">
-                      <Button>
-                        <ArrowRight className="mr-2 h-4 w-4" />
-                        View Billing History
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </TabsContent>
-
-                <TabsContent value="security" className="mt-0 h-full">
-                  <Card className="mb-6">
-                    <CardHeader>
-                      <CardTitle>Password</CardTitle>
-                      <CardDescription>Change your password</CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="current-password">
-                          Current Password
-                        </Label>
-                        <Input id="current-password" type="password" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="new-password">New Password</Label>
-                        <Input id="new-password" type="password" />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="confirm-password">
-                          Confirm New Password
-                        </Label>
-                        <Input id="confirm-password" type="password" />
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t px-6 py-4">
-                      <Button>Update Password</Button>
-                    </CardFooter>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Two-Factor Authentication</CardTitle>
-                      <CardDescription>
-                        Add an extra layer of security to your account
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="flex items-center justify-between py-2">
-                        <div className="flex items-center space-x-3">
-                          <Shield className="h-5 w-5 text-gray-400" />
-                          <div className="flex-1">
-                            <Label htmlFor="two-factor" className="block">
-                              Two-factor authentication
-                            </Label>
-                            <p className="text-xs text-gray-500">
-                              Secure your account with 2FA
-                            </p>
-                          </div>
-                        </div>
-                        <Switch className="cursor-pointer" id="two-factor" />
-                      </div>
-
-                      <div className="flex items-center justify-between py-2">
-                        <div className="flex items-center space-x-3">
-                          <Smartphone className="h-5 w-5 text-gray-400" />
-                          <div className="flex-1">
-                            <Label htmlFor="sms-auth" className="block">
-                              SMS Authentication
-                            </Label>
-                            <p className="text-xs text-gray-500">
-                              Use your phone as an authentication method
-                            </p>
-                          </div>
-                        </div>
-                        <Switch className="cursor-pointer" id="sms-auth" />
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t px-6 py-4">
-                      <Button variant="outline">Security Settings</Button>
-                    </CardFooter>
-                  </Card>
-                </TabsContent>
-              </ScrollArea>
+              </div>
             </div>
-          </div>
-        </Tabs>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  name="contactInfo.email"
+                  type="email"
+                  value={formData.contactInfo.email}
+                  onChange={handleInputChange}
+                  disabled
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  name="contactInfo.phone"
+                  type="tel"
+                  value={formData.contactInfo.phone}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="website">Website</Label>
+                <Input
+                  id="website"
+                  name="contactInfo.website"
+                  type="url"
+                  value={formData.contactInfo.website}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="border-t px-6 py-4">
+            <Button onClick={() => handleSubmit()}>
+              <Save className="mr-2 h-4 w-4" />
+              Save Changes
+            </Button>
+          </CardFooter>
+        </Card>
+
+        {/* Business Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Business Information</CardTitle>
+            <CardDescription>Update your restaurant details</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                className="min-h-32"
+                value={formData.description}
+                onChange={handleInputChange}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="street">Address</Label>
+                <Input
+                  id="street"
+                  name="address.street"
+                  value={formData.address.street}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="city">City</Label>
+                <Input
+                  id="city"
+                  name="address.city"
+                  value={formData.address.city}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="state">State</Label>
+                <Input
+                  id="state"
+                  name="address.state"
+                  value={formData.address.state}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="zipCode">ZIP Code</Label>
+                <Input
+                  id="zipCode"
+                  name="address.zipCode"
+                  value={formData.address.zipCode}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Business Hours</Label>
+              <div className="space-y-3">
+                {formData.businessHours.map((hours, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center"
+                  >
+                    <div className="font-medium">{hours.day}</div>
+                    <div className="flex items-center gap-2">
+                      <Input
+                        type="time"
+                        value={hours.open}
+                        onChange={(e) =>
+                          handleBusinessHoursChange(
+                            index,
+                            "open",
+                            e.target.value,
+                          )
+                        }
+                        className="w-32"
+                      />
+                      <span>to</span>
+                      <Input
+                        type="time"
+                        value={hours.close}
+                        onChange={(e) =>
+                          handleBusinessHoursChange(
+                            index,
+                            "close",
+                            e.target.value,
+                          )
+                        }
+                        className="w-32"
+                      />
+                      <Switch
+                        checked={!hours.isClosed}
+                        onCheckedChange={(checked) =>
+                          handleBusinessHoursChange(index, "isClosed", !checked)
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Delivery Options</Label>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label>Delivery</Label>
+                  <Switch
+                    checked={formData.deliveryOptions.delivery}
+                    onCheckedChange={() =>
+                      handleDeliveryOptionChange("delivery")
+                    }
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label>Pickup</Label>
+                  <Switch
+                    checked={formData.deliveryOptions.pickup}
+                    onCheckedChange={() => handleDeliveryOptionChange("pickup")}
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Label>Dine-in</Label>
+                  <Switch
+                    checked={formData.deliveryOptions.dineIn}
+                    onCheckedChange={() => handleDeliveryOptionChange("dineIn")}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Price Range</Label>
+              <div className="flex gap-2">
+                <Button
+                  variant={
+                    formData.priceRange === "low" ? "default" : "outline"
+                  }
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      priceRange: "low",
+                    }))
+                  }
+                >
+                  Low
+                </Button>
+                <Button
+                  variant={
+                    formData.priceRange === "medium" ? "default" : "outline"
+                  }
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      priceRange: "medium",
+                    }))
+                  }
+                >
+                  Medium
+                </Button>
+                <Button
+                  variant={
+                    formData.priceRange === "high" ? "default" : "outline"
+                  }
+                  onClick={() =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      priceRange: "high",
+                    }))
+                  }
+                >
+                  High
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter className="border-t px-6 py-4">
+            <Button onClick={() => handleSubmit()}>
+              <Save className="mr-2 h-4 w-4" />
+              Save Changes
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );

@@ -1,14 +1,6 @@
 "use client";
 import React from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   BarChart,
   Bar,
@@ -21,437 +13,502 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
 } from "recharts";
-import {
-  Download,
-  Calendar,
-  TrendingUp,
-  Users,
-  ShoppingCart,
-  Star,
-  MapPin,
-} from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import useAnalyticsOverview from "@/hooks/useAnalyticsOverview";
+import useOrderAnalytics from "@/hooks/useOrderAnalytics";
+import useRevenueAnalytics from "@/hooks/useRevenueAnalytics";
+import { formatCurrency } from "@/lib/utils";
+import { motion } from "framer-motion";
 
-// Sample data for charts
-const monthlySales = [
-  { name: "Jan", sales: 4000 },
-  { name: "Feb", sales: 3000 },
-  { name: "Mar", sales: 5000 },
-  { name: "Apr", sales: 2780 },
-  { name: "May", sales: 1890 },
-  { name: "Jun", sales: 2390 },
-  { name: "Jul", sales: 3490 },
-  { name: "Aug", sales: 4000 },
-  { name: "Sep", sales: 3000 },
-  { name: "Oct", sales: 2000 },
-  { name: "Nov", sales: 2780 },
-  { name: "Dec", sales: 3890 },
-];
+// Modern color palette inspired by Dribbble
+const COLORS = {
+  primary: "#6366F1", // Indigo
+  secondary: "#10B981", // Emerald
+  accent: "#F59E0B", // Amber
+  danger: "#EF4444", // Red
+  success: "#22C55E", // Green
+  warning: "#F97316", // Orange
+  info: "#3B82F6", // Blue
+  chart: {
+    bar: "#6366F1",
+    line: "#10B981",
+    pie: ["#6366F1", "#10B981", "#F59E0B", "#EF4444", "#22C55E"],
+  },
+};
 
-const dailyOrders = [
-  { name: "Mon", orders: 24 },
-  { name: "Tue", orders: 32 },
-  { name: "Wed", orders: 28 },
-  { name: "Thu", orders: 38 },
-  { name: "Fri", orders: 52 },
-  { name: "Sat", orders: 64 },
-  { name: "Sun", orders: 48 },
-];
-
-const categoryDistribution = [
-  { name: "Pizza", value: 35 },
-  { name: "Pasta", value: 25 },
-  { name: "Desserts", value: 15 },
-  { name: "Appetizers", value: 15 },
-  { name: "Beverages", value: 10 },
-];
-
-const COLORS = ["#FF8042", "#0088FE", "#00C49F", "#FFBB28", "#FF0000"];
-
-const hourlyActivity = [
-  { hour: "12am", customers: 5 },
-  { hour: "1am", customers: 3 },
-  { hour: "2am", customers: 2 },
-  { hour: "3am", customers: 0 },
-  { hour: "4am", customers: 0 },
-  { hour: "5am", customers: 0 },
-  { hour: "6am", customers: 2 },
-  { hour: "7am", customers: 5 },
-  { hour: "8am", customers: 8 },
-  { hour: "9am", customers: 12 },
-  { hour: "10am", customers: 15 },
-  { hour: "11am", customers: 28 },
-  { hour: "12pm", customers: 35 },
-  { hour: "1pm", customers: 38 },
-  { hour: "2pm", customers: 25 },
-  { hour: "3pm", customers: 20 },
-  { hour: "4pm", customers: 18 },
-  { hour: "5pm", customers: 22 },
-  { hour: "6pm", customers: 35 },
-  { hour: "7pm", customers: 42 },
-  { hour: "8pm", customers: 38 },
-  { hour: "9pm", customers: 30 },
-  { hour: "10pm", customers: 22 },
-  { hour: "11pm", customers: 12 },
-];
-
-const customerDemographics = [
-  { name: "18-24", value: 15 },
-  { name: "25-34", value: 30 },
-  { name: "35-44", value: 25 },
-  { name: "45-54", value: 15 },
-  { name: "55+", value: 15 },
-];
-
-const locationData = [
-  { name: "Downtown", value: 35 },
-  { name: "Uptown", value: 25 },
-  { name: "Midtown", value: 20 },
-  { name: "Suburbs", value: 15 },
-  { name: "Other", value: 5 },
-];
-
-const topItems = [
-  { name: "Margherita Pizza", orders: 120, rating: 4.8 },
-  { name: "Pasta Carbonara", orders: 95, rating: 4.7 },
-  { name: "Tiramisu", orders: 85, rating: 4.9 },
-  { name: "Garlic Bread", orders: 75, rating: 4.5 },
-  { name: "Caesar Salad", orders: 60, rating: 4.6 },
-];
+const fadeIn = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 },
+};
 
 const SellerAnalytics: React.FC = () => {
+  const {
+    totalOrders,
+    orderPercentageChange,
+    totalSales,
+    salesPercentageChange,
+    uniqueCustomers,
+    customerPercentageChange,
+    averageRating,
+    ratingChange,
+    loading: overviewLoading,
+  } = useAnalyticsOverview();
+
+  const {
+    dailyOrders,
+    statusDistribution,
+    averageOrderValue,
+    hourlyOrders,
+    loading: ordersLoading,
+  } = useOrderAnalytics();
+
+  const {
+    dailyRevenue,
+    totalRevenue,
+    revenuePercentageChange,
+    revenueByPaymentMethod,
+    revenueByTimeOfDay,
+    loading: revenueLoading,
+  } = useRevenueAnalytics();
+
+  const renderSkeleton = () => (
+    <div className="space-y-4">
+      <Skeleton className="h-[300px] w-full" />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Skeleton className="h-[200px] w-full" />
+        <Skeleton className="h-[200px] w-full" />
+      </div>
+    </div>
+  );
+
+  if (overviewLoading || ordersLoading || revenueLoading) {
+    return renderSkeleton();
+  }
+
+  const statusData = Object.entries(statusDistribution).map(
+    ([status, count]) => ({
+      name: status,
+      value: count,
+    }),
+  );
+
+  const paymentMethodData = Object.entries(revenueByPaymentMethod).map(
+    ([method, amount]) => ({
+      name: method,
+      value: amount,
+    }),
+  );
+
   return (
-    <div>
-      <div className="animate-fade-in">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <Card className="bg-gradient-to-br from-[#FF9F43]/20 to-[#FF9F43]/10">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    Total Orders
-                  </p>
-                  <h3 className="text-2xl font-bold">1,245</h3>
-                  <p className="text-xs text-green-600 mt-1">
-                    +15.8% from last month
-                  </p>
-                </div>
-                <div className="p-3 rounded-full bg-[#FF9F43]/30">
-                  <ShoppingCart className="text-[#FF9F43]" size={20} />
-                </div>
+    <motion.div
+      initial="initial"
+      animate="animate"
+      variants={fadeIn}
+      className="space-y-6"
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <motion.div variants={fadeIn} transition={{ delay: 0.1 }}>
+          <Card
+            className="bg-gradient-to-br from-indigo-50 to-indigo-100 dark:from-indigo-950
+              dark:to-indigo-900"
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                Total Orders
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-indigo-700 dark:text-indigo-300">
+                {totalOrders}
               </div>
+              <p
+                className={`text-xs
+                  ${orderPercentageChange >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+              >
+                {orderPercentageChange >= 0 ? "+" : ""}
+                {orderPercentageChange.toFixed(1)}% from last month
+              </p>
             </CardContent>
           </Card>
+        </motion.div>
 
-          <Card className="bg-gradient-to-br from-blue-100 to-blue-50">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    Total Sales
-                  </p>
-                  <h3 className="text-2xl font-bold">$23,456</h3>
-                  <p className="text-xs text-green-600 mt-1">
-                    +8.2% from last month
-                  </p>
-                </div>
-                <div className="p-3 rounded-full bg-blue-200">
-                  <TrendingUp className="text-blue-600" size={20} />
-                </div>
+        <motion.div variants={fadeIn} transition={{ delay: 0.2 }}>
+          <Card
+            className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-950
+              dark:to-emerald-900"
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-emerald-600 dark:text-emerald-400">
+                Total Revenue
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                {formatCurrency(totalRevenue)}
               </div>
+              <p
+                className={`text-xs
+                  ${revenuePercentageChange >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+              >
+                {revenuePercentageChange >= 0 ? "+" : ""}
+                {revenuePercentageChange.toFixed(1)}% from last month
+              </p>
             </CardContent>
           </Card>
+        </motion.div>
 
-          <Card className="bg-gradient-to-br from-green-100 to-green-50">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    Total Customers
-                  </p>
-                  <h3 className="text-2xl font-bold">842</h3>
-                  <p className="text-xs text-green-600 mt-1">
-                    +12.5% from last month
-                  </p>
-                </div>
-                <div className="p-3 rounded-full bg-green-200">
-                  <Users className="text-green-600" size={20} />
-                </div>
+        <motion.div variants={fadeIn} transition={{ delay: 0.3 }}>
+          <Card
+            className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-950
+              dark:to-amber-900"
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                Unique Customers
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+                {uniqueCustomers}
               </div>
+              <p
+                className={`text-xs
+                  ${customerPercentageChange >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+              >
+                {customerPercentageChange >= 0 ? "+" : ""}
+                {customerPercentageChange.toFixed(1)}% from last month
+              </p>
             </CardContent>
           </Card>
+        </motion.div>
 
-          <Card className="bg-gradient-to-br from-yellow-100 to-yellow-50">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-1">
-                    Average Rating
-                  </p>
-                  <h3 className="text-2xl font-bold">4.8/5</h3>
-                  <p className="text-xs text-green-600 mt-1">
-                    +0.2 from last month
-                  </p>
-                </div>
-                <div className="p-3 rounded-full bg-yellow-200">
-                  <Star className="text-yellow-600" size={20} />
-                </div>
+        <motion.div variants={fadeIn} transition={{ delay: 0.4 }}>
+          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                Average Rating
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-blue-700 dark:text-blue-300">
+                {averageRating.toFixed(1)}
               </div>
+              <p
+                className={`text-xs
+                  ${ratingChange >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}
+              >
+                {ratingChange >= 0 ? "+" : ""}
+                {ratingChange.toFixed(1)} from last month
+              </p>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Sales Trend</CardTitle>
-                <CardDescription>Monthly sales overview</CardDescription>
-              </div>
-              <Tabs defaultValue="1y">
-                <TabsList>
-                  <TabsTrigger value="1m">1M</TabsTrigger>
-                  <TabsTrigger value="6m">6M</TabsTrigger>
-                  <TabsTrigger value="1y">1Y</TabsTrigger>
-                </TabsList>
-              </Tabs>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <motion.div variants={fadeIn} transition={{ delay: 0.5 }}>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                Daily Orders
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthlySales}>
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip formatter={(value) => [`$${value}`, "Sales"]} />
-                    <Bar dataKey="sales" fill="#F97316" radius={[4, 4, 0, 0]} />
+                  <BarChart data={dailyOrders}>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#374151"
+                      opacity={0.1}
+                    />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("en-US", {
+                          day: "numeric",
+                        })
+                      }
+                      stroke="#6B7280"
+                    />
+                    <YAxis stroke="#6B7280" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        borderRadius: "8px",
+                        border: "none",
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                      }}
+                      labelFormatter={(date) =>
+                        new Date(date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      }
+                    />
+                    <Bar
+                      dataKey="orders"
+                      fill={COLORS.chart.bar}
+                      radius={[4, 4, 0, 0]}
+                      animationDuration={2000}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
+        </motion.div>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Daily Orders</CardTitle>
-                <CardDescription>Orders by day of week</CardDescription>
-              </div>
-              <Button variant="outline" size="sm" className="gap-2">
-                <Download size={14} /> Export
-              </Button>
+        <motion.div variants={fadeIn} transition={{ delay: 0.6 }}>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                Daily Revenue
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={dailyOrders}>
-                    <CartesianGrid strokeDasharray="3 3" opacity={0.2} />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
+                  <LineChart data={dailyRevenue}>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#374151"
+                      opacity={0.1}
+                    />
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("en-US", {
+                          day: "numeric",
+                        })
+                      }
+                      stroke="#6B7280"
+                    />
+                    <YAxis
+                      tickFormatter={(value) => formatCurrency(value)}
+                      stroke="#6B7280"
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        borderRadius: "8px",
+                        border: "none",
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                      }}
+                      labelFormatter={(date) =>
+                        new Date(date).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })
+                      }
+                      formatter={(value: number) => formatCurrency(value)}
+                    />
                     <Line
                       type="monotone"
-                      dataKey="orders"
-                      stroke="#3B82F6"
+                      dataKey="revenue"
+                      stroke={COLORS.chart.line}
                       strokeWidth={2}
+                      dot={{ fill: COLORS.chart.line, strokeWidth: 2 }}
+                      animationDuration={2000}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <Card>
+        <motion.div variants={fadeIn} transition={{ delay: 0.7 }}>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
-              <CardTitle>Category Distribution</CardTitle>
-              <CardDescription>Sales by food category</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categoryDistribution}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name}: ${(percent * 100).toFixed(0)}%`
-                      }
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {categoryDistribution.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value) => [`${value}%`, "Percentage"]}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Demographics</CardTitle>
-              <CardDescription>Age distribution of customers</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={customerDemographics}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name}: ${(percent * 100).toFixed(0)}%`
-                      }
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {customerDemographics.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value) => [`${value}%`, "Percentage"]}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Customer Locations</CardTitle>
-              <CardDescription>Where orders are coming from</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[250px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={locationData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) =>
-                        `${name}: ${(percent * 100).toFixed(0)}%`
-                      }
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {locationData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      formatter={(value) => [`${value}%`, "Percentage"]}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-4 flex items-center justify-center">
-                <Button variant="outline" size="sm" className="gap-2">
-                  <MapPin size={14} /> View Map
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Hourly Activity</CardTitle>
-              <CardDescription>Customer activity by hour</CardDescription>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                Order Status Distribution
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={hourlyActivity}>
+                  <PieChart>
+                    <Pie
+                      data={statusData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name} ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      animationDuration={2000}
+                    >
+                      {statusData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            COLORS.chart.pie[index % COLORS.chart.pie.length]
+                          }
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        borderRadius: "8px",
+                        border: "none",
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div variants={fadeIn} transition={{ delay: 0.8 }}>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                Revenue by Payment Method
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={paymentMethodData}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) =>
+                        `${name} ${(percent * 100).toFixed(0)}%`
+                      }
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="value"
+                      animationDuration={2000}
+                    >
+                      {paymentMethodData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={
+                            COLORS.chart.pie[index % COLORS.chart.pie.length]
+                          }
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        borderRadius: "8px",
+                        border: "none",
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                      }}
+                      formatter={(value: number) => formatCurrency(value)}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div variants={fadeIn} transition={{ delay: 0.9 }}>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
+            <CardHeader>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                Peak Hours
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={hourlyOrders}>
                     <CartesianGrid
                       strokeDasharray="3 3"
-                      opacity={0.2}
-                      vertical={false}
+                      stroke="#374151"
+                      opacity={0.1}
                     />
-                    <XAxis dataKey="hour" />
-                    <YAxis />
+                    <XAxis
+                      dataKey="hour"
+                      tickFormatter={(hour) => `${hour}:00`}
+                      stroke="#6B7280"
+                    />
+                    <YAxis stroke="#6B7280" />
                     <Tooltip
-                      formatter={(value) => [`${value} customers`, "Activity"]}
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        borderRadius: "8px",
+                        border: "none",
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                      }}
                     />
                     <Bar
-                      dataKey="customers"
-                      fill="#22C55E"
+                      dataKey="orders"
+                      fill={COLORS.chart.bar}
                       radius={[4, 4, 0, 0]}
+                      animationDuration={2000}
                     />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
+        </motion.div>
 
-          <Card>
+        <motion.div variants={fadeIn} transition={{ delay: 1 }}>
+          <Card className="hover:shadow-lg transition-shadow duration-300">
             <CardHeader>
-              <CardTitle>Top Performing Items</CardTitle>
-              <CardDescription>Most ordered items and ratings</CardDescription>
+              <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                Revenue by Time of Day
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {topItems.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center">
-                      <div
-                        className="w-8 h-8 rounded-full bg-[#FF9F43]/20 text-[#FF9F43] flex items-center
-                          justify-center font-bold"
-                      >
-                        {index + 1}
-                      </div>
-                      <div className="ml-3">
-                        <p className="font-medium">{item.name}</p>
-                        <div className="flex items-center text-xs text-gray-500">
-                          <ShoppingCart size={12} className="mr-1" />{" "}
-                          {item.orders} orders
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center bg-yellow-100 px-2 py-1 rounded-full">
-                      <Star size={14} className="text-yellow-500 mr-1" />
-                      <span className="text-sm font-medium">{item.rating}</span>
-                    </div>
-                  </div>
-                ))}
+              <div className="h-[300px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={revenueByTimeOfDay}>
+                    <CartesianGrid
+                      strokeDasharray="3 3"
+                      stroke="#374151"
+                      opacity={0.1}
+                    />
+                    <XAxis
+                      dataKey="hour"
+                      tickFormatter={(hour) => `${hour}:00`}
+                      stroke="#6B7280"
+                    />
+                    <YAxis
+                      tickFormatter={(value) => formatCurrency(value)}
+                      stroke="#6B7280"
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "rgba(255, 255, 255, 0.9)",
+                        borderRadius: "8px",
+                        border: "none",
+                        boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+                      }}
+                      formatter={(value: number) => formatCurrency(value)}
+                    />
+                    <Bar
+                      dataKey="revenue"
+                      fill={COLORS.chart.line}
+                      radius={[4, 4, 0, 0]}
+                      animationDuration={2000}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </CardContent>
           </Card>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

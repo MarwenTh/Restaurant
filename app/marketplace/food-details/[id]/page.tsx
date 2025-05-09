@@ -55,7 +55,7 @@ const Page = (props: Props) => {
     <>
       <FoodDetails id={id as string} foodItem={foodItem} />
       <FoodDescription id={id as string} foodItem={foodItem} />
-      <ReviewSection sellerId={foodItem._id} />
+      <ReviewSection sellerId={foodItem.seller?._id} />
       <RecommendedFoods foodItem={menuItems} />
     </>
   );

@@ -91,15 +91,10 @@ export const DesktopSidebar = ({
     <>
       <motion.div
         className={cn(
-          `h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-800
-          w-[60px] flex-shrink-0`,
+          `h-full px-4 py-4 hidden md:flex md:flex-col bg-neutral-100 dark:bg-neutral-80020
+          w-[150px] flex-shrink-0`,
           className,
         )}
-        animate={{
-          width: animate ? (open ? "200px" : "60px") : "700px",
-        }}
-        onMouseEnter={() => setOpen(true)}
-        onMouseLeave={() => setOpen(false)}
         {...props}
       >
         {children}
@@ -132,9 +127,6 @@ export const MobileSidebar = ({
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ x: "-100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
               transition={{
                 duration: 0.3,
                 ease: "easeInOut",
@@ -192,10 +184,6 @@ export const SidebarLink = ({
       </span>
 
       <motion.span
-        animate={{
-          display: animate ? (open ? "inline-block" : "none") : "inline-block",
-          opacity: animate ? (open ? 1 : 0) : 1,
-        }}
         className={` text-sm group-hover/sidebar:translate-x-1 transition duration-150
           whitespace-pre inline-block !p-0 !m-0 ${
           pathname === link.href

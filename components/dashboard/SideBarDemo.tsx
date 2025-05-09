@@ -97,21 +97,13 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
       href: "/dashboard/settings",
       icon: <Settings className="h-5 w-5 shrink-0" />,
     },
-    user?.role === "Seller" && {
-      label: "Earnings",
-      href: "/dashboard/earnings",
-      icon: <FaSackDollar className="h-5 w-5 shrink-0" />,
-    },
+
     user?.role === "Seller" && {
       label: "Analytics",
       href: "/dashboard/analytics",
       icon: <IoAnalyticsSharp className="h-5 w-5 shrink-0" />,
     },
-    user?.role === "Seller" && {
-      label: "Schedule",
-      href: "/dashboard/schedule",
-      icon: <CiCalendar className="h-5 w-5 shrink-0" />,
-    },
+
     user?.role === "Seller" && {
       label: "Reviews",
       href: "/dashboard/reviews",

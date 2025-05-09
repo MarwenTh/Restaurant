@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatCurrency } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export interface Order {
   id: string;
@@ -29,6 +30,7 @@ interface OrdersTableProps {
   orders: Order[];
   title?: string;
   onViewOrder?: (id: string) => void;
+  loading?: boolean;
 }
 
 const statusColors = {
@@ -42,6 +44,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
   orders,
   title = "Recent Orders",
   onViewOrder,
+  loading = false,
 }) => {
   const navigate = useRouter();
 
@@ -54,6 +57,25 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
     }
   };
 
+  if (loading) {
+    return (
+      <Card className="animate-fade-in">
+        <CardHeader>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[...Array(5)].map((_, index) => (
+              <div key={index} className="flex items-center space-x-4">
+                <Skeleton className="h-12 w-full" />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="animate-fade-in">
       <CardHeader>
@@ -65,7 +87,6 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
             <TableRow>
               <TableHead>Order ID</TableHead>
               <TableHead>Customer</TableHead>
-              <TableHead>Items</TableHead>
               <TableHead>Total</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
@@ -81,7 +102,6 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
                 >
                   <TableCell className="font-medium">#{order.id}</TableCell>
                   <TableCell>{order.customer}</TableCell>
-                  <TableCell>{order.items}</TableCell>
                   <TableCell>{formatCurrency(order.total)}</TableCell>
                   <TableCell>
                     <Badge

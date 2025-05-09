@@ -18,6 +18,14 @@ import OrdersTable from "../OrdersTable";
 import MetricsCard from "../MetricsCard";
 import StatCard from "@/components/StatCard";
 import { formatCurrency } from "@/lib/utils";
+import useTodayOrders from "@/hooks/useTodayOrders";
+import useTodayRevenue from "@/hooks/useTodayRevenue";
+import useRating from "@/hooks/useRating";
+import useWeeklyRevenue from "@/hooks/useWeeklyRevenue";
+import useRecentOrders from "@/hooks/useRecentOrders";
+import useRecentReviews from "@/hooks/useRecentReviews";
+import { CiMoneyBill } from "react-icons/ci";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const revenueData = [
   { name: "Mon", revenue: 150 },
@@ -138,38 +146,39 @@ const metrics = [
 ];
 
 const SellerOverview: React.FC = () => {
+  const { todayOrders, percentageChange: orderPercentageChange } =
+    useTodayOrders();
+  const { todayRevenue, percentageChange: revenuePercentageChange } =
+    useTodayRevenue();
+  const {
+    rating,
+    percentageChange: ratingPercentageChange,
+    totalReviews,
+  } = useRating();
+  const { revenueData, loading: revenueLoading } = useWeeklyRevenue();
+  const { orders, loading: ordersLoading } = useRecentOrders();
+  const { reviews, loading: reviewsLoading } = useRecentReviews();
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <StatCard
           title="Today's Orders"
-          value="24"
-          icon={<ShoppingCart size={24} />}
-          percentageChange={15.8}
-          color="orange"
-          delay={0}
-        />
-        <StatCard
-          title="Processing Time"
-          value="18 min"
-          icon={<Clock size={24} />}
-          percentageChange={-12.4}
-          color="green"
-          delay={1}
+          value={todayOrders}
+          icon={<ShoppingBag size={24} />}
+          percentageChange={orderPercentageChange}
         />
         <StatCard
           title="Today's Revenue"
-          value={formatCurrency(842.5)}
-          icon={<CircleDollarSign size={24} />}
-          percentageChange={23.6}
-          color="blue"
-          delay={2}
+          value={`$${todayRevenue.toFixed(2)}`}
+          icon={<CiMoneyBill size={24} />}
+          percentageChange={revenuePercentageChange}
         />
         <StatCard
           title="Rating"
-          value="4.8/5"
+          value={`${rating}/5`}
           icon={<Star size={24} />}
-          percentageChange={4.2}
+          percentageChange={ratingPercentageChange}
           color="yellow"
           delay={3}
         />
@@ -177,35 +186,11 @@ const SellerOverview: React.FC = () => {
       <main className="flex-1">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
           <div className="lg:col-span-2">
-            <RevenueChart data={revenueData} title="This Week's Revenue" />
-          </div>
-          <div className="lg:col-span-1">
-            <Card className="h-full animate-fade-in">
-              <CardHeader>
-                <CardTitle>Popular Items</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {popularDishes.map((dish, index) => (
-                    <div key={index} className="space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">{dish.name}</span>
-                        <span className="text-xs text-gray-500">
-                          {dish.orders} orders
-                        </span>
-                      </div>
-                      <Progress value={dish.percentage} className="h-2" />
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
-          <div className="lg:col-span-2">
-            <OrdersTable orders={recentOrders} title="Today's Orders" />
+            <RevenueChart
+              data={revenueData}
+              title="This Week's Revenue"
+              loading={revenueLoading}
+            />
           </div>
           <div className="lg:col-span-1">
             <Card className="h-full animate-fade-in">
@@ -213,46 +198,82 @@ const SellerOverview: React.FC = () => {
                 <CardTitle>Recent Reviews</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-5">
-                  {recentReviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="pb-4 border-b last:border-b-0 last:pb-0"
-                    >
-                      <div className="flex items-start gap-3">
-                        <img
-                          src={review.avatar}
-                          alt={review.customer}
-                          className="w-10 h-10 rounded-full"
-                        />
-                        <div className="flex-1">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h4 className="font-medium">{review.customer}</h4>
-                              <p className="text-xs text-gray-500">
-                                {review.date} · {review.dish}
-                              </p>
-                            </div>
-                            <div
-                              className="flex items-center bg-yellow-100 text-food-yellow px-2 py-1 rounded-full text-xs
-                                dark:text-black"
-                            >
-                              {review.rating}{" "}
-                              <Star
-                                size={12}
-                                className="ml-1 text-yellow-500"
-                              />
+                {reviewsLoading ? (
+                  <div className="space-y-5">
+                    {[...Array(3)].map((_, index) => (
+                      <div key={index} className="space-y-3">
+                        <div className="flex items-center space-x-3">
+                          <Skeleton className="h-10 w-10 rounded-full" />
+                          <div className="space-y-2">
+                            <Skeleton className="h-4 w-[200px]" />
+                            <Skeleton className="h-3 w-[150px]" />
+                          </div>
+                        </div>
+                        <Skeleton className="h-4 w-full" />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-5">
+                    {reviews.length > 0 ? (
+                      reviews.map((review) => (
+                        <div
+                          key={review.id}
+                          className="pb-4 border-b last:border-b-0 last:pb-0"
+                        >
+                          <div className="flex items-start gap-3">
+                            <img
+                              src={review.avatar}
+                              alt={review.customer}
+                              className="w-10 h-10 rounded-full"
+                            />
+                            <div className="flex-1">
+                              <div className="flex justify-between items-start">
+                                <div>
+                                  <h4 className="font-medium">
+                                    {review.customer}
+                                  </h4>
+                                  <p className="text-xs text-gray-500">
+                                    {review.date} · {review.dish}
+                                  </p>
+                                </div>
+                                <div
+                                  className="flex items-center bg-yellow-100 text-food-yellow px-2 py-1 rounded-full text-xs
+                                    dark:text-black"
+                                >
+                                  {review.rating}{" "}
+                                  <Star
+                                    size={12}
+                                    className="ml-1 text-yellow-500"
+                                  />
+                                </div>
+                              </div>
+                              <p className="text-sm mt-2">{review.comment}</p>
                             </div>
                           </div>
-                          <p className="text-sm mt-2">{review.comment}</p>
                         </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                      ))
+                    ) : (
+                      <p className="text-center text-gray-500 py-4">
+                        No reviews yet
+                      </p>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
+        </div>
+
+        <div className="gap-6 mb-6">
+          <div className="lg:col-span-2">
+            <OrdersTable
+              orders={orders}
+              title="Today's Orders"
+              loading={ordersLoading}
+            />
+          </div>
+          <div className="lg:col-span-1"></div>
         </div>
       </main>
     </div>

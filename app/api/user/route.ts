@@ -31,7 +31,7 @@ export async function GET(request: Request) {
     const email = searchParams.get("email");
     if (email) {
       const user = await User.findOne({ email }).select(
-        "name email role image contactInfo address createdAt updatedAt",
+        "name email role image contactInfo address description cuisine businessHours priceRange deliveryOptions createdAt updatedAt",
       );
       if (!user) {
         return NextResponse.json(
@@ -182,57 +182,69 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id, name, email, role, image, contactInfo, address } =
-      await request.json();
-
-    // If user is not admin, they can only update their own profile
-    if (currentUser.role !== "Admin" && currentUser._id.toString() !== id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await User.findById(id);
-
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
+    const {
+      name,
+      email,
+      role,
+      image,
+      contactInfo,
+      address,
+      description,
+      cuisine,
+      businessHours,
+      priceRange,
+      deliveryOptions,
+    } = await request.json();
 
     // Update basic info
-    user.name = name;
-    user.email = email;
-    if (currentUser.role === "Admin") {
-      user.role = role;
+    currentUser.name = name || currentUser.name;
+    currentUser.email = email || currentUser.email;
+    if (role && currentUser.role === "Admin") {
+      currentUser.role = role;
     }
-    user.image = image;
+    currentUser.image = image || currentUser.image;
 
     // Update contact info if provided
     if (contactInfo) {
-      user.contactInfo = {
-        ...user.contactInfo,
+      currentUser.contactInfo = {
+        ...currentUser.contactInfo,
         ...contactInfo,
       };
     }
 
     // Update address if provided
     if (address) {
-      user.address = {
-        ...user.address,
+      currentUser.address = {
+        ...currentUser.address,
         ...address,
       };
     }
 
-    await user.save();
+    // Update seller specific fields
+    if (description) currentUser.description = description;
+    if (cuisine) currentUser.cuisine = cuisine;
+    if (businessHours) currentUser.businessHours = businessHours;
+    if (priceRange) currentUser.priceRange = priceRange;
+    if (deliveryOptions) currentUser.deliveryOptions = deliveryOptions;
+
+    await currentUser.save();
 
     return NextResponse.json(
       {
         message: "Profile updated successfully",
         user: {
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          role: user.role,
-          image: user.image,
-          contactInfo: user.contactInfo,
-          address: user.address,
+          _id: currentUser._id,
+          name: currentUser.name,
+          email: currentUser.email,
+          role: currentUser.role,
+          image: currentUser.image,
+          contactInfo: currentUser.contactInfo,
+          address: currentUser.address,
+          description: currentUser.description,
+          cuisine: currentUser.cuisine,
+          businessHours: currentUser.businessHours,
+          priceRange: currentUser.priceRange,
+          deliveryOptions: currentUser.deliveryOptions,
         },
       },
       { status: 200 },
