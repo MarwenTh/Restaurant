@@ -22,6 +22,14 @@ import { useRouter } from "next/navigation";
 import { FaSpinner } from "react-icons/fa6";
 import { HashLoader } from "react-spinners";
 
+interface BusinessHours {
+  day: string;
+  open: string;
+  close: string;
+  isClosed: boolean;
+  _id?: string;
+}
+
 const UserSettings = () => {
   const { user, loading, error, refetch } = useUser();
   const router = useRouter();
@@ -42,57 +50,17 @@ const UserSettings = () => {
       email: "",
       website: "",
     },
-    businessHours: [
-      {
-        day: "Monday",
-        open: "09:00",
-        close: "17:00",
-        isClosed: false,
-      },
-      {
-        day: "Tuesday",
-        open: "09:00",
-        close: "17:00",
-        isClosed: false,
-      },
-      {
-        day: "Wednesday",
-        open: "09:00",
-        close: "17:00",
-        isClosed: false,
-      },
-      {
-        day: "Thursday",
-        open: "09:00",
-        close: "17:00",
-        isClosed: false,
-      },
-      {
-        day: "Friday",
-        open: "09:00",
-        close: "17:00",
-        isClosed: false,
-      },
-      {
-        day: "Saturday",
-        open: "10:00",
-        close: "15:00",
-        isClosed: false,
-      },
-      {
-        day: "Sunday",
-        open: "10:00",
-        close: "15:00",
-        isClosed: true,
-      },
-    ],
     priceRange: "medium" as "low" | "medium" | "high",
-    deliveryOptions: {
-      delivery: true,
-      pickup: true,
-      dineIn: true,
-    },
+    businessHours: [] as BusinessHours[],
   });
+
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [passwordError, setPasswordError] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -111,13 +79,8 @@ const UserSettings = () => {
           email: user.email || "",
           website: user.contactInfo?.website || "",
         },
-        businessHours: user.businessHours || formData.businessHours,
         priceRange: user.priceRange || "medium",
-        deliveryOptions: user.deliveryOptions || {
-          delivery: true,
-          pickup: true,
-          dineIn: true,
-        },
+        businessHours: user.businessHours || [],
       });
     }
   }, [user]);
@@ -143,27 +106,11 @@ const UserSettings = () => {
     }
   };
 
-  const handleBusinessHoursChange = (
-    index: number,
-    field: string,
-    value: string | boolean,
-  ) => {
-    setFormData((prev) => ({
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({
       ...prev,
-      businessHours: prev.businessHours.map((hour, i) =>
-        i === index ? { ...hour, [field]: value } : hour,
-      ),
-    }));
-  };
-
-  const handleDeliveryOptionChange = (option: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      deliveryOptions: {
-        ...prev.deliveryOptions,
-        [option]:
-          !prev.deliveryOptions[option as keyof typeof prev.deliveryOptions],
-      },
+      [name]: value,
     }));
   };
 
@@ -220,9 +167,84 @@ const UserSettings = () => {
     }
   };
 
+  const handlePasswordUpdate = async () => {
+    setPasswordError("");
+
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+
+    if (passwordData.newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/user/password", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update password");
+      }
+
+      toast.success("Password updated successfully");
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
+      });
+    } catch (error: any) {
+      toast.error(error.message || "Failed to update password");
+      console.error(error);
+    }
+  };
+
   const handleLogout = async () => {
     await signOut({ redirect: false });
     router.push("/");
+  };
+
+  const handleBusinessHoursChange = (
+    day: string,
+    field: string,
+    value: string | boolean,
+  ) => {
+    setFormData((prev) => {
+      const updatedHours = [...(prev.businessHours || [])];
+      const dayIndex = updatedHours.findIndex((h) => h.day === day);
+
+      if (dayIndex === -1) {
+        // Add new day if it doesn't exist
+        updatedHours.push({
+          day,
+          open: field === "open" ? (value as string) : "09:00",
+          close: field === "close" ? (value as string) : "17:00",
+          isClosed: field === "isClosed" ? (value as boolean) : false,
+        });
+      } else {
+        // Update existing day
+        updatedHours[dayIndex] = {
+          ...updatedHours[dayIndex],
+          [field]: value,
+        };
+      }
+
+      return {
+        ...prev,
+        businessHours: updatedHours,
+      };
+    });
   };
 
   if (loading) {
@@ -236,6 +258,8 @@ const UserSettings = () => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  const isSeller = user?.role === "Seller";
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -358,191 +382,246 @@ const UserSettings = () => {
           </CardFooter>
         </Card>
 
-        {/* Business Information */}
+        {/* Password Update */}
         <Card>
           <CardHeader>
-            <CardTitle>Business Information</CardTitle>
-            <CardDescription>Update your restaurant details</CardDescription>
+            <CardTitle>Update Password</CardTitle>
+            <CardDescription>Change your account password</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                className="min-h-32"
-                value={formData.description}
-                onChange={handleInputChange}
+              <Label htmlFor="currentPassword">Current Password</Label>
+              <Input
+                id="currentPassword"
+                name="currentPassword"
+                type="password"
+                value={passwordData.currentPassword}
+                onChange={handlePasswordChange}
               />
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="street">Address</Label>
-                <Input
-                  id="street"
-                  name="address.street"
-                  value={formData.address.street}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="city">City</Label>
-                <Input
-                  id="city"
-                  name="address.city"
-                  value={formData.address.city}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="state">State</Label>
-                <Input
-                  id="state"
-                  name="address.state"
-                  value={formData.address.state}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="zipCode">ZIP Code</Label>
-                <Input
-                  id="zipCode"
-                  name="address.zipCode"
-                  value={formData.address.zipCode}
-                  onChange={handleInputChange}
-                />
-              </div>
-            </div>
-
             <div className="space-y-2">
-              <Label>Business Hours</Label>
-              <div className="space-y-3">
-                {formData.businessHours.map((hours, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center"
-                  >
-                    <div className="font-medium">{hours.day}</div>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        type="time"
-                        value={hours.open}
-                        onChange={(e) =>
-                          handleBusinessHoursChange(
-                            index,
-                            "open",
-                            e.target.value,
-                          )
-                        }
-                        className="w-32"
-                      />
-                      <span>to</span>
-                      <Input
-                        type="time"
-                        value={hours.close}
-                        onChange={(e) =>
-                          handleBusinessHoursChange(
-                            index,
-                            "close",
-                            e.target.value,
-                          )
-                        }
-                        className="w-32"
-                      />
-                      <Switch
-                        checked={!hours.isClosed}
-                        onCheckedChange={(checked) =>
-                          handleBusinessHoursChange(index, "isClosed", !checked)
-                        }
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <Label htmlFor="newPassword">New Password</Label>
+              <Input
+                id="newPassword"
+                name="newPassword"
+                type="password"
+                value={passwordData.newPassword}
+                onChange={handlePasswordChange}
+              />
             </div>
-
             <div className="space-y-2">
-              <Label>Delivery Options</Label>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label>Delivery</Label>
-                  <Switch
-                    checked={formData.deliveryOptions.delivery}
-                    onCheckedChange={() =>
-                      handleDeliveryOptionChange("delivery")
-                    }
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label>Pickup</Label>
-                  <Switch
-                    checked={formData.deliveryOptions.pickup}
-                    onCheckedChange={() => handleDeliveryOptionChange("pickup")}
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <Label>Dine-in</Label>
-                  <Switch
-                    checked={formData.deliveryOptions.dineIn}
-                    onCheckedChange={() => handleDeliveryOptionChange("dineIn")}
-                  />
-                </div>
-              </div>
+              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={passwordData.confirmPassword}
+                onChange={handlePasswordChange}
+              />
             </div>
-
-            <div className="space-y-2">
-              <Label>Price Range</Label>
-              <div className="flex gap-2">
-                <Button
-                  variant={
-                    formData.priceRange === "low" ? "default" : "outline"
-                  }
-                  onClick={() =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      priceRange: "low",
-                    }))
-                  }
-                >
-                  Low
-                </Button>
-                <Button
-                  variant={
-                    formData.priceRange === "medium" ? "default" : "outline"
-                  }
-                  onClick={() =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      priceRange: "medium",
-                    }))
-                  }
-                >
-                  Medium
-                </Button>
-                <Button
-                  variant={
-                    formData.priceRange === "high" ? "default" : "outline"
-                  }
-                  onClick={() =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      priceRange: "high",
-                    }))
-                  }
-                >
-                  High
-                </Button>
-              </div>
-            </div>
+            {passwordError && (
+              <p className="text-sm text-red-500">{passwordError}</p>
+            )}
           </CardContent>
           <CardFooter className="border-t px-6 py-4">
-            <Button onClick={() => handleSubmit()}>
+            <Button onClick={handlePasswordUpdate}>
               <Save className="mr-2 h-4 w-4" />
-              Save Changes
+              Update Password
             </Button>
           </CardFooter>
         </Card>
+
+        {/* Business Information - Only visible to sellers */}
+        {isSeller && (
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>Business Information</CardTitle>
+              <CardDescription>Update your restaurant details</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  className="min-h-32"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="street">Address</Label>
+                  <Input
+                    id="street"
+                    name="address.street"
+                    value={formData.address.street}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="city">City</Label>
+                  <Input
+                    id="city"
+                    name="address.city"
+                    value={formData.address.city}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="state">State</Label>
+                  <Input
+                    id="state"
+                    name="address.state"
+                    value={formData.address.state}
+                    onChange={handleInputChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="zipCode">ZIP Code</Label>
+                  <Input
+                    id="zipCode"
+                    name="address.zipCode"
+                    value={formData.address.zipCode}
+                    onChange={handleInputChange}
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Price Range</Label>
+                <div className="flex gap-2">
+                  <Button
+                    variant={
+                      formData.priceRange === "low" ? "default" : "outline"
+                    }
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        priceRange: "low",
+                      }))
+                    }
+                  >
+                    Low
+                  </Button>
+                  <Button
+                    variant={
+                      formData.priceRange === "medium" ? "default" : "outline"
+                    }
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        priceRange: "medium",
+                      }))
+                    }
+                  >
+                    Medium
+                  </Button>
+                  <Button
+                    variant={
+                      formData.priceRange === "high" ? "default" : "outline"
+                    }
+                    onClick={() =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        priceRange: "high",
+                      }))
+                    }
+                  >
+                    High
+                  </Button>
+                </div>
+              </div>
+
+              {/* Business Hours Section */}
+              <div className="space-y-4">
+                <Label>Business Hours</Label>
+                <div className="space-y-4">
+                  {[
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday",
+                    "Saturday",
+                    "Sunday",
+                  ].map((day) => {
+                    const dayHours = formData.businessHours?.find(
+                      (h) => h.day === day,
+                    ) || {
+                      day,
+                      open: "09:00",
+                      close: "17:00",
+                      isClosed: false,
+                    };
+
+                    return (
+                      <div
+                        key={day}
+                        className="flex items-center gap-4 p-4 border rounded-lg"
+                      >
+                        <div className="w-32">
+                          <span className="font-medium">{day}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={!dayHours.isClosed}
+                            onCheckedChange={(checked) =>
+                              handleBusinessHoursChange(
+                                day,
+                                "isClosed",
+                                !checked,
+                              )
+                            }
+                          />
+                          <span className="text-sm text-gray-500">
+                            {dayHours.isClosed ? "Closed" : "Open"}
+                          </span>
+                        </div>
+                        {!dayHours.isClosed && (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="time"
+                              value={dayHours.open}
+                              onChange={(e) =>
+                                handleBusinessHoursChange(
+                                  day,
+                                  "open",
+                                  e.target.value,
+                                )
+                              }
+                              className="w-32"
+                            />
+                            <span className="text-gray-500">to</span>
+                            <Input
+                              type="time"
+                              value={dayHours.close}
+                              onChange={(e) =>
+                                handleBusinessHoursChange(
+                                  day,
+                                  "close",
+                                  e.target.value,
+                                )
+                              }
+                              className="w-32"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="border-t px-6 py-4">
+              <Button onClick={() => handleSubmit()}>
+                <Save className="mr-2 h-4 w-4" />
+                Save Changes
+              </Button>
+            </CardFooter>
+          </Card>
+        )}
       </div>
     </div>
   );

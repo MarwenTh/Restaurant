@@ -8,6 +8,7 @@ import {
   TrendingUp,
   CircleCheck,
   Clock,
+  RefreshCw,
 } from "lucide-react";
 import OverviewChart from "@/components/dashboard/OverviewChart";
 import {
@@ -20,40 +21,42 @@ import {
 import RecentActivityList from "../RecentlyActivityList";
 import { Progress } from "@/components/ui/progress";
 import StatCard from "@/components/StatCard";
+import useAdminMetrics from "@/hooks/useAdminMetrics";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+
+const formatNumber = (num: number) => {
+  return num.toLocaleString("en-US");
+};
 
 const AdminOverview = () => {
+  const {
+    totalOrders,
+    orderPercentageChange,
+    uniqueCustomers,
+    customerPercentageChange,
+    loading,
+    error,
+    retry,
+  } = useAdminMetrics();
+
   const metrics = [
     {
-      title: "Total Revenue",
-      value: "$84,248.42",
-      icon: DollarSign,
-      change: 12.5,
-      trend: "up" as const,
-      iconColor: "bg-blue-100 text-blue-600",
-    },
-    {
       title: "Total Orders",
-      value: "2,845",
+      value: loading ? "..." : formatNumber(totalOrders),
       icon: ShoppingBag,
-      change: 8.2,
-      trend: "up" as const,
+      change: orderPercentageChange,
+      trend: orderPercentageChange >= 0 ? ("up" as const) : ("down" as const),
       iconColor: "bg-orange-100 text-orange-600",
     },
     {
       title: "Active Users",
-      value: "9,271",
+      value: loading ? "..." : formatNumber(uniqueCustomers),
       icon: Users,
-      change: 5.1,
-      trend: "up" as const,
+      change: customerPercentageChange,
+      trend:
+        customerPercentageChange >= 0 ? ("up" as const) : ("down" as const),
       iconColor: "bg-green-100 text-green-600",
-    },
-    {
-      title: "Conversion Rate",
-      value: "3.42%",
-      icon: TrendingUp,
-      change: 1.2,
-      trend: "down" as const,
-      iconColor: "bg-purple-100 text-purple-600",
     },
   ];
 
@@ -72,26 +75,56 @@ const AdminOverview = () => {
     cancelled: 3,
   };
 
+  if (error) {
+    return (
+      <div className="p-4 space-y-4">
+        <div className="text-red-500">
+          Error loading dashboard data: {error}
+        </div>
+        <Button
+          onClick={retry}
+          variant="outline"
+          className="flex items-center gap-2"
+        >
+          <RefreshCw className="h-4 w-4" />
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-        {metrics.map((metric, idx) => (
-          <StatCard
-            key={idx}
-            title={metric.title}
-            value={metric.value}
-            icon={<metric.icon />}
-            percentageChange={metric.change}
-            color={
-              metric.trend === "up"
-                ? "green"
-                : metric.trend === "down"
-                  ? "red"
-                  : "orange"
-            }
-            delay={idx}
-          />
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-6">
+        {metrics.map((metric, idx) =>
+          loading ? (
+            <Card key={idx} className="card-shadow">
+              <CardHeader className="pb-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-8 w-16 mt-2" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-4 w-32" />
+              </CardContent>
+            </Card>
+          ) : (
+            <StatCard
+              key={idx}
+              title={metric.title}
+              value={metric.value}
+              icon={<metric.icon />}
+              percentageChange={metric.change}
+              color={
+                metric.trend === "up"
+                  ? "green"
+                  : metric.trend === "down"
+                    ? "red"
+                    : "orange"
+              }
+              delay={idx}
+            />
+          ),
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

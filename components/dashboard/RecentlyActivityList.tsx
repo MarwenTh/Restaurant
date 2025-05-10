@@ -9,13 +9,21 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ShoppingBag, Users, Star, AlertCircle, Bell } from "lucide-react";
+import {
+  ShoppingBag,
+  Users,
+  Star,
+  AlertCircle,
+  Bell,
+  RefreshCw,
+} from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import useRecentActivities, { ActivityType } from "@/hooks/useRecentActivities";
 
 // Activity types
-type ActivityType = "order" | "user" | "review" | "alert" | "notification";
-
-interface Activity {
+type Activity = {
   id: number;
   type: ActivityType;
   title: string;
@@ -26,57 +34,7 @@ interface Activity {
     avatar?: string;
     initials: string;
   };
-}
-
-const activities: Activity[] = [
-  {
-    id: 1,
-    type: "order",
-    title: "New order received",
-    description: `Order #58912 - ${formatCurrency(124.0)}`,
-    time: "5 minutes ago",
-    user: {
-      name: "Sarah Johnson",
-      initials: "SJ",
-    },
-  },
-  {
-    id: 2,
-    type: "user",
-    title: "New user registered",
-    description: "Carlos Rodriguez joined as a new customer",
-    time: "15 minutes ago",
-    user: {
-      name: "Carlos Rodriguez",
-      initials: "CR",
-    },
-  },
-  {
-    id: 3,
-    type: "review",
-    title: "New review submitted",
-    description: "5-star rating for Greek Salad",
-    time: "37 minutes ago",
-    user: {
-      name: "Emily Chen",
-      initials: "EC",
-    },
-  },
-  {
-    id: 4,
-    type: "alert",
-    title: "Low inventory alert",
-    description: "Beef tenderloin (2 kg remaining)",
-    time: "1 hour ago",
-  },
-  {
-    id: 5,
-    type: "notification",
-    title: "Staff schedule updated",
-    description: "2 delivery drivers added for Friday night shift",
-    time: "2 hours ago",
-  },
-];
+};
 
 const getActivityIcon = (type: ActivityType) => {
   switch (type) {
@@ -93,7 +51,45 @@ const getActivityIcon = (type: ActivityType) => {
   }
 };
 
+const ActivitySkeleton = () => (
+  <div className="flex items-start space-x-4">
+    <Skeleton className="h-10 w-10 rounded-full" />
+    <div className="flex-1 space-y-2">
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+    </div>
+  </div>
+);
+
 const RecentActivityList: React.FC = () => {
+  const { activities, loading, error, retry } = useRecentActivities();
+
+  if (error) {
+    return (
+      <Card className="card-shadow">
+        <CardHeader className="pb-3">
+          <CardTitle>Recent Activity</CardTitle>
+          <CardDescription>Latest actions and updates</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="p-4 space-y-4">
+            <div className="text-red-500">
+              Error loading activities: {error}
+            </div>
+            <Button
+              onClick={retry}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Retry
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="card-shadow">
       <CardHeader className="pb-3">
@@ -102,40 +98,45 @@ const RecentActivityList: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {activities.map((activity) => (
-            <div
-              key={activity.id}
-              className="flex items-start space-x-4 animate-fade-in"
-              style={{ animationDelay: `${activity.id * 100}ms` }}
-            >
-              {activity.user ? (
-                <Avatar className="h-10 w-10 border">
-                  <AvatarImage src={activity.user.avatar} />
-                  <AvatarFallback className="bg-secondary text-xs">
-                    {activity.user.initials}
-                  </AvatarFallback>
-                </Avatar>
-              ) : (
-                <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
-                  {getActivityIcon(activity.type)}
-                </div>
-              )}
+          {loading
+            ? // Show 5 skeleton items while loading
+              Array.from({ length: 5 }).map((_, index) => (
+                <ActivitySkeleton key={index} />
+              ))
+            : activities.map((activity, index) => (
+                <div
+                  key={activity.id}
+                  className="flex items-start space-x-4 animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {activity.user ? (
+                    <Avatar className="h-10 w-10 border">
+                      <AvatarImage src={activity.user.avatar} />
+                      <AvatarFallback className="bg-secondary text-xs">
+                        {activity.user.initials}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
+                      {getActivityIcon(activity.type)}
+                    </div>
+                  )}
 
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium leading-none">
-                    {activity.title}
-                  </p>
-                  <span className="text-xs text-[#5e6369]">
-                    {activity.time}
-                  </span>
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium leading-none">
+                        {activity.title}
+                      </p>
+                      <span className="text-xs text-[#5e6369]">
+                        {activity.time}
+                      </span>
+                    </div>
+                    <p className="text-sm dark:text-[#f1f5f9] text-[#505457]">
+                      {activity.description}
+                    </p>
+                  </div>
                 </div>
-                <p className="text-sm dark:text-[#f1f5f9] text-[#505457]">
-                  {activity.description}
-                </p>
-              </div>
-            </div>
-          ))}
+              ))}
         </div>
       </CardContent>
     </Card>
