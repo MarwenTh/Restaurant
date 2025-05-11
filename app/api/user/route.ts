@@ -115,7 +115,6 @@ export async function POST(request: Request) {
     }
 
     const isUserExists = await User.findOne({ email });
-    const isUserHaveToken = await Verification.findOne({ email });
 
     if (isUserExists) {
       return NextResponse.json(
@@ -125,17 +124,6 @@ export async function POST(request: Request) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    // Generate a verification token (JWT)
-    let verificationToken;
-    if (!isUserHaveToken) {
-      verificationToken = jwt.sign(
-        { email },
-        process.env.JWT_SECRET!,
-        { expiresIn: "1h" }, // Token expires in 1 hour
-      );
-    } else {
-      verificationToken = isUserHaveToken.token;
-    }
 
     const user = await User.create({
       email,
@@ -145,22 +133,8 @@ export async function POST(request: Request) {
       image,
     });
 
-    const verification = await Verification.create({
-      email,
-      token: verificationToken,
-    });
-
-    const verificationLink = `${process.env.BASE_URL}/verify?token=${verificationToken}`;
-
-    await sendMail({
-      email: user.email,
-      subject: "Verify your account",
-      template: "verifyEmail.ejs",
-      data: { name: user.name, verificationLink },
-    });
-
     return NextResponse.json(
-      { message: "User registered successfully. Please verify your email." },
+      { message: "User registered successfully!" },
       { status: 201 },
     );
   } catch (error) {

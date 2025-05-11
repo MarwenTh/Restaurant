@@ -50,10 +50,6 @@ export const authOptions: any = {
           throw new Error("Password is incorrect");
         }
 
-        if (!isUserExists.verified) {
-          throw new Error("Please Verify your account in order to log in!");
-        }
-
         return {
           id: isUserExists._id.toString(),
           email: isUserExists.email,

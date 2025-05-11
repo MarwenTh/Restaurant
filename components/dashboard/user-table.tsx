@@ -207,11 +207,9 @@ export function UserTable() {
     pending: "Pending",
   };
 
-  const customersCount = users.filter(
-    (user) => user.role === "customer",
-  ).length;
-  const sellersCount = users.filter((user) => user.role === "seller").length;
-  const adminsCount = users.filter((user) => user.role === "admin").length;
+  const customersCount = users.filter((user) => user.role === "Client").length;
+  const sellersCount = users.filter((user) => user.role === "Seller").length;
+  const adminsCount = users.filter((user) => user.role === "Admin").length;
 
   return (
     <div>
@@ -485,7 +483,7 @@ export function UserTable() {
                               alt="User image"
                               className="aspect-square rounded-md object-cover"
                               height="64"
-                              src={user.image}
+                              src={user.image!}
                               width="64"
                             />
                           </TableCell>
@@ -500,7 +498,7 @@ export function UserTable() {
                                   ? "bg-green-500 text-green-100"
                                   : user.role === "Client"
                                     ? "bg-blue-500 text-blue-100"
-                                    : user.role === "Restaurant"
+                                    : user.role === "Seller"
                                       ? "bg-yellow-500 text-yellow-100"
                                       : user.role === "Delivery"
                                         ? "bg-purple-500 text-purple-100"

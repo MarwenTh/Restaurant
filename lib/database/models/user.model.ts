@@ -62,7 +62,7 @@ const UserSchema = new Schema<IUser>(
     },
     verified: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     address: {
       street: { type: String },
