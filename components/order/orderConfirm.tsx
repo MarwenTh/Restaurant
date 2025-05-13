@@ -62,6 +62,11 @@ const OrderConfirm = () => {
   const { data: session, status } = useSession();
   const navigate = useRouter();
 
+  const [notification, setNotification] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
+
   // Reset loading state on component mount
   useEffect(() => {
     setIsLoading(false);
@@ -82,23 +87,113 @@ const OrderConfirm = () => {
   };
 
   // Function to validate and apply promo code
-  const handleApplyPromoCode = () => {
-    // Mock promo codes - in real app, this would be validated against a backend
-    const promoCodes = {
-      WELCOME10: 10,
-      SPECIAL20: 20,
-      FOOD50: 50,
-    };
+  const handleApplyPromoCode = async () => {
+    if (!promoCode.trim()) {
+      setNotification({ type: "error", message: "Please enter a promo code" });
+      return;
+    }
 
-    const code = promoCode.toUpperCase();
-    if (promoCodes[code as keyof typeof promoCodes]) {
-      setPromoDiscount(promoCodes[code as keyof typeof promoCodes]);
-      setAppliedPromoCode(code);
-      toast.success(`Promo code ${code} applied successfully!`);
-    } else {
-      toast.error("Invalid promo code");
+    try {
+      const response = await axios.get("/api/promo");
+      const promoCodes = response.data;
+      const code = promoCode.trim(); // Remove toUpperCase() to match exact case
+      console.log("Entered code:", code);
+      console.log("Available codes:", promoCodes);
+
+      const found = promoCodes.find((p: any) => p.code === code && p.available);
+      console.log("Found promo code:", found);
+
+      if (found) {
+        // Update states
+        setPromoDiscount(found.discount);
+        setAppliedPromoCode(code);
+
+        // Show success message with discount
+        setNotification({
+          type: "success",
+          message: `Promo code ${code} applied successfully! ${found.discount}% discount applied.`,
+        });
+
+        // Update order with new prices
+        if (order) {
+          const prices = calculatePrices();
+          const updatedOrder = {
+            ...order,
+            promoCodeApplied: code,
+            promoDiscount: prices.promoDiscount,
+            totalAmount: prices.total,
+            discountAmount: prices.itemsDiscount + prices.promoDiscount,
+          };
+          setOrder(updatedOrder);
+        }
+      } else {
+        // Show error message
+        setNotification({
+          type: "error",
+          message: "Invalid or unavailable promo code",
+        });
+
+        // Reset states
+        setPromoDiscount(0);
+        setAppliedPromoCode(null);
+        setPromoCode("");
+
+        // Reset order promo code
+        if (order) {
+          const prices = calculatePrices();
+          const updatedOrder = {
+            ...order,
+            promoCodeApplied: undefined,
+            promoDiscount: 0,
+            totalAmount: prices.total,
+            discountAmount: prices.itemsDiscount,
+          };
+          setOrder(updatedOrder);
+        }
+      }
+    } catch (err) {
+      console.error("Error applying promo code:", err);
+      setNotification({
+        type: "error",
+        message: "Error validating promo code",
+      });
+
+      // Reset states on error
+      setPromoDiscount(0);
+      setAppliedPromoCode(null);
+      setPromoCode("");
     }
   };
+
+  // Add useEffect to recalculate prices when promo code changes
+  useEffect(() => {
+    if (order) {
+      const prices = calculatePrices();
+      const updatedOrder = {
+        ...order,
+        totalAmount: prices.total,
+        discountAmount: prices.itemsDiscount + prices.promoDiscount,
+        promoDiscount: prices.promoDiscount,
+      };
+      setOrder(updatedOrder);
+    }
+  }, [promoDiscount, appliedPromoCode, order?.items?.length]);
+
+  // Add real-time price update when promo code changes
+  useEffect(() => {
+    const prices = calculatePrices();
+    if (order) {
+      const updatedOrder = {
+        ...order,
+        totalAmount: prices.total,
+        discountAmount: prices.itemsDiscount + prices.promoDiscount,
+        promoDiscount: prices.promoDiscount,
+      };
+      setOrder(updatedOrder);
+    }
+  }, [promoCode, deliveryMethod]);
+
+  // Add debounced promo code validation
 
   // Calculate prices based on order items
   const calculatePrices = () => {
@@ -180,7 +275,10 @@ const OrderConfirm = () => {
         deliveryMethod === "delivery" ? deliveryAddress : undefined,
       scheduledFor: scheduledFor ? new Date(scheduledFor) : undefined,
       specialInstructions: specialInstructions || undefined,
-      discountAmount: prices.itemsDiscount,
+      discountAmount: prices.itemsDiscount + prices.promoDiscount,
+      // Add promo code information
+      promoCodeApplied: appliedPromoCode || undefined,
+      promoDiscount: prices.promoDiscount,
       // Add the quantity field
       quantity:
         order.items?.reduce((total, item) => total + item.quantity, 0) || 0,
@@ -190,15 +288,13 @@ const OrderConfirm = () => {
 
     try {
       const response = await axios.post("/api/order", updatedOrder);
+      toast.success("Order placed successfully!");
       toastSuccess({ title: response.data.message });
       navigate.push("/order/success");
     } catch (error) {
       console.error("Error creating order:", error);
       setError("Failed to create order. Please try again.");
-      toastSuccess({
-        title: "Uh oh! Something went wrong.",
-        description: "Failed to create order. Please try again.",
-      });
+      toast.error("Failed to create order. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -355,9 +451,50 @@ const OrderConfirm = () => {
                   </div>
                 </RadioGroup>
               </div>
-
               {/* Additional Information Tabs */}
               <div className="bg-white p-8 rounded-2xl shadow-lg animate-fade-in">
+                {notification.type && (
+                  <div
+                    className={`mb-6 p-4 rounded-lg shadow-md transition-all duration-300 transform ${
+                    notification.type === "success"
+                        ? "bg-green-50 border border-green-200 text-green-700"
+                        : "bg-red-50 border border-red-200 text-red-700"
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      {notification.type === "success" ? (
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 13l4 4L19 7"
+                          ></path>
+                        </svg>
+                      ) : (
+                        <svg
+                          className="w-5 h-5 mr-2"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M6 18L18 6M6 6l12 12"
+                          ></path>
+                        </svg>
+                      )}
+                      <p className="font-medium">{notification.message}</p>
+                    </div>
+                  </div>
+                )}
                 <Tabs
                   value={activeTab}
                   onValueChange={setActiveTab}
@@ -571,17 +708,15 @@ const OrderConfirm = () => {
                         <h3 className="font-semibold text-lg">Promo Code</h3>
                         <div className="flex gap-2">
                           <Input
+                            type="text"
                             placeholder="Enter promo code"
                             value={promoCode}
                             onChange={(e) => setPromoCode(e.target.value)}
-                            className="uppercase"
                           />
                           <Button
+                            type="button"
                             onClick={handleApplyPromoCode}
-                            disabled={
-                              !promoCode || appliedPromoCode === promoCode
-                            }
-                            variant="secondary"
+                            disabled={promoCode.trim() === ""}
                           >
                             Apply
                           </Button>
@@ -602,6 +737,15 @@ const OrderConfirm = () => {
                                 setAppliedPromoCode(null);
                                 setPromoDiscount(0);
                                 setPromoCode("");
+                                setNotification({ type: null, message: "" });
+                                if (order) {
+                                  const updatedOrder = {
+                                    ...order,
+                                    promoCodeApplied: undefined,
+                                    promoDiscount: 0,
+                                  };
+                                  setOrder(updatedOrder);
+                                }
                               }}
                               className="text-green-700 hover:text-green-800"
                             >
@@ -614,7 +758,6 @@ const OrderConfirm = () => {
                   </TabsContent>
                 </Tabs>
               </div>
-
               <div className="bg-white p-8 rounded-2xl shadow-lg animate-fade-in">
                 <h2 className="text-2xl font-semibold mb-6 flex items-center gap-2">
                   <Clock className="w-6 h-6 text-food-orange" />
@@ -671,7 +814,6 @@ const OrderConfirm = () => {
                   </div>
                 </div>
               </div>
-
               <Button
                 onClick={handleConfirmOrder}
                 className="w-full py-6 text-lg bg-food-orange hover:bg-food-orange/90 transition-colors

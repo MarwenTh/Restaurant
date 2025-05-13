@@ -40,6 +40,7 @@ export interface IOrder extends Document {
     date: Date;
   };
   promoCodeApplied?: string;
+  promoDiscount?: number;
   discountAmount?: number;
   specialInstructions?: string;
   createdAt: Date;
@@ -116,6 +117,7 @@ const OrderSchema = new Schema<IOrder>(
       date: { type: Date },
     },
     promoCodeApplied: { type: String },
+    promoDiscount: { type: Number, default: 0 },
     discountAmount: { type: Number, default: 0 },
     specialInstructions: { type: String },
     quantity: { type: Number, required: true },

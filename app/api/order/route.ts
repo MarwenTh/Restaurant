@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
       driver,
       refundInfo,
       promoCodeApplied,
+      promoDiscount,
       discountAmount,
       specialInstructions,
       quantity,
@@ -104,6 +105,7 @@ export async function POST(request: NextRequest) {
       driver,
       refundInfo,
       promoCodeApplied,
+      promoDiscount: promoDiscount ?? 0,
       discountAmount: discountAmount ?? 0,
       specialInstructions,
       deliveryAddress: deliveryAddress

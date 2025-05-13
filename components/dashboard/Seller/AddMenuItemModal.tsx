@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import {
   Dialog,
@@ -35,6 +35,14 @@ import useUser from "@/hooks/useUser";
 import { useToast } from "@/components/ui/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface AddMenuItemModalProps {
   onSuccess?: () => void;
@@ -59,12 +67,18 @@ interface FormData {
   image: string;
 }
 
+interface Category {
+  _id: string;
+  name: string;
+}
+
 const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [categories, setCategories] = useState<Category[]>([]);
   const { toast } = useToast();
   const { user } = useUser();
 
@@ -86,6 +100,23 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
     preparationTime: 0,
     image: "",
   });
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get("/api/category");
+      setCategories(response.data);
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch categories",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -119,6 +150,23 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
     } else {
       setFormData((prev) => ({ ...prev, [name]: checked }));
     }
+  };
+
+  const handleCategorySelect = (categoryId: string) => {
+    const category = categories.find((cat) => cat._id === categoryId);
+    if (category && !formData.category.includes(category.name)) {
+      setFormData((prev) => ({
+        ...prev,
+        category: [...prev.category, category.name],
+      }));
+    }
+  };
+
+  const removeCategory = (categoryToRemove: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: prev.category.filter((cat) => cat !== categoryToRemove),
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -239,17 +287,38 @@ const AddMenuItemModal: React.FC<AddMenuItemModalProps> = ({ onSuccess }) => {
             <div className="space-y-2">
               <Label htmlFor="category" className="flex items-center gap-2">
                 <Wheat className="h-4 w-4" />
-                Categories (comma-separated)
+                Categories
               </Label>
-              <Input
-                id="category"
-                name="category"
-                value={formData.category.join(", ")}
-                onChange={(e) => handleArrayInputChange(e, "category")}
-                required
-                className="transition-all duration-200 focus:ring-2 focus:ring-[#FF9F43]"
-                placeholder="e.g., Main Course, Appetizer, Dessert"
-              />
+              <Select onValueChange={handleCategorySelect}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((category) => (
+                    <SelectItem key={category._id} value={category._id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {formData.category.map((cat) => (
+                  <Badge
+                    key={cat}
+                    variant="secondary"
+                    className="flex items-center gap-1 bg-[#FF9F43]/10 text-[#FF9F43] hover:bg-[#FF9F43]/20"
+                  >
+                    {cat}
+                    <button
+                      type="button"
+                      onClick={() => removeCategory(cat)}
+                      className="ml-1 hover:text-red-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
             </div>
           </motion.div>
         );

@@ -79,8 +79,11 @@ const ClientOverview = () => {
   const activeOrders = orders.filter(
     (order) => order.status === "pending" || order.status === "processing",
   ).length;
-  const favoriteRestaurants = new Set(orders.map((order) => order.seller.name))
-    .size;
+  const favoriteRestaurants = new Set(
+    orders
+      .filter((order) => order.seller && order.seller.name)
+      .map((order) => order.seller.name),
+  ).size;
 
   // Calculate pagination
   const totalPages = Math.ceil(orders.length / ordersPerPage);

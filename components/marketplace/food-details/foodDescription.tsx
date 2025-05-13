@@ -4,7 +4,8 @@ import useFood from "@/hooks/useFood";
 import { MenuItem } from "@/interface";
 import React, { FC } from "react";
 import AiAnalysis from "./aiAnalysis";
-import { BotMessageSquare, Info, Package } from "lucide-react";
+import { BotMessageSquare, Info, Package, Tag } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   id: string;
@@ -50,9 +51,30 @@ const FoodDescription: FC<Props> = ({ id, foodItem }) => {
             <h3 className="text-xl font-medium mb-4 font-playfair">
               About this dish
             </h3>
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-gray-600 leading-relaxed mb-6">
               {foodItem.description}
             </p>
+
+            {foodItem.category && foodItem.category.length > 0 && (
+              <div className="mt-6">
+                <h4 className="text-lg font-medium mb-3 font-playfair flex items-center gap-2">
+                  <Tag className="h-4 w-4 text-food-orange" />
+                  Categories
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  {foodItem.category.map((cat, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="bg-food-orange/10 text-food-orange hover:bg-food-orange/20 px-3 py-1 text-sm
+                        font-medium"
+                    >
+                      {cat}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
 

@@ -23,7 +23,14 @@ import { IoAnalyticsSharp } from "react-icons/io5";
 import { CiCalendar } from "react-icons/ci";
 import { SiIfood } from "react-icons/si";
 import { User } from "@/interface";
-import { Settings, TicketMinus, Truck, TruckIcon, Users } from "lucide-react";
+import {
+  Settings,
+  TicketMinus,
+  Truck,
+  TruckIcon,
+  Users,
+  Tags,
+} from "lucide-react";
 
 type Props = {
   user: User | null;
@@ -97,13 +104,21 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
       href: "/dashboard/settings",
       icon: <Settings className="h-5 w-5 shrink-0" />,
     },
-
+    user?.role === "Admin" && {
+      label: "Promo Codes",
+      href: "/dashboard/promo-codes",
+      icon: <TicketMinus className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Admin" && {
+      label: "Categories",
+      href: "/dashboard/categories",
+      icon: <Tags className="h-5 w-5 shrink-0" />,
+    },
     user?.role === "Seller" && {
       label: "Analytics",
       href: "/dashboard/analytics",
       icon: <IoAnalyticsSharp className="h-5 w-5 shrink-0" />,
     },
-
     user?.role === "Seller" && {
       label: "Reviews",
       href: "/dashboard/reviews",

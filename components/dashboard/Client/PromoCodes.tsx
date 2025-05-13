@@ -1,12 +1,17 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { IPromo } from "@/lib/database/models/promo.model";
 import { motion } from "framer-motion";
 import { Copy, Check, Percent, Calendar, Tag } from "lucide-react";
 import { toast } from "sonner";
 import { HashLoader } from "react-spinners";
+import { User } from "@/interface";
 
-const PromoCodes = () => {
+type Props = {
+  user: User | null;
+};
+
+const PromoCodes: FC<Props> = ({ user }) => {
   const [promoCodes, setPromoCodes] = useState<IPromo[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
