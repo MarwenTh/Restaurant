@@ -84,36 +84,29 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
       href: "/dashboard/profile",
       icon: <IconUserBolt className="h-5 w-5 shrink-0" />,
     },
-    user?.role === "Admin" && {
-      label: "Deliveries",
-      href: "/dashboard/deliveries",
-      icon: <Truck className="h-5 w-5 shrink-0" />,
-    },
+
     user?.role === "Admin" && {
       label: "Analytics",
       href: "/dashboard/analytics",
       icon: <IoAnalyticsSharp className="h-5 w-5 shrink-0" />,
-    },
-    user?.role === "Admin" && {
-      label: "Reviews",
-      href: "/dashboard/reviews",
-      icon: <MdOutlineReviews className="h-5 w-5 shrink-0" />,
-    },
-    user?.role === "Admin" && {
-      label: "Settings",
-      href: "/dashboard/settings",
-      icon: <Settings className="h-5 w-5 shrink-0" />,
-    },
-    user?.role === "Admin" && {
-      label: "Promo Codes",
-      href: "/dashboard/promo-codes",
-      icon: <TicketMinus className="h-5 w-5 shrink-0" />,
     },
     user?.role === "Admin" && {
       label: "Categories",
       href: "/dashboard/categories",
       icon: <Tags className="h-5 w-5 shrink-0" />,
     },
+    user?.role === "Admin" && {
+      label: "Reviews",
+      href: "/dashboard/reviews",
+      icon: <MdOutlineReviews className="h-5 w-5 shrink-0" />,
+    },
+
+    user?.role === "Admin" && {
+      label: "Promo Codes",
+      href: "/dashboard/promo-codes",
+      icon: <TicketMinus className="h-5 w-5 shrink-0" />,
+    },
+
     user?.role === "Seller" && {
       label: "Analytics",
       href: "/dashboard/analytics",
@@ -125,6 +118,16 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
       icon: <MdOutlineReviews className="h-5 w-5 shrink-0" />,
     },
     user?.role === "Seller" && {
+      label: "Settings",
+      href: "/dashboard/settings",
+      icon: <Settings className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Admin" && {
+      label: "Deliveries",
+      href: "/dashboard/deliveries",
+      icon: <Truck className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Admin" && {
       label: "Settings",
       href: "/dashboard/settings",
       icon: <Settings className="h-5 w-5 shrink-0" />,
@@ -168,11 +171,7 @@ export const Logo = () => {
       className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
     >
       <SiIfood className="h-7 w-7 rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm shrink-0" />
-      <motion.span
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
-      >
+      <motion.span className="font-medium text-black dark:text-white whitespace-pre">
         FoodGuide
       </motion.span>
     </Link>

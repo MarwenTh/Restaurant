@@ -23,8 +23,8 @@ const useCategory = () => {
       }
 
       setData({
-        categories: result.category || [],
-        totalCategories: result.totalCategories || 0,
+        categories: Array.isArray(result) ? result : [],
+        totalCategories: Array.isArray(result) ? result.length : 0,
         loading: false,
         error: null,
       });

@@ -84,19 +84,17 @@ const About = () => {
               Our Story
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 dark:text-gray-100">
-              Connecting Culinary Excellence with Food Enthusiasts
+              نربطو بين الذوق العالي و محبّي الماكلة
             </h2>
             <p className="text-[#64748b] text-lg mb-6 dark:text-gray-400">
-              FoodGuide was born from a simple idea: to create a platform that
-              celebrates culinary diversity and makes exceptional food
-              accessible to everyone, while helping restaurants thrive in the
-              digital age.
+              FoodGuide جات من فكرة بسيطة: نعملو بلاصة تجمع تنوّع الماكلة و
+              تخلّي أحسن الأطباق توصل للناس الكل، و في نفس الوقت نعاونوا
+              الريسطوّات باش يواكبوا العصر الرقمي.
             </p>
             <p className="text-[#64748b] text-lg mb-8 dark:text-gray-400">
-              Founded in 2023, we've quickly grown into a vibrant marketplace
-              connecting talented chefs and innovative restaurants with food
-              lovers seeking authentic culinary experiences. Our mission is to
-              transform the way people discover, order, and enjoy food.
+              تأسّسنا في 2023، و في وقت قصير ولّينا مارشي فيه طباخة مبدعين و
+              ريسطوّات مجدّدة، و ناس تحب تذوق الماكلة الصحاح. الميسيون متاعنا هي
+              نبدلو كيفاش الناس تكتشف، تطلب، و تتمتّع بالماكلة.
             </p>
 
             {/* Stats */}
@@ -107,10 +105,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    Quality First
+                    الجودة قبل كل شيء
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    Only vetted restaurants with exceptional standards
+                    ✦ ما نقبلو كان الريسطوّات اللي عندهم ستاندار عالي
                   </p>
                 </div>
               </div>
@@ -120,10 +118,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    Community Driven
+                    مجتمعنا هو القائد
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    Built on feedback from chefs and customers alike
+                    ✦ نسمعو للطباخة و الحرفاء و نطوّرو مع بعضنا
                   </p>
                 </div>
               </div>
@@ -133,10 +131,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    Business Growth
+                    نكبّرو البيزنس المحلي
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    Helping local restaurants reach new customers
+                    ✦ نعاونوا الريسطوّات باش يوصلو لأكثر ناس
                   </p>
                 </div>
               </div>
@@ -146,10 +144,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    Fair Partnership
+                    شراكة بالنية
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    Transparent pricing and equitable relationships
+                    ✦ أسعار واضحة و علاقة فيها الإنصاف
                   </p>
                 </div>
               </div>
@@ -159,7 +157,7 @@ const About = () => {
               size="lg"
               className="cursor-pointer reveal dark:bg-[#f97415] dark:text-white dark:hover:bg-[#f65e00]"
             >
-              Learn More About Us
+              تعرف علينا أكثر
             </Button>
           </div>
         </div>

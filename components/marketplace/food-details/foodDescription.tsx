@@ -4,8 +4,15 @@ import useFood from "@/hooks/useFood";
 import { MenuItem } from "@/interface";
 import React, { FC } from "react";
 import AiAnalysis from "./aiAnalysis";
-import { BotMessageSquare, Info, Package, Tag } from "lucide-react";
+import {
+  BotMessageSquare,
+  Info,
+  MessageSquare,
+  Package,
+  Tag,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import ReviewTab from "./ReviewTab";
 
 type Props = {
   id: string;
@@ -43,6 +50,15 @@ const FoodDescription: FC<Props> = ({ id, foodItem }) => {
           >
             <BotMessageSquare className="h-4 w-4 mr-2" />
             Chat with AI
+          </TabsTrigger>
+          <TabsTrigger
+            value="reviews"
+            className="rounded-full px-6 py-4 data-[state=active]:bg-white
+              data-[state=active]:text-food-orange data-[state=active]:shadow-sm
+              cursor-pointer"
+          >
+            <MessageSquare className="h-4 w-4 mr-2" />
+            Reviews
           </TabsTrigger>
         </TabsList>
 
@@ -104,6 +120,9 @@ const FoodDescription: FC<Props> = ({ id, foodItem }) => {
 
         <TabsContent value="aiAnalysis" className="animate-fade-in">
           <AiAnalysis foodItem={foodItem} />
+        </TabsContent>
+        <TabsContent value="reviews" className="animate-fade-in">
+          <ReviewTab foodItem={foodItem} foodId={id} />
         </TabsContent>
       </Tabs>
     </div>

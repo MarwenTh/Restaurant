@@ -1,5 +1,5 @@
 "use client";
-import { ChevronLeft, ChevronRight, Filter } from "lucide-react";
+import { ChevronLeft, ChevronRight, Filter, Loader2 } from "lucide-react";
 import React, { useState, useRef } from "react";
 import { Badge } from "../ui/badge";
 import useCategory from "@/hooks/useCategory";

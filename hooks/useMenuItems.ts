@@ -3,11 +3,8 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import useUser from "./useUser";
 
-// this hook is used to fetch menu items of the current seller who is logged in
-const useMenuItems = (
-  page: number = 1,
-  limit: number = 6,
-): UseMenuItemsResponse => {
+// this hook is used to fetch all menu items
+const useMenuItems = (): UseMenuItemsResponse => {
   const [data, setData] = useState<Omit<UseMenuItemsResponse, "refetch">>({
     menuItems: [],
     totalMenuItems: 0,
@@ -23,13 +20,7 @@ const useMenuItems = (
     try {
       setData((prev) => ({ ...prev, loading: true }));
 
-      const params = new URLSearchParams();
-      params.append("page", page.toString());
-      params.append("limit", limit.toString());
-
-      const response = await axios.get(
-        `/api/menu-item?seller=${id}&${params.toString()}`,
-      );
+      const response = await axios.get(`/api/menu-item?seller=${id}`);
       const result = await response.data;
 
       if (response.status !== 200) {

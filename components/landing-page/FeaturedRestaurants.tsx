@@ -16,17 +16,17 @@ const FeaturedRestaurants = () => {
           className="inline-block px-4 py-2 bg-[#D4AF37]/10 text-[#D4AF37] rounded-full text-sm
             font-medium tracking-wider mb-6 reveal dark:bg-[#D4AF37]/20"
         >
-          FEATURED RESTAURANTS
+          ريسطوّات مميّزين
         </span>
         <h2
           className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif mb-6 reveal
             dark:text-white"
         >
-          Explore Our Top-Rated Plates
+          إكتشف أشهى الأطباق المجربة
         </h2>
         <p className="text-gray-700 text-lg reveal dark:text-gray-300">
-          Discover the most loved restaurants on our platform, known for their
-          exceptional food quality, service, and unique culinary experiences.
+          تصفّح الريسطوّات اللي الناس حبتهم، معروفين بجودة الماكلة، الخدمة
+          البنينة، و تجارب مذاق ما تتنساش.
         </p>
       </div>
       {loading && (

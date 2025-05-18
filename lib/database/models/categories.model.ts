@@ -2,6 +2,7 @@ import { Schema, model, Document, Types, models } from "mongoose";
 
 export interface ICategory extends Document {
   name: string;
+  image: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -9,6 +10,7 @@ export interface ICategory extends Document {
 const CategorySchema = new Schema<ICategory>(
   {
     name: { type: String, required: true },
+    image: { type: String, required: true },
   },
   { timestamps: true },
 );

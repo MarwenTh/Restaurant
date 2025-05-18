@@ -2,7 +2,6 @@
 import FoodDescription from "@/components/marketplace/food-details/foodDescription";
 import FoodDetails from "@/components/marketplace/food-details/foodDetails";
 import RecommendedFoods from "@/components/marketplace/food-details/recommendedFood";
-import ReviewSection from "@/components/marketplace/food-details/reviewSection";
 import { Button } from "@/components/ui/button";
 import useFood from "@/hooks/useFood";
 import { MenuItem } from "@/interface";
@@ -55,7 +54,6 @@ const Page = (props: Props) => {
     <>
       <FoodDetails id={id as string} foodItem={foodItem} />
       <FoodDescription id={id as string} foodItem={foodItem} />
-      <ReviewSection sellerId={foodItem.seller?._id} />
       <RecommendedFoods foodItem={menuItems} />
     </>
   );

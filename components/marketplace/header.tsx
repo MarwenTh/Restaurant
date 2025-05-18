@@ -1,7 +1,7 @@
 "use client";
 import {
   ChevronDown,
-  Clock,
+  Timer,
   Filter,
   Search,
   ShoppingBag,
@@ -140,26 +140,26 @@ const Header = () => {
 
                     <div className="py-2">
                       <h3 className="text-sm font-medium mb-2 flex items-center">
-                        <Clock className="h-4 w-4 mr-2 text-[#D4AF37]" />
-                        Maximum Delivery Time
+                        <Timer className="h-4 w-4 mr-2 text-[#D4AF37]" />
+                        Preparation Time
                       </h3>
                       <div className="flex flex-wrap gap-2">
-                        {[15, 30, 45, 60].map((time) => (
+                        {[5, 10, 15, 20, 30].map((time) => (
                           <Button
                             key={time}
                             variant={
-                              filters.maxDeliveryTime === time
+                              filters.preparationTime === time
                                 ? "default"
                                 : "outline"
                             }
                             size="sm"
                             className={
-                              filters.maxDeliveryTime === time
+                              filters.preparationTime === time
                                 ? "bg-[#D4AF37] hover:bg-[#D4AF37]/90"
                                 : "hover:border-[#D4AF37] hover:text-[#D4AF37]"
                             }
                             onClick={() =>
-                              toggleFilter("maxDeliveryTime", time)
+                              toggleFilter("preparationTime", time)
                             }
                           >
                             {time} min
@@ -190,7 +190,7 @@ const Header = () => {
                             }
                             onClick={() => toggleFilter("maxPrice", price)}
                           >
-                            ${price}
+                            {price} dt
                           </Button>
                         ))}
                       </div>

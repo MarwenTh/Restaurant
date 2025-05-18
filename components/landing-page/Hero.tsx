@@ -8,9 +8,9 @@ const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentText, setCurrentText] = useState(0);
   const headlines = [
-    "Connecting Foodies with Amazing Restaurants",
-    "The Ultimate Food Marketplace Experience",
-    "Discover Culinary Treasures Near You",
+    "نربطو محبّي الماكلة بأحسن الريسطوّات",
+    "أحلى تجربة مارشي للماكلة",
+    "إكتشف كنوز الماكلة قريب منك",
   ];
   const { data: session } = useSession();
 
@@ -61,8 +61,7 @@ const Hero = () => {
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden"
       style={{
-        background: `linear-gradient(to right, rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.7)), 
-                    url('https://images.unsplash.com/photo-1543007630-9710e4a00a20?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80')`,
+        background: `linear-gradient(to right, rgba(26, 26, 26, 0.9), rgba(26, 26, 26, 0.7)), url('/background.jpg')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
@@ -76,7 +75,7 @@ const Hero = () => {
       >
         <div className="inline-block mb-6 reveal">
           <span className="px-4 py-1.5 mb-6 bg-[#f97415]/10 text-[#f97415] rounded-full font-medium text-sm">
-            THE PREMIUM FOOD MARKETPLACE
+            المارشي المميز للماكلة
           </span>
         </div>
 
@@ -98,27 +97,29 @@ const Hero = () => {
               </span>
             ))}
           </span>
-          <span className="block mt-2 text-[#D4AF37]">Taste, Order, Enjoy</span>
+          <span className="block mt-2 text-[#D4AF37]">ذوق، طلب، تمتّع</span>
         </h1>
 
         <p className="max-w-3xl mx-auto text-lg md:text-xl text-white/90 mb-10 reveal">
-          Where exceptional restaurants meet food enthusiasts. Our marketplace
-          brings together the best local eateries and hungry customers in one
-          seamless platform.
+          وين الريسطوّات المميّزين يلتقيو بمحبي الماكلة. البلاتفورم متاعنا تجمع
+          أفضل المطاعم المحليّة مع الناس اللي تحب تاكل، في بلاصة وحدة سهلة و
+          سلسة.
         </p>
 
         <div
           className="reveal flex flex-col sm:flex-row justify-center items-center space-y-4
             sm:space-y-0 sm:space-x-6"
         >
-          <button
-            className="bg-[#D4AF37] cursor-pointer text-white px-6 py-3 rounded-md font-medium
-              transition-all hover:shadow-[#D4AF37] hover:translate-y-[-2px] min-w-[180px]
-              animate-fade-in hover:shadow-2xl"
-            style={{ animationDelay: "300ms" }}
-          >
-            Find Restaurants
-          </button>
+          <Link href="/marketplace">
+            <button
+              className="bg-[#D4AF37] cursor-pointer text-white px-6 py-3 rounded-md font-medium
+                transition-all hover:shadow-[#D4AF37] hover:translate-y-[-2px] min-w-[180px]
+                animate-fade-in hover:shadow-2xl"
+              style={{ animationDelay: "300ms" }}
+            >
+              Find Restaurants
+            </button>
+          </Link>
           <Link href={`${session ? "/dashboard" : "signup"}`}>
             <button
               className="border border-[#D4AF37] text-[#D4AF37] px-6 py-3 rounded-md font-medium
@@ -126,7 +127,7 @@ const Hero = () => {
                 hover:shadow-[#D4AF37] min-w-[180px] animate-fade-in cursor-pointer"
               style={{ animationDelay: "500ms" }}
             >
-              Join us now
+              {session ? "Dashboard" : "Sign Up"}
             </button>
           </Link>
         </div>

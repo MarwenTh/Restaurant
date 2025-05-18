@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export type FilterKeys =
   | "minRating"
-  | "maxDeliveryTime"
+  | "preparationTime"
   | "maxPrice"
   | "sortBy"
   | "category"
@@ -11,7 +11,7 @@ export type FilterKeys =
 
 export type Filters = {
   minRating: number;
-  maxDeliveryTime: number;
+  preparationTime: number;
   maxPrice: number;
   sortBy: string;
   category: string;
@@ -20,7 +20,7 @@ export type Filters = {
 
 const defaultFilters: Filters = {
   minRating: 0,
-  maxDeliveryTime: 0,
+  preparationTime: 0,
   maxPrice: 0,
   sortBy: "",
   category: "all",
@@ -38,7 +38,7 @@ export function useUrlFilters() {
 
     const newFilters = {
       minRating: Number(params.get("minRating")) || 0,
-      maxDeliveryTime: Number(params.get("maxDeliveryTime")) || 0,
+      preparationTime: Number(params.get("preparationTime")) || 0,
       maxPrice: Number(params.get("maxPrice")) || 0,
       sortBy: params.get("sortBy") || "",
       category: params.get("category") || "all",
@@ -61,10 +61,10 @@ export function useUrlFilters() {
         params.set("minRating", updatedFilters.minRating.toString());
       }
 
-      if (updatedFilters.maxDeliveryTime !== defaultFilters.maxDeliveryTime) {
+      if (updatedFilters.preparationTime !== defaultFilters.preparationTime) {
         params.set(
-          "maxDeliveryTime",
-          updatedFilters.maxDeliveryTime.toString(),
+          "preparationTime",
+          updatedFilters.preparationTime.toString(),
         );
       }
 

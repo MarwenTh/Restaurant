@@ -8,7 +8,7 @@ type Props = {
 
 const RecommendedFoods: React.FC<Props> = ({ foodItem }) => {
   return (
-    <div className="bg-gray-50 py-16">
+    <div className="bg-gray-50">
       <FoodCarousel
         title="You Might Also Like"
         subtitle="Discover similar dishes you might enjoy"

@@ -43,9 +43,8 @@ const DrawerTemplate: FC<Props> = ({
             <BarChartTemplate />
           </div>
           <DrawerFooter>
-            <Button>Submit</Button>
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">Ok</Button>
             </DrawerClose>
           </DrawerFooter>
         </div>

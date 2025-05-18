@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -82,14 +82,31 @@ const statusLabels = {
 
 const MenuItems: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  // const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const menuItemsPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const { menuItems, loading, totalMenuItems, refetch } = useMenuItems(
-    currentPage,
-    menuItemsPerPage,
-  );
+  const { menuItems, loading, totalMenuItems, refetch } = useMenuItems();
   const { toast } = useToast();
+
+  // Filter items based on search term
+  const filteredItems = menuItems?.filter(
+    (item) =>
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (Array.isArray(item.category) &&
+        item.category.some((cat) =>
+          cat.toLowerCase().includes(searchTerm.toLowerCase()),
+        )),
+  );
+
+  // Calculate pagination
+  const totalPages = Math.ceil((filteredItems?.length || 0) / menuItemsPerPage);
+  const startIndex = (currentPage - 1) * menuItemsPerPage;
+  const endIndex = startIndex + menuItemsPerPage;
+  const currentItems = filteredItems?.slice(startIndex, endIndex);
+
+  // Reset to first page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const handleDelete = async (id: string) => {
     try {
@@ -110,15 +127,6 @@ const MenuItems: React.FC = () => {
       });
     }
   };
-
-  const filteredItems = menuItems?.filter(
-    (item) =>
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (Array.isArray(item.category) &&
-        item.category.some((cat) =>
-          cat.toLowerCase().includes(searchTerm.toLowerCase()),
-        )),
-  );
 
   return (
     <div>
@@ -224,7 +232,7 @@ const MenuItems: React.FC = () => {
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {filteredItems?.map((item) => (
+                          {currentItems?.map((item) => (
                             <TableRow key={item._id}>
                               <TableCell>
                                 <div className="h-12 w-12 rounded-md overflow-hidden">
@@ -740,39 +748,47 @@ const MenuItems: React.FC = () => {
             {!loading ? (
               <div>
                 Showing{" "}
-                <strong>{(currentPage - 1) * menuItemsPerPage + 1}</strong> -{" "}
                 <strong>
-                  {Math.min(currentPage * menuItemsPerPage, totalMenuItems)}
+                  {filteredItems?.length === 0 ? 0 : startIndex + 1}
                 </strong>{" "}
-                of <strong>{totalMenuItems}</strong> items
+                -{" "}
+                <strong>
+                  {Math.min(endIndex, filteredItems?.length || 0)}
+                </strong>{" "}
+                of <strong>{filteredItems?.length || 0}</strong> items
               </div>
             ) : (
               <div className="flex items-center">
                 <span>Loading...</span>
-                <FaSpinner size={13} className="animate-spin" />
+                <FaSpinner size={13} className="animate-spin ml-2" />
               </div>
             )}
           </div>
-          <div className="flex">
+          <div className="flex items-center gap-2">
             <Button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               variant="ghost"
               size="sm"
-              disabled={currentPage === 1}
-              className={`${currentPage === 1 ? "" : "cursor-pointer"}`}
+              disabled={currentPage === 1 || loading}
+              className="flex items-center"
             >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Prev
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
             </Button>
+            <div className="text-sm text-muted-foreground">
+              Page {currentPage} of {totalPages || 1}
+            </div>
             <Button
-              onClick={() => setCurrentPage((prev) => prev + 1)}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
               variant="ghost"
               size="sm"
-              disabled={currentPage * menuItemsPerPage >= totalMenuItems}
-              className={`${currentPage * menuItemsPerPage >= totalMenuItems ? "" : "cursor-pointer"}`}
+              disabled={currentPage >= totalPages || loading}
+              className="flex items-center"
             >
               Next
-              <ChevronRight className="ml-2 h-4 w-4" />
+              <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>
         </CardFooter>

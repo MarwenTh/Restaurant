@@ -25,18 +25,12 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const sellerId = searchParams.get("seller");
     // Pagination parameters
-    const page = parseInt(searchParams.get("page") || "1", 10);
-    const limit = parseInt(searchParams.get("limit") || "6", 10);
-    const skip = (page - 1) * limit;
 
     if (sellerId) {
-      const menuItems = await MenuItem.find({ seller: sellerId })
-        .populate({
-          path: "seller",
-          select: "-password -__v -updatedAt", // exclude sensitive/unnecessary fields
-        })
-        .skip(skip)
-        .limit(limit);
+      const menuItems = await MenuItem.find({ seller: sellerId }).populate({
+        path: "seller",
+        select: "-password -__v -updatedAt", // exclude sensitive/unnecessary fields
+      });
 
       const totalMenuItems = menuItems.length;
 
@@ -54,13 +48,10 @@ export async function GET(request: NextRequest) {
     //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     // }
 
-    const allMenuItems = await MenuItem.find()
-      .populate({
-        path: "seller",
-        select: "-password -__v -updatedAt", // exclude sensitive/unnecessary fields
-      })
-      .skip(skip)
-      .limit(limit);
+    const allMenuItems = await MenuItem.find().populate({
+      path: "seller",
+      select: "-password -__v -updatedAt", // exclude sensitive/unnecessary fields
+    });
     const totalMenuItems = await MenuItem.countDocuments();
 
     return NextResponse.json({ allMenuItems, totalMenuItems }, { status: 200 });

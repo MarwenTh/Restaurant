@@ -51,6 +51,8 @@ export interface UseMenuItemsResponse {
   loading: boolean;
   error: string | null;
   refetch: () => void;
+  hasMore?: boolean;
+  loadMore?: () => Promise<void>;
 }
 
 export interface UseCategoryResponse {

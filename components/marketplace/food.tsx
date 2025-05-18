@@ -5,13 +5,9 @@ import {
   Heart,
   MapPin,
   ShoppingBag,
-  Sparkles,
-  Star,
-  ThumbsUp,
-  TrendingUp,
+  Loader2,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent, CardFooter } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 import { Button } from "../ui/button";
@@ -26,9 +22,16 @@ import { useUrlFilters } from "@/hooks/useUrlFilters";
 import { cn, formatCurrency } from "@/lib/utils";
 
 const Food = () => {
-  const { loading, error, menuItems, refetch, totalMenuItems } = useFood();
+  const {
+    loading,
+    error,
+    menuItems,
+    refetch,
+    totalMenuItems,
+    loadMore,
+    hasMore,
+  } = useFood();
   const [animatedItems, setAnimatedItems] = useState<number[]>([]);
-  const [activeTab, setActiveTab] = useState("trending");
   const { filters } = useUrlFilters();
 
   const { search: searchQuery, category: selectedCategory } = filters;
@@ -53,11 +56,10 @@ const Food = () => {
       filters.minRating === 0 ||
       (item.rating && item.rating >= filters.minRating);
 
-    // Delivery time filter
-    const matchesDeliveryTime =
-      filters.maxDeliveryTime === 0 ||
-      (item.deliveryTime &&
-        parseInt(item.deliveryTime) <= filters.maxDeliveryTime);
+    // Preparation time filter
+    const matchesPreparationTime =
+      filters.preparationTime === 0 ||
+      (item.preparationTime && item.preparationTime <= filters.preparationTime);
 
     // Price filter
     const matchesPrice =
@@ -67,7 +69,7 @@ const Food = () => {
       matchesSearch &&
       matchesCategory &&
       matchesRating &&
-      matchesDeliveryTime &&
+      matchesPreparationTime &&
       matchesPrice
     );
   });
@@ -82,15 +84,6 @@ const Food = () => {
       return (b.rating || 0) - (a.rating || 0);
     } else if (filters.sortBy === "popularity") {
       return (b.popularity || 0) - (a.popularity || 0);
-    } else if (activeTab === "trending") {
-      return (b.popularity || 0) - (a.popularity || 0);
-    } else if (activeTab === "newest") {
-      return (
-        new Date(b.createdAt || "").getTime() -
-        new Date(a.createdAt || "").getTime()
-      );
-    } else if (activeTab === "popular") {
-      return (b.reviews || 0) - (a.reviews || 0);
     }
     return 0;
   });
@@ -106,35 +99,6 @@ const Food = () => {
           <ShoppingBag className="h-6 w-6 mr-2 text-[#D4AF37]" />
           Available Foods
         </h2>
-        <div>
-          <Tabs
-            defaultValue="trending"
-            className="w-full md:w-[400px]"
-            value={activeTab}
-            onValueChange={setActiveTab}
-          >
-            <TabsList className="mb-2 bg-[#D4AF37]/10">
-              <TabsTrigger
-                value="trending"
-                className="data-[state=active]:bg-[#D4AF37] data-[state=active]:text-white"
-              >
-                <TrendingUp className="h-4 w-4 mr-1" /> Trending
-              </TabsTrigger>
-              <TabsTrigger
-                value="newest"
-                className="data-[state=active]:bg-[#D4AF37] data-[state=active]:text-white"
-              >
-                <Sparkles className="h-4 w-4 mr-1" /> Newest
-              </TabsTrigger>
-              <TabsTrigger
-                value="popular"
-                className="data-[state=active]:bg-[#D4AF37] data-[state=active]:text-white"
-              >
-                <ThumbsUp className="h-4 w-4 mr-1" /> Popular
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
       </div>
 
       <Categories />
@@ -156,7 +120,7 @@ const Food = () => {
                   </CardContent>
                 </Card>
               ))
-          : sortedFoodItems?.map((item, index) => (
+          : sortedFoodItems?.map((item) => (
               <Link
                 href={`marketplace/food-details/${item._id}`}
                 key={item._id}
@@ -166,26 +130,12 @@ const Food = () => {
                     duration-300 bg-white rounded-xl group"
                 >
                   <div className="relative">
-                    <div className="absolute top-3 right-3 z-10 flex gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="bg-white/90 backdrop-blur-sm text-primary rounded-full hover:bg-white
-                          hover:text-[#D4AF37] shadow-md"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          // Toggle favorite logic would go here
-                        }}
-                      >
-                        <Heart className="h-5 w-5 transition-colors duration-300" />
-                      </Button>
-                    </div>
                     <Image
                       width={500}
                       height={500}
                       src={item.image}
                       alt={item.name}
-                      className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div
                       className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0
@@ -195,49 +145,31 @@ const Food = () => {
                       {formatCurrency(item.price)}
                     </Badge>
                   </div>
-                  <CardContent className="p-6">
-                    <div className="flex items-center mb-3">
-                      <Avatar className="h-8 w-8 mr-2 border-2 border-[#D4AF37]/20">
-                        <AvatarImage
-                          src={item.seller?.image}
-                          alt={item.seller?.name}
-                        />
-                        <AvatarFallback className="bg-[#D4AF37]/10 text-[#D4AF37]">
-                          {item.seller?.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium">
-                        {item.seller?.name}
-                      </span>
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center">
+                        <Avatar className="h-6 w-6 mr-2 border border-[#D4AF37]/20">
+                          <AvatarImage
+                            src={item.seller?.image}
+                            alt={item.seller?.name}
+                          />
+                          <AvatarFallback className="bg-[#D4AF37]/10 text-[#D4AF37] text-xs">
+                            {item.seller?.name.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="text-sm font-medium truncate max-w-[120px]">
+                          {item.seller?.name}
+                        </span>
+                      </div>
                     </div>
                     <h3
-                      className="font-medium text-xl mb-2 line-clamp-1 group-hover:text-[#D4AF37]
+                      className="font-medium text-lg mb-2 line-clamp-1 group-hover:text-[#D4AF37]
                         transition-colors"
                     >
                       {item.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                      {item.description ||
-                        "Delicious food item with amazing flavors."}
-                    </p>
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="flex items-center">
-                        <Star className="h-4 w-4 text-[#D4AF37] fill-[#D4AF37]" />
-                        <span className="text-sm ml-1 font-semibold">
-                          {item.rating}
-                        </span>
-                        <span className="text-xs text-muted-foreground ml-1">
-                          ({item.reviews})
-                        </span>
-                      </div>
-                      <Separator orientation="vertical" className="h-4" />
-                      <div className="flex items-center text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3 mr-1 text-[#D4AF37]" />
-                        {item.deliveryTime}
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {item.category.map((tag) => (
+                    <div className="flex flex-wrap gap-1">
+                      {item.category.slice(0, 2).map((tag) => (
                         <Badge
                           key={tag}
                           variant="outline"
@@ -246,13 +178,16 @@ const Food = () => {
                           {tag}
                         </Badge>
                       ))}
+                      {item.category.length > 2 && (
+                        <Badge
+                          variant="outline"
+                          className="text-xs bg-[#D4AF37]/5 hover:bg-[#D4AF37]/10"
+                        >
+                          +{item.category.length - 2}
+                        </Badge>
+                      )}
                     </div>
                   </CardContent>
-                  <CardFooter className="p-6 pt-0">
-                    <Button className="w-full bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-white">
-                      Order Now
-                    </Button>
-                  </CardFooter>
                 </Card>
               </Link>
             ))}
@@ -267,14 +202,25 @@ const Food = () => {
         </div>
       )}
 
-      {sortedFoodItems && sortedFoodItems.length > 0 && (
+      {hasMore && sortedFoodItems && sortedFoodItems.length > 0 && (
         <div className="mt-16 text-center">
           <Button
             variant="outline"
             className="px-8 py-6 text-[#D4AF37] border-[#D4AF37]/20 hover:bg-[#D4AF37]/10
               hover:border-[#D4AF37]/30"
+            onClick={loadMore}
+            disabled={loading}
           >
-            Load More <ChevronDown className="ml-2 h-4 w-4" />
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              <>
+                Load More <ChevronDown className="ml-2 h-4 w-4" />
+              </>
+            )}
           </Button>
         </div>
       )}

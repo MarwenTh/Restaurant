@@ -72,7 +72,7 @@ const SellersCarousel = () => {
               .map((_, i) => (
                 <CarouselItem
                   key={i}
-                  className="pl-4 md:basis-1/2 lg:basis-1/4"
+                  className="pl-4 md:basis-1/3 lg:basis-1/5"
                 >
                   <Card className="overflow-hidden">
                     <CardContent className="p-6">
@@ -111,51 +111,21 @@ const SellersCarousel = () => {
           {sellers.map((seller) => (
             <CarouselItem
               key={seller._id}
-              className="pl-4 md:basis-1/2 lg:basis-1/4"
+              className="pl-4 md:basis-1/3 lg:basis-1/5"
             >
               <Link href={`/marketplace/seller/${seller._id}`}>
                 <Card
                   className="overflow-hidden hover:shadow-lg transition-all duration-300 hover:-translate-y-1
                     border-gold/10 h-full"
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-16 w-16 border border-gold/20 ring-2 ring-gold/5">
-                        <AvatarImage src={seller.image} alt={seller.name} />
-                        <AvatarFallback className="bg-gold/10 text-gold">
-                          {seller.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h3 className="font-medium text-lg">{seller.name}</h3>
-                        <div className="flex items-center">
-                          <Star className="h-4 w-4 text-gold fill-gold" />
-                          <span className="text-sm ml-1 font-semibold">
-                            {seller.rating || "New"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="mt-6 text-sm text-muted-foreground">
-                      {seller.address && (
-                        <p className="flex items-center">
-                          <MapPin className="h-3 w-3 mr-1 text-gold" />
-                          {seller.address.city}, {seller.address.state}
-                        </p>
-                      )}
-                      {seller.cuisine && (
-                        <p className="flex items-center mt-1">
-                          <ShoppingBag className="h-3 w-3 mr-1 text-gold" />
-                          {seller.cuisine.join(", ")}
-                        </p>
-                      )}
-                    </div>
-                    <Badge
-                      variant="secondary"
-                      className="mt-4 bg-gold/10 text-gold border-gold/20"
-                    >
-                      {seller.priceRange || "Medium"} Price Range
-                    </Badge>
+                  <CardContent className="p-4 flex flex-col items-center text-center">
+                    <Avatar className="h-20 w-20 border border-gold/20 ring-2 ring-gold/5 mb-3">
+                      <AvatarImage src={seller.image} alt={seller.name} />
+                      <AvatarFallback className="bg-gold/10 text-gold">
+                        {seller.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    <h3 className="font-medium text-lg">{seller.name}</h3>
                   </CardContent>
                 </Card>
               </Link>

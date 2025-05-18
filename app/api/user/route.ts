@@ -231,3 +231,54 @@ export async function PUT(request: Request) {
     );
   }
 }
+
+export async function PATCH(request: Request) {
+  try {
+    await connectToDatabase();
+    const session = await getSession();
+    const currentUser = await User.findOne({ email: session?.user?.email });
+
+    if (!currentUser || currentUser.role !== "Admin") {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { _id, name, email, role, image } = await request.json();
+    if (!_id || !name || !email || !role) {
+      return NextResponse.json(
+        { error: "Missing required fields" },
+        { status: 400 },
+      );
+    }
+
+    const user = await User.findById(_id);
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    user.name = name;
+    user.email = email;
+    user.role = role;
+    user.image = image;
+    await user.save();
+
+    return NextResponse.json(
+      {
+        message: "User updated successfully!",
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          image: user.image,
+        },
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}

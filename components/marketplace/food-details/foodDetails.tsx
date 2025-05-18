@@ -91,6 +91,7 @@ const FoodDetails: FC<Props> = ({ id, foodItem }) => {
 
     setIsOrdering(true);
     setOrder({
+      _id: `temp_${Date.now()}`,
       client: user._id || "",
       seller: foodItem.seller?._id || "",
       items: [
@@ -265,13 +266,6 @@ const FoodDetails: FC<Props> = ({ id, foodItem }) => {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Button
-                className="bg-food-orange hover:bg-food-orange/90 text-white rounded-full px-8 h-12
-                  shadow-lg shadow-food-orange/20 hover:shadow-xl hover:shadow-food-orange/30
-                  transition-all cursor-pointer"
-              >
-                Add to Cart
-              </Button>
               <Button
                 onClick={handleOrderNow}
                 variant="outline"
