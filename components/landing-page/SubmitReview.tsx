@@ -51,7 +51,9 @@ const SubmitReview = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!review || rating === 0) {
-      setValidationError("يرجى ملء التقييم وكتابة المراجعة قبل الإرسال.");
+      setValidationError(
+        "Veuillez remplir l'évaluation et écrire votre avis avant l'envoi.",
+      );
       return;
     }
     setValidationError(null);
@@ -66,10 +68,11 @@ const SubmitReview = () => {
           reviewMessage: review,
           image: image || user?.image || undefined,
           rating,
-          role: user?.role || "User",
+          role: user?.role || "Utilisateur",
         }),
       });
-      if (!res.ok) throw new Error("فشل في إرسال المراجعة. حاول مرة أخرى.");
+      if (!res.ok)
+        throw new Error("Échec de l'envoi de l'avis. Veuillez réessayer.");
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 4000);
       setName("");
@@ -78,7 +81,7 @@ const SubmitReview = () => {
       setReview("");
       setImage(null);
     } catch (err: any) {
-      setSubmitError(err.message || "حدث خطأ غير متوقع.");
+      setSubmitError(err.message || "Une erreur inattendue s'est produite.");
     } finally {
       setSubmitting(false);
     }
@@ -97,20 +100,22 @@ const SubmitReview = () => {
       >
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold font-serif mb-2 text-[#D4AF37] reveal">
-            شاركنا رأيك في FoodGuide
+            Partagez votre avis sur FoodGuide
           </h2>
           <p className="text-gray-500 text-lg reveal">
-            نحبوا نسمعوا تجربتك! قيم المنصة و اكتب مراجعتك بكل حرية.
+            Nous aimerions connaître votre expérience ! Évaluez la plateforme et
+            partagez votre avis librement.
           </p>
         </div>
         {submitted ? (
           <div className="flex flex-col items-center justify-center py-12">
             <CheckCircle2 className="h-16 w-16 text-[#D4AF37] mb-4" />
             <h3 className="text-xl font-semibold mb-2 text-[#D4AF37]">
-              شكراً لمراجعتك!
+              Merci pour votre avis !
             </h3>
             <p className="text-gray-600">
-              تم استلام رأيك بنجاح. سنعرضه قريباً على المنصة.
+              Votre témoignage a été reçu avec succès. Il sera bientôt affiché
+              sur la plateforme.
             </p>
           </div>
         ) : (
@@ -118,7 +123,7 @@ const SubmitReview = () => {
             <div>
               <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
                 <ImageIcon className="h-5 w-5 text-[#D4AF37]" />
-                صورة شخصية (اختياري)
+                Photo de profil (optionnel)
               </label>
               <input
                 type="file"
@@ -132,14 +137,14 @@ const SubmitReview = () => {
                 <div className="mt-3 flex justify-center relative">
                   <img
                     src={image}
-                    alt="Preview"
+                    alt="Aperçu"
                     className="h-20 w-20 rounded-full object-cover border-2 border-[#D4AF37]/40 shadow"
                   />
                   <button
                     type="button"
                     onClick={() => setImage("")}
                     className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow hover:bg-red-50"
-                    aria-label="حذف الصورة"
+                    aria-label="Supprimer l'image"
                   >
                     <XCircle className="h-5 w-5 text-red-400 hover:text-red-600" />
                   </button>
@@ -151,7 +156,7 @@ const SubmitReview = () => {
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                الاسم <span className="text-[#D4AF37]">*</span>
+                Nom <span className="text-[#D4AF37]">*</span>
               </label>
               <input
                 type="text"
@@ -160,13 +165,13 @@ const SubmitReview = () => {
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none
                   focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] bg-white"
-                placeholder="اكتب اسمك هنا"
+                placeholder="Entrez votre nom"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                التقييم <span className="text-[#D4AF37]">*</span>
+                Évaluation <span className="text-[#D4AF37]">*</span>
               </label>
               <div className="flex items-center space-x-1 rtl:space-x-reverse">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -197,7 +202,7 @@ const SubmitReview = () => {
                 htmlFor="review"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                المراجعة <span className="text-[#D4AF37]">*</span>
+                Avis <span className="text-[#D4AF37]">*</span>
               </label>
               <textarea
                 id="review"
@@ -206,7 +211,7 @@ const SubmitReview = () => {
                 className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none
                   focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] bg-white
                   min-h-[120px]"
-                placeholder="اكتب رأيك أو تجربتك مع FoodGuide..."
+                placeholder="Partagez votre expérience avec FoodGuide..."
               />
             </div>
             {validationError && (
@@ -226,7 +231,7 @@ const SubmitReview = () => {
                 disabled:opacity-60"
               disabled={submitting}
             >
-              {submitting ? "...جاري الإرسال" : "أرسل المراجعة"}
+              {submitting ? "Envoi en cours..." : "Envoyer l'avis"}
             </button>
           </form>
         )}

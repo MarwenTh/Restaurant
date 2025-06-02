@@ -128,9 +128,9 @@ const Footer = () => {
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-[#D4AF37] mr-3 mt-1 flex-shrink-0" />
                 <span className="text-gray-400">
-                  123 Gourmet Street, Foodie Plaza,
+                  Tunisia, Foodie Plaza,
                   <br />
-                  New York, NY 10001
+                  Tunis, TN 10001
                 </span>
               </li>
               <li className="flex items-center">
@@ -152,26 +152,6 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
-
-            <div className="mt-6">
-              <h4 className="text-sm font-semibold mb-3">
-                Subscribe to Our Newsletter
-              </h4>
-              <form className="flex">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="bg-[#2A2A2A] text-white px-4 py-2 rounded-l-md focus:outline-none flex-1"
-                />
-                <button
-                  type="submit"
-                  className="bg-[#D4AF37] text-white px-4 py-2 rounded-r-md font-medium transition-colors
-                    hover:bg-[#D4AF37]/90"
-                >
-                  Subscribe
-                </button>
-              </form>
-            </div>
           </div>
         </div>
 

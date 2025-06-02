@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import FoodCarousel from "@/components/marketplace/FoodCarousel";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import ReservationForm from "@/components/marketplace/ReservationForm";
 
 interface BusinessHours {
   day: string;
@@ -209,6 +210,7 @@ const SellerProfile = () => {
                     {seller.address.state} {seller.address.zipCode}
                   </p>
                 )}
+                <ReservationForm sellerId={seller._id} />
               </div>
             </div>
           </div>

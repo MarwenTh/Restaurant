@@ -30,6 +30,7 @@ import {
   TruckIcon,
   Users,
   Tags,
+  Calendar,
 } from "lucide-react";
 
 type Props = {
@@ -99,6 +100,16 @@ const SidebarDemo: FC<Props> = ({ user, loading }) => {
       label: "Reviews",
       href: "/dashboard/reviews",
       icon: <MdOutlineReviews className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Seller" && {
+      label: "Reservations",
+      href: "/dashboard/reservations",
+      icon: <Calendar className="h-5 w-5 shrink-0" />,
+    },
+    user?.role === "Client" && {
+      label: "Reservations",
+      href: "/dashboard/reservations",
+      icon: <Calendar className="h-5 w-5 shrink-0" />,
     },
 
     user?.role === "Admin" && {

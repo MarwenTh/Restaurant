@@ -42,48 +42,54 @@ const HowItWorks = () => {
   const customerSteps = [
     {
       icon: <Search className="h-8 w-8 text-[#D4AF37]" />,
-      title: "إكتشف",
-      description: "تصفّح الماكلة و الريسطوّات اللي تناسب ذوقك و وينك موجود.",
+      title: "Découvrez",
+      description:
+        "Parcourez les plats et restaurants qui correspondent à vos goûts et à votre localisation.",
     },
     {
       icon: <UtensilsCrossed className="h-8 w-8 text-[#D4AF37]" />,
-      title: "إختار",
-      description: "لقَى ما تحب من أطباق متنوّعة و عدّلها كيف تحب.",
+      title: "Choisissez",
+      description:
+        "Trouvez ce qui vous plaît parmi une variété de plats et personnalisez-les selon vos préférences.",
     },
     {
       icon: <CreditCard className="h-8 w-8 text-[#D4AF37]" />,
-      title: "طلب",
-      description: "كمل الكوموند بكل أمان عبر سيستام خلاص سهل و واضح.",
+      title: "Commandez",
+      description:
+        "Finalisez votre commande en toute sécurité grâce à notre système de paiement simple et transparent.",
     },
     {
       icon: <Truck className="h-8 w-8 text-[#D4AF37]" />,
-      title: "تفرهد",
+      title: "Savourez",
       description:
-        "تابع الكوموند متاعك لحظة بلحظة و استمتع بوجبة توصلك لباب دارك.",
+        "Suivez votre commande en temps réel et profitez d'un repas livré directement chez vous.",
     },
   ];
 
   const restaurantSteps = [
     {
       icon: <Store className="h-8 w-8 text-[#D4AF37]" />,
-      title: "شارك",
-      description: "سجّل كمشارك و حضّر البروفيل متاعك على البلاتفورم.",
+      title: "Rejoignez",
+      description:
+        "Inscrivez-vous en tant que partenaire et créez votre profil sur notre plateforme.",
     },
     {
       icon: <Smartphone className="h-8 w-8 text-[#D4AF37]" />,
-      title: "ورّي",
-      description: "حطّ المينيو، التصاور، و المعلومات باش تجلب محبّي الماكلة.",
+      title: "Présentez",
+      description:
+        "Ajoutez votre menu, photos et informations pour attirer les amateurs de cuisine.",
     },
     {
       icon: <ShoppingBag className="h-8 w-8 text-[#D4AF37]" />,
-      title: "إستقبل",
-      description: "توصّل بالكوموند و تصرّف فيهم بالساهل من الداشبورد متاعنا.",
+      title: "Recevez",
+      description:
+        "Gérez vos commandes facilement depuis notre tableau de bord intuitif.",
     },
     {
       icon: <ChefHat className="h-8 w-8 text-[#D4AF37]" />,
-      title: "كبّر",
+      title: "Développez",
       description:
-        "بنِي البراند متاعك، زيد في الظهور، و قرّب من حرفاء جداد معانا.",
+        "Construisez votre marque, augmentez votre visibilité et atteignez de nouveaux clients avec nous.",
     },
   ];
 
@@ -99,18 +105,19 @@ const HowItWorks = () => {
             className="inline-block px-4 py-2 bg-[#D4AF37]/10 text-[#D4AF37] rounded-full text-sm
               font-medium tracking-wider mb-6 reveal"
           >
-            كيفاش تخدم
+            Comment ça marche
           </span>
           <h2
             className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 font-serif reveal
               dark:text-white"
           >
-            تجربة سهلة للناس الكل
+            Une expérience simple pour tous
           </h2>
           <p className="text-gray-700 dark:text-gray-300 text-lg reveal">
-            البلاتفورم متاعنا معمولة باش تسهّل الدنيا على محبّي الماكلة و أصحاب
-            الريسطوّات. سواء تحب تلقى أكلة بنينة ولا تحب تورّي شطارتك في
-            الكوجينة، سهّلناها عليك!
+            Notre plateforme est conçue pour simplifier la vie des amateurs de
+            cuisine et des restaurateurs. Que vous cherchiez un bon repas ou que
+            vous souhaitiez partager vos talents culinaires, nous avons tout
+            simplifié pour vous !
           </p>
         </div>
 
@@ -124,7 +131,7 @@ const HowItWorks = () => {
                 }`}
               onClick={() => setActiveTab("customer")}
             >
-              للناس اللي تحب الماكلة
+              Pour les Gourmets
             </button>
             <button
               className={`px-6 py-3 rounded-full text-base font-medium transition-all cursor-pointer ${
@@ -134,7 +141,7 @@ const HowItWorks = () => {
                 }`}
               onClick={() => setActiveTab("restaurant")}
             >
-              لريسطوّات و الطباخة
+              Pour les Restaurants
             </button>
           </div>
         </div>

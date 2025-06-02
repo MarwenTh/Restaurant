@@ -81,20 +81,23 @@ const About = () => {
               className="inline-block px-4 py-1.5 mb-6 bg-[#f97415]/10 text-[#f97415] rounded-full
                 font-medium text-sm dark:bg-[#f97415]/20 dark:text-[#f97415]"
             >
-              Our Story
+              Notre Histoire
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 dark:text-gray-100">
-              نربطو بين الذوق العالي و محبّي الماكلة
+              Nous connectons les amateurs de cuisine aux meilleurs restaurants
             </h2>
             <p className="text-[#64748b] text-lg mb-6 dark:text-gray-400">
-              FoodGuide جات من فكرة بسيطة: نعملو بلاصة تجمع تنوّع الماكلة و
-              تخلّي أحسن الأطباق توصل للناس الكل، و في نفس الوقت نعاونوا
-              الريسطوّات باش يواكبوا العصر الرقمي.
+              FoodGuide est né d'une idée simple : créer un espace qui rassemble
+              la diversité culinaire et permet aux meilleurs plats d'atteindre
+              tout le monde, tout en aidant les restaurants à s'adapter à l'ère
+              numérique.
             </p>
             <p className="text-[#64748b] text-lg mb-8 dark:text-gray-400">
-              تأسّسنا في 2023، و في وقت قصير ولّينا مارشي فيه طباخة مبدعين و
-              ريسطوّات مجدّدة، و ناس تحب تذوق الماكلة الصحاح. الميسيون متاعنا هي
-              نبدلو كيفاش الناس تكتشف، تطلب، و تتمتّع بالماكلة.
+              Fondé en 2023, nous sommes rapidement devenus une plateforme où se
+              rencontrent des chefs créatifs, des restaurants innovants et des
+              amateurs de bonne cuisine. Notre mission est de transformer la
+              façon dont les gens découvrent, commandent et apprécient la
+              nourriture.
             </p>
 
             {/* Stats */}
@@ -105,10 +108,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    الجودة قبل كل شيء
+                    La Qualité Avant Tout
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    ✦ ما نقبلو كان الريسطوّات اللي عندهم ستاندار عالي
+                    ✦ Nous n'acceptons que les restaurants aux standards élevés
                   </p>
                 </div>
               </div>
@@ -118,10 +121,11 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    مجتمعنا هو القائد
+                    Notre Communauté est Prioritaire
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    ✦ نسمعو للطباخة و الحرفاء و نطوّرو مع بعضنا
+                    ✦ Nous écoutons les chefs et les clients pour évoluer
+                    ensemble
                   </p>
                 </div>
               </div>
@@ -131,10 +135,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    نكبّرو البيزنس المحلي
+                    Développement du Business Local
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    ✦ نعاونوا الريسطوّات باش يوصلو لأكثر ناس
+                    ✦ Nous aidons les restaurants à atteindre plus de clients
                   </p>
                 </div>
               </div>
@@ -144,10 +148,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    شراكة بالنية
+                    Partenariat Équitable
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    ✦ أسعار واضحة و علاقة فيها الإنصاف
+                    ✦ Prix transparents et relations basées sur l'équité
                   </p>
                 </div>
               </div>
@@ -157,7 +161,7 @@ const About = () => {
               size="lg"
               className="cursor-pointer reveal dark:bg-[#f97415] dark:text-white dark:hover:bg-[#f65e00]"
             >
-              تعرف علينا أكثر
+              En Savoir Plus
             </Button>
           </div>
         </div>
