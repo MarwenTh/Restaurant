@@ -9,6 +9,7 @@ import {
   Phone,
   MapPin,
 } from "lucide-react";
+import Link from "next/link";
 import { SiIfood } from "react-icons/si";
 
 const Footer = () => {
@@ -145,7 +146,7 @@ const Footer = () => {
               <li className="flex items-center">
                 <Mail className="h-5 w-5 text-[#D4AF37] mr-3 flex-shrink-0" />
                 <a
-                  href="Nawres.zayneb@FoodGuide.com"
+                  href="mailto:info@FoodGuide.com"
                   className="text-gray-400 hover:text-[#D4AF37] transition-colors"
                 >
                   info@FoodGuide.com

@@ -93,7 +93,7 @@ const Food = () => {
   };
 
   return (
-    <section className="container mx-auto px-4 py-12">
+    <section className="container mx-auto px-4 py-5">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
         <h2 className="text-3xl font-serif font-semibold flex items-center">
           <ShoppingBag className="h-6 w-6 mr-2 text-[#D4AF37]" />

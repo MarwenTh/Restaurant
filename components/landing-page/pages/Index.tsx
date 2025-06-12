@@ -1,14 +1,13 @@
 import { useEffect } from "react";
 import Hero from "../Hero";
-import Navbar from "../Navbar";
 import About from "../About";
 import HowItWorks from "../HowItWorks";
 import FeaturedRestaurants from "../FeaturedRestaurants";
-import Areas from "../Areas";
 import Testimonials from "../Testimonials";
 import SubmitReview from "../SubmitReview";
 import Footer from "../Footer";
 import ScrollToTop from "../ScrollToTop";
+import Navbar from "../HomeNavbar";
 
 const Index = () => {
   useEffect(() => {

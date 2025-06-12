@@ -87,7 +87,7 @@ export function useUrlFilters() {
       // Update the URL without refreshing the page
       const queryString = params.toString();
       const newUrl = queryString ? `?${queryString}` : window.location.pathname;
-      router.push(newUrl);
+      router.replace(newUrl, { scroll: false });
     },
     [filters, router],
   );
@@ -95,7 +95,7 @@ export function useUrlFilters() {
   // Reset all filters to default values
   const resetFilters = useCallback(() => {
     setFilters(defaultFilters);
-    router.push(window.location.pathname);
+    router.replace(window.location.pathname, { scroll: false });
   }, [router]);
 
   // Toggle a filter value (for numeric filters)

@@ -11,12 +11,11 @@ import useUser from "@/hooks/useUser";
 import Link from "next/link";
 
 const NAV_ITEMS = [
-  { name: "Accueil", href: "#hero" },
-  { name: "À propos", href: "#about" },
-  { name: "Comment ça marche", href: "#how-it-works" },
-  { name: "Meilleures offres", href: "#featured" },
-  { name: "Zones", href: "#areas" },
-  { name: "Témoignages", href: "#testimonials" },
+  { name: "Home", href: "#hero" },
+  { name: "About", href: "#about" },
+  { name: "How it works", href: "#how-it-works" },
+  { name: "Best offers", href: "#featured" },
+  { name: "Testimonials", href: "#testimonials" },
 ];
 
 const Navbar = () => {
@@ -96,7 +95,7 @@ const Navbar = () => {
           {!session ? (
             <Link href={"/signup"}>
               <Button variant="outline" className="font-medium cursor-pointer">
-                Rejoignez-nous
+                Join us
               </Button>
             </Link>
           ) : (
@@ -108,7 +107,7 @@ const Navbar = () => {
         <button
           className="md:hidden text-[#020817]"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label={isMobileMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -136,7 +135,7 @@ const Navbar = () => {
           ))}
           <div className="flex flex-col space-y-3 pt-3">
             <Button variant="outline" className="w-full">
-              Devenez partenaire
+              Become a partner
             </Button>
           </div>
         </div>

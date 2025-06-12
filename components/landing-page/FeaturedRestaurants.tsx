@@ -16,18 +16,17 @@ const FeaturedRestaurants = () => {
           className="inline-block px-4 py-2 bg-[#D4AF37]/10 text-[#D4AF37] rounded-full text-sm
             font-medium tracking-wider mb-6 reveal dark:bg-[#D4AF37]/20"
         >
-          Restaurants en Vedette
+          Featured Restaurants
         </span>
         <h2
           className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif mb-6 reveal
             dark:text-white"
         >
-          Découvrez nos Plats les Plus Appréciés
+          Discover Our Most Popular Dishes
         </h2>
         <p className="text-gray-700 text-lg reveal dark:text-gray-300">
-          Explorez nos restaurants les plus populaires, reconnus pour la qualité
-          de leur cuisine, leur service exceptionnel et des expériences
-          gustatives inoubliables.
+          Explore our most popular restaurants, known for their quality cuisine,
+          exceptional service, and unforgettable dining experiences.
         </p>
       </div>
       {loading && (
@@ -37,7 +36,7 @@ const FeaturedRestaurants = () => {
       )}
 
       {menuItems?.length === 0 && (
-        <div className="text-center text-gray-500">Aucun plat trouvé</div>
+        <div className="text-center text-gray-500">No dishes found</div>
       )}
       {error && <div className="text-red-500 text-center">{error}</div>}
 

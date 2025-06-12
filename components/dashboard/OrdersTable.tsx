@@ -53,7 +53,7 @@ const OrdersTable: React.FC<OrdersTableProps> = ({
       onViewOrder(orderId);
     } else {
       // Default behavior - navigate to order details
-      navigate.push(`/seller/orders/${orderId}`);
+      navigate.push(`/dashboard/orders/${orderId}`);
     }
   };
 

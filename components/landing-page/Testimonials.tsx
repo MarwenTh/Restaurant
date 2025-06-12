@@ -39,11 +39,11 @@ const Testimonials = () => {
       setError(null);
       try {
         const res = await fetch("/api/site-review");
-        if (!res.ok) throw new Error("Échec de la récupération des avis");
+        if (!res.ok) throw new Error("Failed to fetch reviews");
         const data = await res.json();
         setReviews(data.reviews || []);
       } catch (err: any) {
-        setError(err.message || "Une erreur inattendue s'est produite");
+        setError(err.message || "An unexpected error occurred");
       } finally {
         setLoading(false);
       }
@@ -85,24 +85,24 @@ const Testimonials = () => {
             className="inline-block px-4 py-2 bg-[#D4AF37]/10 text-[#D4AF37] rounded-full text-sm
               font-medium tracking-wider mb-6 reveal dark:bg-[#D4AF37]/20 dark:text-[#D4AF37]"
           >
-            TÉMOIGNAGES
+            TESTIMONIALS
           </span>
           <h2
             className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif mb-6 reveal text-gray-900
               dark:text-white"
           >
-            Que disent nos utilisateurs ?
+            What do our users say?
           </h2>
           <p className="text-gray-700 text-lg reveal dark:text-gray-300">
-            Ne nous croyez pas sur parole, découvrez ce que nos clients et
-            restaurateurs qui ont essayé FoodGuide pensent de leur expérience.
+            Don't just take our word for it, discover what our customers and
+            restaurateurs who have tried FoodGuide think about their experience.
           </p>
         </div>
 
         <div className="relative max-w-4xl mx-auto">
           {loading ? (
             <div className="text-center py-16 text-[#D4AF37] font-semibold text-xl">
-              Chargement en cours...
+              Loading...
             </div>
           ) : error ? (
             <div className="text-center py-16 text-red-500 font-semibold text-xl">
@@ -110,7 +110,7 @@ const Testimonials = () => {
             </div>
           ) : testimonials.length === 0 ? (
             <div className="text-center py-16 text-gray-400 font-semibold text-xl">
-              Aucun témoignage pour le moment.
+              No testimonials yet.
             </div>
           ) : (
             <div
@@ -140,7 +140,7 @@ const Testimonials = () => {
                         {testimonials[currentTestimonial].name}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {testimonials[currentTestimonial].role || "Utilisateur"}
+                        {testimonials[currentTestimonial].role || "User"}
                       </p>
                       <div className="flex mt-1">
                         {Array.from({ length: 5 }).map((_, index) => (
@@ -173,7 +173,7 @@ const Testimonials = () => {
                   rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300
                   hover:text-[#D4AF37] dark:hover:text-[#D4AF37] transition-colors
                   focus:outline-none"
-                aria-label="Témoignage précédent"
+                aria-label="Previous testimonial"
                 disabled={isAnimating}
               >
                 <ChevronLeft className="h-6 w-6" />
@@ -189,7 +189,7 @@ const Testimonials = () => {
                         ? "bg-[#D4AF37] w-6"
                         : "bg-gray-300 dark:bg-gray-600"
                     }`}
-                    aria-label={`Aller au témoignage ${index + 1}`}
+                    aria-label={`Go to testimonial ${index + 1}`}
                     disabled={isAnimating}
                   />
                 ))}
@@ -201,7 +201,7 @@ const Testimonials = () => {
                   rounded-full flex items-center justify-center text-gray-700 dark:text-gray-300
                   hover:text-[#D4AF37] dark:hover:text-[#D4AF37] transition-colors
                   focus:outline-none"
-                aria-label="Témoignage suivant"
+                aria-label="Next testimonial"
                 disabled={isAnimating}
               >
                 <ChevronRight className="h-6 w-6" />

@@ -52,7 +52,7 @@ const SubmitReview = () => {
     e.preventDefault();
     if (!review || rating === 0) {
       setValidationError(
-        "Veuillez remplir l'évaluation et écrire votre avis avant l'envoi.",
+        "Please fill in the rating and write your review before submitting.",
       );
       return;
     }
@@ -68,11 +68,11 @@ const SubmitReview = () => {
           reviewMessage: review,
           image: image || user?.image || undefined,
           rating,
-          role: user?.role || "Utilisateur",
+          role: user?.role || "User",
         }),
       });
       if (!res.ok)
-        throw new Error("Échec de l'envoi de l'avis. Veuillez réessayer.");
+        throw new Error("Failed to submit review. Please try again.");
       setSubmitted(true);
       setTimeout(() => setSubmitted(false), 4000);
       setName("");
@@ -81,7 +81,7 @@ const SubmitReview = () => {
       setReview("");
       setImage(null);
     } catch (err: any) {
-      setSubmitError(err.message || "Une erreur inattendue s'est produite.");
+      setSubmitError(err.message || "An unexpected error occurred.");
     } finally {
       setSubmitting(false);
     }
@@ -100,22 +100,22 @@ const SubmitReview = () => {
       >
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold font-serif mb-2 text-[#D4AF37] reveal">
-            Partagez votre avis sur FoodGuide
+            Share your review about FoodGuide
           </h2>
           <p className="text-gray-500 text-lg reveal">
-            Nous aimerions connaître votre expérience ! Évaluez la plateforme et
-            partagez votre avis librement.
+            We'd love to hear about your experience! Rate the platform and share
+            your review freely.
           </p>
         </div>
         {submitted ? (
           <div className="flex flex-col items-center justify-center py-12">
             <CheckCircle2 className="h-16 w-16 text-[#D4AF37] mb-4" />
             <h3 className="text-xl font-semibold mb-2 text-[#D4AF37]">
-              Merci pour votre avis !
+              Thank you for your review!
             </h3>
             <p className="text-gray-600">
-              Votre témoignage a été reçu avec succès. Il sera bientôt affiché
-              sur la plateforme.
+              Your testimonial has been successfully received. It will be
+              displayed on the platform soon.
             </p>
           </div>
         ) : (
@@ -123,7 +123,7 @@ const SubmitReview = () => {
             <div>
               <label className="text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
                 <ImageIcon className="h-5 w-5 text-[#D4AF37]" />
-                Photo de profil (optionnel)
+                Profile picture (optional)
               </label>
               <input
                 type="file"
@@ -144,7 +144,7 @@ const SubmitReview = () => {
                     type="button"
                     onClick={() => setImage("")}
                     className="absolute -top-2 -right-2 bg-white rounded-full p-1 shadow hover:bg-red-50"
-                    aria-label="Supprimer l'image"
+                    aria-label="Remove image"
                   >
                     <XCircle className="h-5 w-5 text-red-400 hover:text-red-600" />
                   </button>
@@ -156,7 +156,7 @@ const SubmitReview = () => {
                 htmlFor="name"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Nom <span className="text-[#D4AF37]">*</span>
+                Name <span className="text-[#D4AF37]">*</span>
               </label>
               <input
                 type="text"
@@ -165,13 +165,13 @@ const SubmitReview = () => {
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none
                   focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] bg-white"
-                placeholder="Entrez votre nom"
+                placeholder="Enter your name"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Évaluation <span className="text-[#D4AF37]">*</span>
+                Rating <span className="text-[#D4AF37]">*</span>
               </label>
               <div className="flex items-center space-x-1 rtl:space-x-reverse">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -202,7 +202,7 @@ const SubmitReview = () => {
                 htmlFor="review"
                 className="block text-sm font-medium text-gray-700 mb-1"
               >
-                Avis <span className="text-[#D4AF37]">*</span>
+                Review <span className="text-[#D4AF37]">*</span>
               </label>
               <textarea
                 id="review"
@@ -211,7 +211,7 @@ const SubmitReview = () => {
                 className="w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none
                   focus:ring-2 focus:ring-[#D4AF37]/50 focus:border-[#D4AF37] bg-white
                   min-h-[120px]"
-                placeholder="Partagez votre expérience avec FoodGuide..."
+                placeholder="Share your experience with FoodGuide..."
               />
             </div>
             {validationError && (
@@ -231,7 +231,7 @@ const SubmitReview = () => {
                 disabled:opacity-60"
               disabled={submitting}
             >
-              {submitting ? "Envoi en cours..." : "Envoyer l'avis"}
+              {submitting ? "Submitting..." : "Submit Review"}
             </button>
           </form>
         )}

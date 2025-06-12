@@ -42,54 +42,53 @@ const HowItWorks = () => {
   const customerSteps = [
     {
       icon: <Search className="h-8 w-8 text-[#D4AF37]" />,
-      title: "Découvrez",
+      title: "Discover",
       description:
-        "Parcourez les plats et restaurants qui correspondent à vos goûts et à votre localisation.",
+        "Browse dishes and restaurants that match your tastes and location.",
     },
     {
       icon: <UtensilsCrossed className="h-8 w-8 text-[#D4AF37]" />,
-      title: "Choisissez",
+      title: "Choose",
       description:
-        "Trouvez ce qui vous plaît parmi une variété de plats et personnalisez-les selon vos préférences.",
+        "Find what you like from a variety of dishes and customize them according to your preferences.",
     },
     {
       icon: <CreditCard className="h-8 w-8 text-[#D4AF37]" />,
-      title: "Commandez",
+      title: "Order",
       description:
-        "Finalisez votre commande en toute sécurité grâce à notre système de paiement simple et transparent.",
+        "Complete your order securely with our simple and transparent payment system.",
     },
     {
       icon: <Truck className="h-8 w-8 text-[#D4AF37]" />,
-      title: "Savourez",
+      title: "Enjoy",
       description:
-        "Suivez votre commande en temps réel et profitez d'un repas livré directement chez vous.",
+        "Track your order in real-time and enjoy a meal delivered right to your doorstep.",
     },
   ];
 
   const restaurantSteps = [
     {
       icon: <Store className="h-8 w-8 text-[#D4AF37]" />,
-      title: "Rejoignez",
+      title: "Join",
       description:
-        "Inscrivez-vous en tant que partenaire et créez votre profil sur notre plateforme.",
+        "Sign up as a partner and create your profile on our platform.",
     },
     {
       icon: <Smartphone className="h-8 w-8 text-[#D4AF37]" />,
-      title: "Présentez",
+      title: "Present",
       description:
-        "Ajoutez votre menu, photos et informations pour attirer les amateurs de cuisine.",
+        "Add your menu, photos, and information to attract food enthusiasts.",
     },
     {
       icon: <ShoppingBag className="h-8 w-8 text-[#D4AF37]" />,
-      title: "Recevez",
-      description:
-        "Gérez vos commandes facilement depuis notre tableau de bord intuitif.",
+      title: "Receive",
+      description: "Manage your orders easily from our intuitive dashboard.",
     },
     {
       icon: <ChefHat className="h-8 w-8 text-[#D4AF37]" />,
-      title: "Développez",
+      title: "Grow",
       description:
-        "Construisez votre marque, augmentez votre visibilité et atteignez de nouveaux clients avec nous.",
+        "Build your brand, increase your visibility, and reach new customers with us.",
     },
   ];
 
@@ -105,19 +104,18 @@ const HowItWorks = () => {
             className="inline-block px-4 py-2 bg-[#D4AF37]/10 text-[#D4AF37] rounded-full text-sm
               font-medium tracking-wider mb-6 reveal"
           >
-            Comment ça marche
+            How it works
           </span>
           <h2
             className="text-3xl md:text-4xl lg:text-5xl font-bold mb-8 font-serif reveal
               dark:text-white"
           >
-            Une expérience simple pour tous
+            A simple experience for everyone
           </h2>
           <p className="text-gray-700 dark:text-gray-300 text-lg reveal">
-            Notre plateforme est conçue pour simplifier la vie des amateurs de
-            cuisine et des restaurateurs. Que vous cherchiez un bon repas ou que
-            vous souhaitiez partager vos talents culinaires, nous avons tout
-            simplifié pour vous !
+            Our platform is designed to simplify life for food enthusiasts and
+            restaurateurs. Whether you're looking for a good meal or want to
+            share your culinary talents, we've simplified everything for you!
           </p>
         </div>
 
@@ -131,7 +129,7 @@ const HowItWorks = () => {
                 }`}
               onClick={() => setActiveTab("customer")}
             >
-              Pour les Gourmets
+              For Food Lovers
             </button>
             <button
               className={`px-6 py-3 rounded-full text-base font-medium transition-all cursor-pointer ${
@@ -141,7 +139,7 @@ const HowItWorks = () => {
                 }`}
               onClick={() => setActiveTab("restaurant")}
             >
-              Pour les Restaurants
+              For Restaurants
             </button>
           </div>
         </div>

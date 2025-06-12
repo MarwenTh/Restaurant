@@ -81,23 +81,22 @@ const About = () => {
               className="inline-block px-4 py-1.5 mb-6 bg-[#f97415]/10 text-[#f97415] rounded-full
                 font-medium text-sm dark:bg-[#f97415]/20 dark:text-[#f97415]"
             >
-              Notre Histoire
+              Our Story
             </div>
             <h2 className="text-3xl md:text-4xl font-bold mb-6 dark:text-gray-100">
-              Nous connectons les amateurs de cuisine aux meilleurs restaurants
+              We connect food enthusiasts with the best restaurants
             </h2>
             <p className="text-[#64748b] text-lg mb-6 dark:text-gray-400">
-              FoodGuide est né d'une idée simple : créer un espace qui rassemble
-              la diversité culinaire et permet aux meilleurs plats d'atteindre
-              tout le monde, tout en aidant les restaurants à s'adapter à l'ère
-              numérique.
+              FoodGuide was born from a simple idea: creating a space that
+              brings together culinary diversity and allows the best dishes to
+              reach everyone, while helping restaurants adapt to the digital
+              age.
             </p>
             <p className="text-[#64748b] text-lg mb-8 dark:text-gray-400">
-              Fondé en 2023, nous sommes rapidement devenus une plateforme où se
-              rencontrent des chefs créatifs, des restaurants innovants et des
-              amateurs de bonne cuisine. Notre mission est de transformer la
-              façon dont les gens découvrent, commandent et apprécient la
-              nourriture.
+              Founded in 2023, we quickly became a platform where creative
+              chefs, innovative restaurants, and food enthusiasts meet. Our
+              mission is to transform how people discover, order, and enjoy
+              food.
             </p>
 
             {/* Stats */}
@@ -108,10 +107,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    La Qualité Avant Tout
+                    Quality First
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    ✦ Nous n'acceptons que les restaurants aux standards élevés
+                    ✦ We only accept restaurants with high standards
                   </p>
                 </div>
               </div>
@@ -121,11 +120,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    Notre Communauté est Prioritaire
+                    Our Community is Priority
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    ✦ Nous écoutons les chefs et les clients pour évoluer
-                    ensemble
+                    ✦ We listen to chefs and customers to evolve together
                   </p>
                 </div>
               </div>
@@ -135,10 +133,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    Développement du Business Local
+                    Local Business Development
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    ✦ Nous aidons les restaurants à atteindre plus de clients
+                    ✦ We help restaurants reach more customers
                   </p>
                 </div>
               </div>
@@ -148,10 +146,10 @@ const About = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-xl mb-1 dark:text-gray-100">
-                    Partenariat Équitable
+                    Fair Partnership
                   </h4>
                   <p className="text-[#64748b] text-sm dark:text-gray-400">
-                    ✦ Prix transparents et relations basées sur l'équité
+                    ✦ Transparent pricing and equity-based relationships
                   </p>
                 </div>
               </div>
@@ -161,7 +159,7 @@ const About = () => {
               size="lg"
               className="cursor-pointer reveal dark:bg-[#f97415] dark:text-white dark:hover:bg-[#f65e00]"
             >
-              En Savoir Plus
+              Learn More
             </Button>
           </div>
         </div>

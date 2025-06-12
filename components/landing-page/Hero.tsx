@@ -8,9 +8,9 @@ const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [currentText, setCurrentText] = useState(0);
   const headlines = [
-    "Nous connectons les amateurs de bouffe aux meilleurs restos.",
-    "La plus belle expérience de marché culinaire.",
-    "Découvre les trésors culinaires près de chez toi.",
+    "We connect food lovers to the best restaurants.",
+    "The most beautiful culinary marketplace experience.",
+    "Discover culinary treasures near you.",
   ];
   const { data: session } = useSession();
 
@@ -75,7 +75,7 @@ const Hero = () => {
       >
         <div className="inline-block mb-6 reveal">
           <span className="px-4 py-1.5 mb-6 bg-[#f97415]/10 text-[#f97415] rounded-full font-medium text-sm">
-            Le marché culinaire d'exception
+            The exceptional culinary marketplace
           </span>
         </div>
 
@@ -97,13 +97,13 @@ const Hero = () => {
               </span>
             ))}
           </span>
-          <span className="block mt-2 text-[#D4AF37]">ذوق، طلب، تمتّع</span>
+          <span className="block mt-2 text-[#D4AF37]">Taste, order, enjoy</span>
         </h1>
 
         <p className="max-w-3xl mx-auto text-lg md:text-xl text-white/90 mb-10 reveal">
-          Là où les restos d'exception rencontrent les passionnés de bouffe.
-          Notre plateforme réunit les meilleurs restaurants locaux avec les
-          amateurs de bonne cuisine, dans un seul endroit simple et convivial.
+          Where exceptional restaurants meet food enthusiasts. Our platform
+          brings together the best local restaurants with food lovers, all in
+          one simple and friendly place.
         </p>
 
         <div

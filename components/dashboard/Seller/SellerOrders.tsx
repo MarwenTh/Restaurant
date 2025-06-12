@@ -172,9 +172,13 @@ const SellerOrders: React.FC = () => {
       const transformedOrders: UpdatedOrder[] = data.orders.map(
         (order: ApiOrder) => ({
           id: order._id,
-          customer: order.client.name || order.client.email,
+          customer:
+            order.client?.name || order.client?.email || "Unknown Customer",
           items: order.items
-            .map((item) => `${item.menuItem.name} x${item.quantity}`)
+            .map(
+              (item) =>
+                `${item.menuItem?.name || "Unknown Item"} x${item.quantity}`,
+            )
             .join(", "),
           total: order.totalAmount,
           status: order.status,
